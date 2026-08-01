@@ -109,6 +109,7 @@ final class Pagina {
 				'segnaposto'   => $inviate['segnaposto'] ?? '',
 				'saluto'       => $inviate['saluto'] ?? '',
 				'solo_su'      => $inviate['solo_su'] ?? array(),
+				'sostituisci_ricerca' => isset( $inviate['sostituisci_ricerca'] ),
 			);
 		}
 

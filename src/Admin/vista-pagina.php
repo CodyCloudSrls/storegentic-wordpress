@@ -143,6 +143,14 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 					</td>
 				</tr>
 				<tr>
+					<th scope="row"><?php esc_html_e( 'Ricerca del sito', 'storegentic' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="sostituisci_ricerca" <?php checked( (bool) $i['sostituisci_ricerca'] ); ?>>
+							<?php esc_html_e( 'Sostituisci la ricerca del tema con quella di Storegentic', 'storegentic' ); ?></label>
+						<p class="description"><?php esc_html_e( 'La lente e il campo di ricerca del tuo tema apriranno la ricerca semantica invece di quella di WordPress. Se il tuo tema usa un markup particolare, il filtro storegentic_inneschi_ricerca permette di indicarlo.', 'storegentic' ); ?></p>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><?php esc_html_e( 'Dove compare', 'storegentic' ); ?></th>
 					<td>
 						<fieldset>

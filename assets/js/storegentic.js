@@ -220,10 +220,75 @@
     attesa = window.setTimeout(function () { cerca(v); }, 350);
   });
 
+  /* ------------------------------------- si prende la ricerca del sito
+   *
+   * Con "sostituisci" acceso, i comandi di ricerca del tema aprono questo
+   * pannello invece del modulo di WordPress. Si intercettano due cose: il
+   * clic su un innesco, e l'invio di un modulo di ricerca — perche' su
+   * molti temi la ricerca e' un campo sempre visibile, senza pulsante da
+   * cliccare.
+   *
+   * L'ascolto e' delegato al documento: funziona anche sui comandi che il
+   * tema aggiunge dopo, cosa che un aggancio diretto non farebbe. */
+
+  function inneschi() {
+    return (cfg.sostituisci && Array.isArray(cfg.inneschi) && cfg.inneschi.length)
+      ? cfg.inneschi
+      : ['[data-storegentic]'];
+  }
+
+  function eUnInnesco(elemento) {
+    var sel = inneschi();
+    for (var i = 0; i < sel.length; i++) {
+      try { if (elemento.closest(sel[i])) { return true; } }
+      catch (err) { /* selettore non valido nel filtro: si ignora */ }
+    }
+    return false;
+  }
+
+  /*
+   * Fase di cattura, non di risalita.
+   *
+   * Il tema ha il suo ascoltatore sul documento per la stessa lente. Due
+   * ascoltatori sullo stesso elemento si eseguono in ordine di
+   * registrazione, e `preventDefault()` non ne ferma nessuno: il risultato
+   * era che si aprivano DUE pannelli sovrapposti, quello del tema e il
+   * nostro, con il fuoco nel campo sbagliato.
+   *
+   * In cattura si arriva prima di qualunque ascoltatore in risalita,
+   * ovunque sia registrato, e `stopPropagation()` gli impedisce di partire.
+   * E' l'unico modo di prendersi la ricerca di un tema che non conosciamo.
+   */
   document.addEventListener('click', function (e) {
-    if (e.target.closest('[data-storegentic]')) { e.preventDefault(); apri(); return; }
-    if (e.target.closest('[data-sg-chiudi]')) { e.preventDefault(); chiudi(); }
+    if (!cfg.sostituisci) { return; }
+    if (pannello && pannello.contains(e.target)) { return; }
+    if (!eUnInnesco(e.target)) { return; }
+
+    e.preventDefault();
+    e.stopPropagation();
+    apri();
+  }, true);
+
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-sg-chiudi]')) { e.preventDefault(); chiudi(); return; }
+    if (pannello && pannello.contains(e.target)) { return; }
+    // Con la sostituzione spenta resta il solo innesco esplicito.
+    if (!cfg.sostituisci && e.target.closest('[data-storegentic]')) { e.preventDefault(); apri(); }
   });
+
+  document.addEventListener('submit', function (e) {
+    if (!cfg.sostituisci) { return; }
+    if (pannello && pannello.contains(e.target)) { return; }
+    if (!eUnInnesco(e.target)) { return; }
+
+    e.preventDefault();
+    var campo = e.target.querySelector('input[type="search"], input[name="s"]');
+    apri();
+    if (campo && campo.value.trim()) {
+      if (campoPannello) { campoPannello.value = campo.value; }
+      cerca(campo.value);
+    }
+  }, true);
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') { chiudi(); return; }

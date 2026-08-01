@@ -111,6 +111,37 @@ final class Interfaccia {
 				'segnaposto' => '' !== $i['segnaposto'] ? (string) $i['segnaposto'] : __( 'Che cosa stai cercando?', 'storegentic' ),
 				'saluto'     => '' !== $i['saluto'] ? (string) $i['saluto'] : '',
 				'analitica'  => (bool) $i['analitica'],
+				/*
+				 * Quando e' acceso, il plugin si prende la ricerca del sito:
+				 * i comandi di ricerca del tema aprono il pannello di
+				 * Storegentic invece del modulo di WordPress.
+				 *
+				 * I selettori non sono legati a questo tema. Sono le forme
+				 * piu' diffuse — un modulo con role="search", le classi che
+				 * WordPress genera da sempre — piu' un filtro per i temi che
+				 * usano nomi propri. Un plugin universale non puo' conoscere
+				 * il markup di chi lo installa: puo' solo riconoscere le
+				 * convenzioni e lasciare una porta aperta per le eccezioni.
+				 */
+				'sostituisci' => (bool) $i['sostituisci_ricerca'],
+				'inneschi'    => array_values(
+					array_unique(
+						array_map(
+							'strval',
+							(array) apply_filters(
+								'storegentic_inneschi_ricerca',
+								array(
+									'[data-storegentic]',
+									'form[role="search"]',
+									'form.search-form',
+									'form.woocommerce-product-search',
+									'.search-toggle',
+									'[data-oni-apri-ricerca]',
+								)
+							)
+						)
+					)
+				),
 				'testi'      => array(
 					'chiudi'      => __( 'Chiudi', 'storegentic' ),
 					'cerca'       => __( 'Cerca', 'storegentic' ),
