@@ -87,7 +87,17 @@ final class Ponte {
 			return new WP_Error( 'storegentic_spento', __( 'Storegentic non è attivo su questo negozio.', 'storegentic' ), array( 'status' => 403 ) );
 		}
 
-		$impronta = 'storegentic_freq_' . md5( self::indirizzo() );
+		/*
+		 * Finestra fissa, agganciata all'orologio e non all'ultima richiesta.
+		 * Con `set_transient` rinnovato a ogni colpo la scadenza si sposta in
+		 * avanti di continuo: sotto traffico costante il contatore non scade
+		 * mai, e un visitatore che ha fatto trenta ricerche resta bloccato
+		 * finche' non smette del tutto. Qui la finestra e' un blocco di
+		 * secondi: allo scadere il contatore riparte da solo.
+		 */
+		$finestra = (int) floor( time() / self::FINESTRA );
+		$impronta = 'sg_freq_' . md5( self::indirizzo() . '|' . $finestra );
+
 		$conteggio = (int) get_transient( $impronta );
 
 		if ( $conteggio >= self::TETTO ) {
@@ -98,7 +108,7 @@ final class Ponte {
 			);
 		}
 
-		set_transient( $impronta, $conteggio + 1, self::FINESTRA );
+		set_transient( $impronta, $conteggio + 1, self::FINESTRA * 2 );
 
 		return true;
 	}
@@ -113,7 +123,15 @@ final class Ponte {
 			return new WP_Error( 'storegentic_ricerca_assente', __( 'La ricerca non è disponibile per questo negozio.', 'storegentic' ), array( 'status' => 503 ) );
 		}
 
-		$client = new Client( null, null, 20 );
+		/*
+		 * Un solo tentativo, e un timeout corto. Il client riprova sui 5xx
+		 * con attese crescenti, e va benissimo per la sincronizzazione, che
+		 * gira nel cron. Qui no: questa rotta e' pubblica e c'e' una persona
+		 * che aspetta. Con i ritentativi una singola ricerca poteva tenere
+		 * occupato un processo di PHP per quasi un minuto, e poche richieste
+		 * contemporanee bastavano a saturare i processi disponibili.
+		 */
+		$client = new Client( null, null, 8, 0 );
 
 		$risposta = $client->post(
 			$percorso,
@@ -180,8 +198,8 @@ final class Ponte {
 		Registratore::accoda(
 			$tipo,
 			array(
-				'sessionId' => sanitize_text_field( (string) $richiesta->get_param( 'sessionId' ) ),
-				'mode'      => sanitize_key( (string) $richiesta->get_param( 'mode' ) ),
+				'sessionId' => mb_substr( sanitize_text_field( (string) $richiesta->get_param( 'sessionId' ) ), 0, 64 ),
+				'mode'      => mb_substr( sanitize_key( (string) $richiesta->get_param( 'mode' ) ), 0, 32 ),
 				'data'      => self::dati_evento( $richiesta->get_param( 'data' ) ),
 			)
 		);
@@ -200,13 +218,21 @@ final class Ponte {
 
 		$puliti = array();
 
-		// Solo scalari, e non piu' di venti chiavi: il ponte non e' un archivio.
+		/*
+		 * Solo scalari, non piu' di venti chiavi e non piu' di 500 caratteri
+		 * per valore. Il numero di chiavi da solo non basta: sanitize_text_field
+		 * non impone alcuna lunghezza, quindi venti valori da un megabyte
+		 * ciascuno finivano nella coda, e la coda sta in un'opzione del
+		 * database caricata a ogni richiesta.
+		 */
 		foreach ( array_slice( $grezzi, 0, 20, true ) as $chiave => $valore ) {
-			if ( is_scalar( $valore ) ) {
-				$puliti[ sanitize_key( (string) $chiave ) ] = is_string( $valore )
-					? sanitize_text_field( $valore )
-					: $valore;
+			if ( ! is_scalar( $valore ) ) {
+				continue;
 			}
+
+			$puliti[ sanitize_key( (string) $chiave ) ] = is_string( $valore )
+				? mb_substr( sanitize_text_field( $valore ), 0, 500 )
+				: $valore;
 		}
 
 		return $puliti;
@@ -215,22 +241,34 @@ final class Ponte {
 	/**
 	 * L'indirizzo di chi chiama, per il limite di frequenza.
 	 *
-	 * Dietro a un proxy REMOTE_ADDR e' quello del proxy: si guarda prima
-	 * l'intestazione inoltrata, ma solo il primo valore, che e' l'unico non
-	 * falsificabile a valle.
+	 * Si usa REMOTE_ADDR, che e' l'unico valore che il client non puo'
+	 * scegliere. Le intestazioni inoltrate — X-Forwarded-For e simili — sono
+	 * scritte da chi chiama: leggendole per prime, chiunque poteva mandare
+	 * un valore diverso a ogni richiesta e non incontrare mai il limite,
+	 * consumando la quota del negozio a costo zero.
+	 *
+	 * Dietro un proxy vero REMOTE_ADDR e' l'indirizzo del proxy, e il limite
+	 * diventa collettivo: piu' severo del necessario, ma dalla parte giusta.
+	 * Chi ha un proxy fidato lo dichiara con il filtro qui sotto, che riceve
+	 * anche il valore inoltrato in modo da poterlo usare consapevolmente.
 	 */
 	private static function indirizzo(): string {
-		foreach ( array( 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' ) as $campo ) {
-			if ( empty( $_SERVER[ $campo ] ) ) {
-				continue;
-			}
-			$valore = (string) wp_unslash( $_SERVER[ $campo ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$primo  = trim( explode( ',', $valore )[0] );
-			if ( filter_var( $primo, FILTER_VALIDATE_IP ) ) {
-				return $primo;
-			}
-		}
+		$remoto = isset( $_SERVER['REMOTE_ADDR'] )
+			? trim( (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			: '';
 
-		return '0.0.0.0';
+		$indirizzo = filter_var( $remoto, FILTER_VALIDATE_IP ) ? $remoto : '0.0.0.0';
+
+		/**
+		 * Permette a chi sta dietro un proxy fidato di indicare l'indirizzo vero.
+		 *
+		 * Chi usa questo filtro si assume la responsabilita' di verificare che
+		 * la richiesta arrivi davvero dal proprio proxy.
+		 *
+		 * @param string $indirizzo Indirizzo che il plugin userebbe.
+		 */
+		$scelto = (string) apply_filters( 'storegentic_indirizzo_client', $indirizzo );
+
+		return filter_var( $scelto, FILTER_VALIDATE_IP ) ? $scelto : $indirizzo;
 	}
 }

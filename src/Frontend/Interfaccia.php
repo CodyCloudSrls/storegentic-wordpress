@@ -41,8 +41,19 @@ final class Interfaccia {
 			return false;
 		}
 
-		// Se il servizio non dichiara la ricerca, non c'e' niente da mostrare.
-		if ( '' === Contratto::endpoint( 'search' ) ) {
+		/*
+		 * Si guarda SOLO il contratto gia' in cache, mai chiedendone uno
+		 * nuovo. Questa funzione gira su ogni pagina pubblica: con una
+		 * chiamata all'handshake qui dentro, alla scadenza della cache il
+		 * primo visitatore avrebbe pagato l'handshake nel proprio tempo di
+		 * caricamento, e con il servizio irraggiungibile lo avrebbero pagato
+		 * tutti, ognuno con i tentativi e le attese del client.
+		 *
+		 * Il contratto lo rinnova il cron o l'amministratore. Finche' non
+		 * c'e', il negozio si comporta come se Storegentic non fosse
+		 * configurato: nessun comando in pagina.
+		 */
+		if ( '' === Contratto::endpoint_in_cache( 'search' ) ) {
 			return false;
 		}
 

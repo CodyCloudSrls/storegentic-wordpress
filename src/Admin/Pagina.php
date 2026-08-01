@@ -78,28 +78,62 @@ final class Pagina {
 
 		$inviate = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- sanificato campo per campo da Impostazioni::salva().
 
+		/*
+		 * Si salva solo quello che il modulo ha davvero stampato.
+		 *
+		 * Le sezioni Aspetto e Catalogo compaiono solo a negozio collegato,
+		 * ma il pulsante di salvataggio c'e' sempre. Trattando ogni casella
+		 * assente come "non spuntata", un salvataggio fatto mentre il
+		 * servizio era irraggiungibile spegneva in blocco sincronizzazione
+		 * automatica, invio delle categorie, potatura e analisi — senza che
+		 * nessuno avesse toccato quelle voci, e senza dirlo.
+		 *
+		 * Il campo sentinella dice quali gruppi erano in pagina; le caselle
+		 * di un gruppo assente non vengono nemmeno guardate.
+		 */
+		$gruppi = array_filter( array_map( 'sanitize_key', (array) ( $inviate['gruppi'] ?? array() ) ) );
+
 		$nuove = array(
-			'base'                => $inviate['base'] ?? '',
-			'workspace'           => $inviate['workspace'] ?? '',
-			'attivo'              => isset( $inviate['attivo'] ),
-			'modalita'            => $inviate['modalita'] ?? 'barra',
-			'posizione'           => $inviate['posizione'] ?? 'destra',
-			'colore'              => $inviate['colore'] ?? '#1A1815',
-			'colore_testo'        => $inviate['colore_testo'] ?? '#FFFFFF',
-			'raggio'              => $inviate['raggio'] ?? 8,
-			'etichetta'           => $inviate['etichetta'] ?? '',
-			'segnaposto'          => $inviate['segnaposto'] ?? '',
-			'saluto'              => $inviate['saluto'] ?? '',
-			'solo_su'             => $inviate['solo_su'] ?? array(),
-			'sincro_automatica'   => isset( $inviate['sincro_automatica'] ),
-			'frequenza'           => $inviate['frequenza'] ?? 'daily',
-			'lotto'               => $inviate['lotto'] ?? 200,
-			'includi_bozze'       => isset( $inviate['includi_bozze'] ),
-			'includi_esauriti'    => isset( $inviate['includi_esauriti'] ),
-			'invia_categorie'     => isset( $inviate['invia_categorie'] ),
-			'pota_mancanti'       => isset( $inviate['pota_mancanti'] ),
-			'analitica'           => isset( $inviate['analitica'] ),
+			'base'   => $inviate['base'] ?? '',
+			'attivo' => isset( $inviate['attivo'] ),
 		);
+
+		if ( in_array( 'aspetto', $gruppi, true ) ) {
+			$nuove += array(
+				'modalita'     => $inviate['modalita'] ?? 'barra',
+				'posizione'    => $inviate['posizione'] ?? 'destra',
+				'colore'       => $inviate['colore'] ?? '#1A1815',
+				'colore_testo' => $inviate['colore_testo'] ?? '#FFFFFF',
+				'raggio'       => $inviate['raggio'] ?? 8,
+				'etichetta'    => $inviate['etichetta'] ?? '',
+				'segnaposto'   => $inviate['segnaposto'] ?? '',
+				'saluto'       => $inviate['saluto'] ?? '',
+				'solo_su'      => $inviate['solo_su'] ?? array(),
+			);
+		}
+
+		if ( in_array( 'catalogo', $gruppi, true ) ) {
+			$nuove += array(
+				'sincro_automatica' => isset( $inviate['sincro_automatica'] ),
+				'frequenza'         => $inviate['frequenza'] ?? 'daily',
+				'includi_bozze'     => isset( $inviate['includi_bozze'] ),
+				'includi_esauriti'  => isset( $inviate['includi_esauriti'] ),
+				'invia_categorie'   => isset( $inviate['invia_categorie'] ),
+				'pota_mancanti'     => isset( $inviate['pota_mancanti'] ),
+				'analitica'         => isset( $inviate['analitica'] ),
+			);
+
+			/*
+			 * Il lotto non si cambia a sincronizzazione avviata: le pagine
+			 * sono gia' calcolate su quello vecchio, e cambiarlo a meta'
+			 * salterebbe blocchi di prodotti che poi verrebbero tolti
+			 * dall'indice. La sessione lo congela comunque, ma non ha senso
+			 * far credere che il nuovo valore sia gia' in uso.
+			 */
+			if ( ! Sincronizzazione::in_corso() ) {
+				$nuove['lotto'] = $inviate['lotto'] ?? 200;
+			}
+		}
 
 		/*
 		 * La chiave si sovrascrive solo se ne e' stata scritta una nuova: il
@@ -113,9 +147,16 @@ final class Pagina {
 
 		Impostazioni::salva( $nuove );
 
-		// Il cron periodico segue lo stato: acceso solo se serve.
+		/*
+		 * Il cron segue lo stato. `spegni_periodica()` toglie anche il passo
+		 * pendente, quindi si evita di chiamarla mentre una sincronizzazione
+		 * e' in corso: la lascerebbe ferma a meta' senza nulla che la
+		 * riprenda fino al giro periodico successivo.
+		 */
 		if ( Impostazioni::leggi( 'attivo' ) && Impostazioni::leggi( 'sincro_automatica' ) && Impostazioni::configurato() ) {
 			Pianificatore::accendi_periodica();
+		} elseif ( Sincronizzazione::in_corso() ) {
+			wp_clear_scheduled_hook( Pianificatore::AGGANCIO_PERIODICO );
 		} else {
 			Pianificatore::spegni_periodica();
 		}

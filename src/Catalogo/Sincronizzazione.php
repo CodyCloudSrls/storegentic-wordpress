@@ -147,6 +147,18 @@ final class Sincronizzazione {
 				'fase'     => self::IN_CORSO,
 				'pagina'   => 0,
 				'pagine'   => (int) ceil( count( $ids ) / $lotto ),
+				/*
+				 * Il lotto si congela con la sessione, come gli identificativi.
+				 * Rileggerlo a ogni passo produce un danno silenzioso: le
+				 * pagine sono calcolate all'avvio, ma l'offset no. Se
+				 * l'amministratore alza il lotto a meta' sincronizzazione
+				 * l'offset salta in avanti e un blocco di prodotti non viene
+				 * spedito da nessuna pagina; se lo abbassa, la sessione si
+				 * ferma a `pagine` avendo coperto solo una parte dell'elenco.
+				 * In entrambi i casi la riconciliazione poi cancella
+				 * dall'indice prodotti che sono vivi a catalogo.
+				 */
+				'lotto'    => $lotto,
 				'inviati'  => 0,
 				'totale'   => count( $ids ),
 				'iniziata' => time(),
@@ -200,7 +212,8 @@ final class Sincronizzazione {
 			return self::fallisci( __( 'Il servizio non dichiara l\'indirizzo per il caricamento del catalogo.', 'storegentic' ) );
 		}
 
-		$lotto   = (int) Impostazioni::leggi( 'lotto' );
+		// Il lotto della sessione, non quello attuale: vedi avvia().
+		$lotto   = (int) ( $stato['lotto'] ?? Impostazioni::leggi( 'lotto' ) );
 		$ids     = is_array( $stato['ids'] ?? null ) ? $stato['ids'] : array();
 		$fetta   = array_slice( $ids, (int) $stato['pagina'] * $lotto, $lotto );
 
@@ -338,10 +351,20 @@ final class Sincronizzazione {
 				);
 			}
 
-			$in_catalogo = (int) ( $prova['catalogSkus'] ?? 0 );
+			/*
+			 * La guardia deve chiudersi, non aprirsi, quando non capisce la
+			 * risposta. Se il server accetta la prova a vuoto in modo
+			 * asincrono (202 senza corpo) o cambia il nome del campo, senza
+			 * questo controllo `catalogSkus` varrebbe 0, la condizione
+			 * sarebbe falsa e si passerebbe dritti alla cancellazione vera:
+			 * l'unica rete di sicurezza contro lo svuotamento del catalogo si
+			 * disattiverebbe in silenzio proprio quando serve di piu'.
+			 */
+			$noto        = isset( $prova['catalogSkus'] ) && is_numeric( $prova['catalogSkus'] );
+			$in_catalogo = $noto ? (int) $prova['catalogSkus'] : 0;
 			$da_potare   = (int) ( $prova['prunedSkus'] ?? 0 );
 
-			if ( $in_catalogo > 0 && ( $da_potare / $in_catalogo ) > self::SOGLIA_POTATURA ) {
+			if ( ! $noto || $in_catalogo <= 0 || ( $da_potare / $in_catalogo ) > self::SOGLIA_POTATURA ) {
 				self::aggiorna(
 					array(
 						'fase'      => self::DA_CHIUDERE,
@@ -350,28 +373,33 @@ final class Sincronizzazione {
 							'in_catalogo' => $in_catalogo,
 							'da_potare'   => $da_potare,
 							'visti'       => (int) ( $prova['seenSkus'] ?? 0 ),
+							'ignoto'      => ! $noto,
 						),
 					)
 				);
 
 				self::annota(
-					sprintf(
-						'Riconciliazione sospesa: cancellerebbe %d SKU su %d (%d%%). Serve conferma.',
-						$da_potare,
-						$in_catalogo,
-						(int) round( $da_potare / $in_catalogo * 100 )
-					)
+					$noto && $in_catalogo > 0
+						? sprintf(
+							'Riconciliazione sospesa: cancellerebbe %d SKU su %d (%d%%). Serve conferma.',
+							$da_potare,
+							$in_catalogo,
+							(int) round( $da_potare / $in_catalogo * 100 )
+						)
+						: 'Riconciliazione sospesa: la prova a vuoto non ha detto quanti prodotti ci sono in indice. Serve conferma.'
 				);
 
 				return new WP_Error(
 					'storegentic_potatura_ampia',
-					sprintf(
-						/* translators: 1: SKU da cancellare, 2: SKU in catalogo. */
-						__( 'La riconciliazione cancellerebbe %1$d prodotti su %2$d. Controlla la sincronizzazione prima di confermare.', 'storegentic' ),
-						$da_potare,
-						$in_catalogo
-					),
-					array( 'da_potare' => $da_potare, 'in_catalogo' => $in_catalogo )
+					$noto && $in_catalogo > 0
+						? sprintf(
+							/* translators: 1: SKU da cancellare, 2: SKU in catalogo. */
+							__( 'La riconciliazione cancellerebbe %1$d prodotti su %2$d. Controlla la sincronizzazione prima di confermare.', 'storegentic' ),
+							$da_potare,
+							$in_catalogo
+						)
+						: __( 'La verifica non ha riportato quanti prodotti ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. La potatura resta sospesa.', 'storegentic' ),
+					array( 'da_potare' => $da_potare, 'in_catalogo' => $in_catalogo, 'ignoto' => ! $noto )
 				);
 			}
 		}

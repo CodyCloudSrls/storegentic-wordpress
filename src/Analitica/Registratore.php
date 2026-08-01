@@ -109,10 +109,22 @@ final class Registratore {
 			return;
 		}
 
+		$contratto = Contratto::ottieni();
+
+		/*
+		 * Servizio irraggiungibile: la coda resta dov'e'. Prima si cancellava
+		 * ogni volta che l'indirizzo risultava assente, e l'indirizzo risulta
+		 * assente anche quando il contratto non arriva: bastava un'ora di
+		 * disservizio per buttare via tutti gli eventi raccolti.
+		 */
+		if ( is_wp_error( $contratto ) ) {
+			return;
+		}
+
 		$percorso = Contratto::endpoint( 'analyticsEvents' );
 
 		if ( '' === $percorso ) {
-			// Il servizio non raccoglie eventi per questo negozio: si smette.
+			// Contratto valido che NON dichiara la raccolta: si smette davvero.
 			delete_option( self::CODA );
 			return;
 		}

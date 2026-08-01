@@ -42,9 +42,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Contratto {
 
-	private const CACHE     = \Storegentic\PREFISSO_OPZIONI . 'contratto';
-	private const IMPRONTA  = \Storegentic\PREFISSO_OPZIONI . 'contratto_impronta';
-	private const DURATA    = 6 * HOUR_IN_SECONDS;
+	private const CACHE      = \Storegentic\PREFISSO_OPZIONI . 'contratto';
+	private const IMPRONTA   = \Storegentic\PREFISSO_OPZIONI . 'contratto_impronta';
+	private const FALLIMENTO = \Storegentic\PREFISSO_OPZIONI . 'contratto_ko';
+	private const DURATA     = 6 * HOUR_IN_SECONDS;
+
+	/** Quanto si ricorda un handshake fallito prima di riprovare. */
+	private const DURATA_FALLIMENTO = 5 * MINUTE_IN_SECONDS;
 
 	/**
 	 * L'unico percorso scritto nel plugin.
@@ -72,6 +76,18 @@ final class Contratto {
 			if ( is_array( $cache ) && self::impronta_valida() ) {
 				return $cache;
 			}
+
+			// Handshake fallito da poco: non si ritenta a ogni chiamata.
+			if ( false !== get_transient( self::FALLIMENTO ) ) {
+				$vecchio = get_option( self::CACHE . '_ultimo', null );
+
+				return is_array( $vecchio ) && self::impronta_valida()
+					? $vecchio
+					: new WP_Error(
+						'storegentic_non_raggiungibile',
+						__( 'Storegentic non risponde. Il collegamento verrà ritentato fra qualche minuto.', 'storegentic' )
+					);
+			}
 		}
 
 		return self::rinnova();
@@ -88,23 +104,67 @@ final class Contratto {
 		$risposta = $client->post( self::PERCORSO_HANDSHAKE, self::presentazione() );
 
 		if ( is_wp_error( $risposta ) ) {
-			/*
-			 * Un contratto vecchio vale piu' di nessun contratto: se il
-			 * servizio e' momentaneamente giu', il negozio continua a
-			 * funzionare con l'ultimo contratto ricevuto. Si segna l'errore
-			 * per la diagnostica, ma non si spegne tutto.
-			 */
 			update_option( \Storegentic\PREFISSO_OPZIONI . 'ultimo_errore', array(
 				'quando'    => time(),
 				'messaggio' => $risposta->get_error_message(),
 			), false );
+
+			/*
+			 * Cache negativa. Senza, ogni chiamata a puo() o endpoint() —
+			 * e ce n'e' una su ogni pagina pubblica — rifarebbe l'handshake
+			 * in modo bloccante: con il servizio irraggiungibile ogni
+			 * visitatore aspetterebbe i tentativi e le attese del client
+			 * prima di vedere la pagina. Si ricorda il fallimento per pochi
+			 * minuti, quel tanto che basta a non ripeterlo a ogni visita.
+			 */
+			set_transient( self::FALLIMENTO, time(), self::DURATA_FALLIMENTO );
+
+			$stato = (int) ( $risposta->get_error_data()['stato'] ?? 0 );
+
+			/*
+			 * Su 401 e 403 NON si ripiega sul contratto vecchio. Il ripiego
+			 * serve a superare un servizio momentaneamente giu', non a far
+			 * finta che una chiave revocata sia ancora valida: con il
+			 * ripiego il negozio resterebbe "collegato" per sempre,
+			 * continuando a mostrare comandi che rispondono "non
+			 * autorizzato" a ogni clic.
+			 */
+			if ( in_array( $stato, array( 401, 403 ), true ) ) {
+				self::dimentica();
+				return $risposta;
+			}
 
 			$vecchio = get_option( self::CACHE . '_ultimo', null );
 
 			return is_array( $vecchio ) && self::impronta_valida() ? $vecchio : $risposta;
 		}
 
+		/*
+		 * Non basta un 2xx: deve essere un contratto. Una risposta vuota o
+		 * un corpo che non descrive ne' capacita' ne' indirizzi non e' un
+		 * contratto, e metterlo in cache distruggerebbe la copia di
+		 * sicurezza sostituendola con nulla.
+		 */
+		if ( ! self::pare_un_contratto( $risposta ) ) {
+			update_option( \Storegentic\PREFISSO_OPZIONI . 'ultimo_errore', array(
+				'quando'    => time(),
+				'messaggio' => __( 'Il servizio ha risposto senza dichiarare capacità né indirizzi.', 'storegentic' ),
+			), false );
+
+			set_transient( self::FALLIMENTO, time(), self::DURATA_FALLIMENTO );
+
+			$vecchio = get_option( self::CACHE . '_ultimo', null );
+
+			return is_array( $vecchio ) && self::impronta_valida()
+				? $vecchio
+				: new WP_Error(
+					'storegentic_contratto_illeggibile',
+					__( 'Il servizio ha risposto senza dichiarare capacità né indirizzi.', 'storegentic' )
+				);
+		}
+
 		delete_option( \Storegentic\PREFISSO_OPZIONI . 'ultimo_errore' );
+		delete_transient( self::FALLIMENTO );
 
 		set_transient( self::CACHE, $risposta, self::DURATA );
 		// Copia persistente, usata solo come rete di sicurezza se il servizio cade.
@@ -114,11 +174,47 @@ final class Contratto {
 		return $risposta;
 	}
 
+	/**
+	 * Un contratto dichiara almeno le capacita' o gli indirizzi.
+	 *
+	 * @param array<string,mixed> $risposta
+	 */
+	private static function pare_un_contratto( array $risposta ): bool {
+		foreach ( array( 'capabilities', 'endpoints' ) as $campo ) {
+			if ( isset( $risposta[ $campo ] ) && is_array( $risposta[ $campo ] ) && ! empty( $risposta[ $campo ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/** Butta via il contratto: si usa quando cambiano chiave o base. */
 	public static function dimentica(): void {
 		delete_transient( self::CACHE );
+		delete_transient( self::FALLIMENTO );
 		delete_option( self::CACHE . '_ultimo' );
 		delete_option( self::IMPRONTA );
+	}
+
+	/**
+	 * Come endpoint(), ma senza mai contattare il servizio.
+	 *
+	 * La usa il frontend pubblico: li' una chiamata di rete dentro il
+	 * rendering si trasformerebbe in attesa per il visitatore.
+	 */
+	public static function endpoint_in_cache( string $nome ): string {
+		$cache = get_transient( self::CACHE );
+
+		if ( ! is_array( $cache ) || ! self::impronta_valida() ) {
+			$cache = get_option( self::CACHE . '_ultimo', null );
+		}
+
+		if ( ! is_array( $cache ) || ! self::impronta_valida() ) {
+			return '';
+		}
+
+		return self::cerca_endpoint( $cache, $nome );
 	}
 
 	/**
@@ -134,6 +230,13 @@ final class Contratto {
 			return '';
 		}
 
+		return self::cerca_endpoint( $contratto, $nome );
+	}
+
+	/**
+	 * @param array<string,mixed> $contratto
+	 */
+	private static function cerca_endpoint( array $contratto, string $nome ): string {
 		$endpoints = $contratto['endpoints'] ?? array();
 
 		if ( ! is_array( $endpoints ) ) {

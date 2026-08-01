@@ -84,6 +84,9 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 		</table>
 
 		<?php if ( $collegato ) : ?>
+			<?php // Dice a salva() quali gruppi erano davvero in pagina. ?>
+			<input type="hidden" name="gruppi[]" value="aspetto">
+			<input type="hidden" name="gruppi[]" value="catalogo">
 			<h2 class="title"><?php esc_html_e( 'Aspetto', 'storegentic' ); ?></h2>
 			<table class="form-table" role="presentation">
 				<tr>
@@ -187,8 +190,15 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 					<th scope="row"><label for="sg-lotto"><?php esc_html_e( 'Prodotti per pagina', 'storegentic' ); ?></label></th>
 					<td>
 						<input type="number" id="sg-lotto" name="lotto" min="25" max="1000" style="width:6rem"
-						       value="<?php echo esc_attr( (string) $i['lotto'] ); ?>">
-						<p class="description"><?php esc_html_e( 'Abbassalo se l\'hosting interrompe le sincronizzazioni a metà.', 'storegentic' ); ?></p>
+						       value="<?php echo esc_attr( (string) $i['lotto'] ); ?>"
+						       <?php disabled( Sincronizzazione::in_corso() ); ?>>
+						<p class="description">
+							<?php
+							echo Sincronizzazione::in_corso()
+								? esc_html__( 'Non si cambia a sincronizzazione avviata: le pagine sono già calcolate sul valore attuale.', 'storegentic' )
+								: esc_html__( 'Abbassalo se l\'hosting interrompe le sincronizzazioni a metà.', 'storegentic' );
+							?>
+						</p>
 					</td>
 				</tr>
 				<tr>
@@ -231,8 +241,14 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 				<?php self::pulsante( 'sincronizza', __( 'Sincronizza ora il catalogo', 'storegentic' ), true ); ?>
 			<?php endif; ?>
 		<?php endif; ?>
-		<?php if ( Sincronizzazione::FALLITA === $stato['fase'] ) : ?>
-			<?php self::pulsante( 'azzera', __( 'Azzera lo stato', 'storegentic' ) ); ?>
+		<?php if ( Sincronizzazione::FALLITA === $stato['fase'] || ! empty( $stato['potatura'] ) ) : ?>
+			<?php
+			/*
+			 * Anche da "potatura sospesa" ci vuole un'uscita non distruttiva:
+			 * altrimenti l'unico pulsante offerto sarebbe quello che cancella.
+			 */
+			self::pulsante( 'azzera', __( 'Annulla e azzera lo stato', 'storegentic' ) );
+			?>
 		<?php endif; ?>
 	</p>
 
@@ -241,12 +257,16 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 			<p>
 				<strong><?php esc_html_e( 'Riconciliazione sospesa.', 'storegentic' ); ?></strong>
 				<?php
-				printf(
-					/* translators: 1: prodotti che verrebbero rimossi, 2: prodotti in indice. */
-					esc_html__( 'Toglierebbe %1$d prodotti su %2$d dall\'indice. Se il catalogo si è davvero ridotto tanto, conferma; altrimenti controlla la sincronizzazione.', 'storegentic' ),
-					(int) $stato['potatura']['da_potare'],
-					(int) $stato['potatura']['in_catalogo']
-				);
+				if ( ! empty( $stato['potatura']['ignoto'] ) ) {
+					esc_html_e( 'La verifica non ha riportato quanti prodotti ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. Conferma solo se sei sicuro che il catalogo sia stato spedito per intero.', 'storegentic' );
+				} else {
+					printf(
+						/* translators: 1: prodotti che verrebbero rimossi, 2: prodotti in indice. */
+						esc_html__( 'Toglierebbe %1$d prodotti su %2$d dall\'indice. Se il catalogo si è davvero ridotto tanto, conferma; altrimenti controlla la sincronizzazione.', 'storegentic' ),
+						(int) $stato['potatura']['da_potare'],
+						(int) $stato['potatura']['in_catalogo']
+					);
+				}
 				?>
 			</p>
 			<p><?php self::pulsante( 'conferma_potatura', __( 'Confermo, procedi', 'storegentic' ) ); ?></p>

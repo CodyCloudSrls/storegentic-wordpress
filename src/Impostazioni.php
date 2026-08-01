@@ -111,8 +111,7 @@ final class Impostazioni {
 	private static function sanifica( string $nome, $valore ) {
 		switch ( $nome ) {
 			case 'base':
-				$url = esc_url_raw( trim( (string) $valore ) );
-				return untrailingslashit( $url );
+				return self::base_ammessa( (string) $valore );
 
 			case 'chiave':
 			case 'workspace':
@@ -150,6 +149,62 @@ final class Impostazioni {
 			default:
 				return (bool) $valore;
 		}
+	}
+
+	/**
+	 * La base del servizio, se e' un indirizzo a cui si puo' mandare la chiave.
+	 *
+	 * `esc_url_raw` da solo accetta qualsiasi host: http in chiaro, un
+	 * indirizzo di rete interna, l'indirizzo dei metadati di un provider
+	 * cloud. Chi riesce a scrivere questa impostazione potrebbe farsi
+	 * spedire la chiave del negozio insieme a ogni handshake, e usare il
+	 * server del negozio per bussare a servizi raggiungibili solo da dentro
+	 * la rete.
+	 *
+	 * Qui si pretende https e un host pubblico. Se il valore non e'
+	 * accettabile si tiene quello attuale invece di svuotare
+	 * l'impostazione: un campo svuotato scollegherebbe il negozio.
+	 */
+	private static function base_ammessa( string $grezzo ): string {
+		$attuale = (string) ( get_option( self::CHIAVE, array() )['base'] ?? self::predefinite()['base'] );
+		$url     = untrailingslashit( esc_url_raw( trim( $grezzo ) ) );
+
+		if ( '' === $url ) {
+			return $attuale;
+		}
+
+		$pezzi = wp_parse_url( $url );
+
+		if ( ! is_array( $pezzi ) || empty( $pezzi['host'] ) ) {
+			return $attuale;
+		}
+
+		// In chiaro la chiave viaggerebbe leggibile: mai.
+		if ( 'https' !== strtolower( (string) ( $pezzi['scheme'] ?? '' ) ) ) {
+			return $attuale;
+		}
+
+		$host = strtolower( (string) $pezzi['host'] );
+
+		if ( in_array( $host, array( 'localhost', '127.0.0.1', '::1', '[::1]' ), true ) ) {
+			return $attuale;
+		}
+
+		/*
+		 * Se l'host e' gia' un indirizzo IP si controlla che sia pubblico.
+		 * Non si risolve un nome a dominio: la risoluzione al momento del
+		 * salvataggio non dice nulla su dove puntera' al momento della
+		 * chiamata, e darebbe una falsa sicurezza.
+		 */
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) && ! filter_var(
+			$host,
+			FILTER_VALIDATE_IP,
+			FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+		) ) {
+			return $attuale;
+		}
+
+		return $url;
 	}
 
 	/** Il plugin puo' parlare col servizio? */

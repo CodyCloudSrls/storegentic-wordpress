@@ -46,11 +46,19 @@ final class Client {
 	private string $base;
 	private string $chiave;
 	private int $timeout;
+	private int $tentativi;
 
-	public function __construct( ?string $base = null, ?string $chiave = null, int $timeout = 30 ) {
-		$this->base    = untrailingslashit( $base ?? (string) Impostazioni::leggi( 'base' ) );
-		$this->chiave  = $chiave ?? (string) Impostazioni::leggi( 'chiave' );
-		$this->timeout = $timeout;
+	/**
+	 * @param int|null $tentativi Ritentativi oltre al primo. `null` usa il
+	 *                            valore predefinito; 0 significa un tentativo
+	 *                            solo, e serve sulle rotte pubbliche, dove
+	 *                            c'e' una persona che aspetta.
+	 */
+	public function __construct( ?string $base = null, ?string $chiave = null, int $timeout = 30, ?int $tentativi = null ) {
+		$this->base      = untrailingslashit( $base ?? (string) Impostazioni::leggi( 'base' ) );
+		$this->chiave    = $chiave ?? (string) Impostazioni::leggi( 'chiave' );
+		$this->timeout   = $timeout;
+		$this->tentativi = null === $tentativi ? self::TENTATIVI : max( 0, $tentativi );
 	}
 
 	/**
@@ -103,7 +111,7 @@ final class Client {
 
 		$ultimo = null;
 
-		for ( $tentativo = 0; $tentativo <= self::TENTATIVI; $tentativo++ ) {
+		for ( $tentativo = 0; $tentativo <= $this->tentativi; $tentativo++ ) {
 			if ( $tentativo > 0 ) {
 				sleep( $this->attesa( $tentativo, $ultimo ) );
 			}
@@ -134,6 +142,17 @@ final class Client {
 			 * 429, dove il server dice esplicitamente quando ritentare.
 			 */
 			if ( $codice < 500 && 429 !== $codice ) {
+				return $errore;
+			}
+
+			/*
+			 * Se il server chiede di aspettare piu' di quanto siamo disposti
+			 * ad aspettare, si rinuncia e si riferisce l'attesa richiesta.
+			 * Ritentare prima del tempo indicato non fa che consumare un
+			 * altro colpo di quota e ottenere lo stesso 429.
+			 */
+			$dati = $errore->get_error_data();
+			if ( isset( $dati['retry_after'] ) && (int) $dati['retry_after'] > self::ATTESA_MASSIMA ) {
 				return $errore;
 			}
 

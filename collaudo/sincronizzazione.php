@@ -181,7 +181,69 @@ prova( 'potatura registrata per la conferma', ! empty( $s['potatura'] ),
 $vere = count( array_filter( $GLOBALS['chiamate'], fn( $u ) => str_contains( $u, 'reconcile' ) ) );
 prova( 'una sola chiamata: la prova a vuoto', 1 === $vere, "$vere chiamate" );
 
+/* ------------------------ 4. la prova a vuoto non dice quanti SKU ci sono */
+echo "\n=== 4. prova a vuoto senza catalogSkus: la guardia deve chiudersi ===\n";
 Sincronizzazione::azzera();
-Impostazioni::salva( array( 'chiave' => '', 'attivo' => false ) );
+contratto_finto();
+$GLOBALS['chiamate'] = array();
+$GLOBALS['copione'] = array(
+    '/catalog/upsert' => array( 'codice' => 202, 'corpo' => array() ),
+    /*
+     * 202 senza corpo: il server ha accettato la prova a vuoto in modo
+     * asincrono. E' una risposta legittima, e il client la tratta come
+     * successo. Senza una guardia esplicita, `catalogSkus` varrebbe 0, la
+     * soglia non scatterebbe e si passerebbe dritti alla cancellazione
+     * vera: la rete di sicurezza si aprirebbe proprio quando la risposta
+     * del server e' anomala.
+     */
+    '/catalog/reconcile' => array( 'codice' => 202, 'corpo' => array() ),
+);
+Sincronizzazione::avvia();
+$giri = 0; $ultimo = null;
+while ( Sincronizzazione::in_corso() && $giri < 30 ) {
+    $ultimo = Sincronizzazione::passo();
+    if ( is_wp_error( $ultimo ) ) { break; }
+    $giri++;
+}
+$s = Sincronizzazione::stato();
+$rec = count( array_filter( $GLOBALS['chiamate'], fn( $u ) => str_contains( $u, 'reconcile' ) ) );
+prova( 'sospesa anche senza numeri', is_wp_error( $ultimo ) && 'storegentic_potatura_ampia' === $ultimo->get_error_code(),
+    is_wp_error( $ultimo ) ? $ultimo->get_error_code() : 'nessun errore' );
+prova( 'resta da_chiudere', Sincronizzazione::DA_CHIUDERE === $s['fase'], $s['fase'] );
+prova( 'segnata come ignota', ! empty( $s['potatura']['ignoto'] ) );
+prova( 'nessuna cancellazione: solo la prova a vuoto', 1 === $rec, "$rec chiamate" );
+
+/* ------------------- 5. il lotto cambiato a meta' non sposta le pagine */
+echo "\n=== 5. il lotto cambia durante la sessione ===\n";
+Sincronizzazione::azzera();
+contratto_finto();
+Impostazioni::salva( array( 'lotto' => 50 ) );
+$GLOBALS['visti'] = array();
+$GLOBALS['copione'] = array(
+    '/catalog/upsert' => function( $args ) {
+        $c = json_decode( $args['body'], true );
+        foreach ( $c['products'] as $p ) { $GLOBALS['visti'][ $p['sku'] ] = true; }
+        return array( 'codice' => 202, 'corpo' => array() );
+    },
+    '/catalog/reconcile' => array( 'codice' => 200, 'corpo' => array(
+        'seenSkus' => 191, 'catalogSkus' => 191, 'prunedSkus' => 0,
+    ) ),
+);
+Sincronizzazione::avvia();
+$attesi = (int) Sincronizzazione::stato()['totale'];
+Sincronizzazione::passo();
+// L'amministratore raddoppia il lotto a sessione avviata.
+Impostazioni::salva( array( 'lotto' => 200 ) );
+$giri = 0;
+while ( Sincronizzazione::in_corso() && $giri < 40 ) {
+    if ( is_wp_error( Sincronizzazione::passo() ) ) { break; }
+    $giri++;
+}
+prova( 'tutti i prodotti spediti nonostante il cambio di lotto',
+    count( $GLOBALS['visti'] ) === $attesi,
+    count( $GLOBALS['visti'] ) . "/$attesi SKU distinti" );
+
+Sincronizzazione::azzera();
+Impostazioni::salva( array( 'chiave' => '', 'attivo' => false, 'lotto' => 200 ) );
 delete_transient( 'storegentic_contratto' );
 echo "\nstato ripulito.\n";
