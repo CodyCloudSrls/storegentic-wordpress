@@ -1,0 +1,132 @@
+/* =============================================================================
+   Storegentic sul negozio.
+
+   Tutte le classi hanno il prefisso `sg-`, tutti i colori passano da
+   variabili impostate dall'amministrazione. Non si tocca nessun selettore
+   del tema: il plugin deve poter convivere con qualunque tema senza che
+   l'uno rompa l'altro.
+
+   Le misure sono in rem e le larghezze in `min()`: cosi' l'interfaccia
+   regge lo zoom del testo al 200% (WCAG 1.4.4) senza tagliare nulla.
+   ========================================================================== */
+
+:root {
+  --sg-colore: #1A1815;
+  --sg-testo: #FFFFFF;
+  --sg-raggio: 8px;
+  --sg-carta: #FFFFFF;
+  --sg-inchiostro: #1A1815;
+  --sg-inchiostro-2: #6A635B;
+  --sg-linea: #E3E0DC;
+  --sg-velo: rgba(20, 18, 16, .45);
+}
+
+.sg-fuori-schermo {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* --- barra --- */
+.sg-barra { display: flex; gap: .5rem; width: 100%; }
+.sg-barra__campo {
+  flex: 1 1 auto; min-width: 0; min-height: 48px;
+  padding: .7rem 1rem; font: inherit; font-size: 1rem;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+}
+.sg-barra__campo:focus-visible { outline: 2px solid var(--sg-colore); outline-offset: 1px; }
+.sg-barra__invio {
+  flex: none; min-height: 48px; padding-inline: 1.25rem;
+  font: inherit; font-size: .875rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--sg-testo); background: var(--sg-colore);
+  border: 1px solid var(--sg-colore); border-radius: var(--sg-raggio); cursor: pointer;
+}
+.sg-barra__invio:hover { filter: brightness(1.25); }
+
+/* --- bolla fluttuante --- */
+.sg-bolla {
+  position: fixed; inset-block-end: 1.25rem; z-index: 99990;
+  width: 56px; height: 56px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--sg-testo); background: var(--sg-colore);
+  border: 0; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .22);
+}
+.sg-bolla--destra { inset-inline-end: 1.25rem; }
+.sg-bolla--sinistra { inset-inline-start: 1.25rem; }
+.sg-bolla:hover { filter: brightness(1.25); }
+.sg-bolla:focus-visible { outline: 3px solid var(--sg-colore); outline-offset: 3px; }
+
+/* --- pannello --- */
+.sg-pannello[hidden] { display: none; }
+.sg-pannello { position: fixed; inset: 0; z-index: 99999; }
+.sg-pannello__velo { position: absolute; inset: 0; background: var(--sg-velo); }
+.sg-pannello__foglio {
+  position: relative; margin: 4vh auto 0;
+  width: min(94%, 46rem); max-height: 88vh;
+  display: flex; flex-direction: column;
+  background: var(--sg-carta); border-radius: var(--sg-raggio);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .28);
+  overflow: hidden;
+}
+.sg-pannello__testa {
+  display: flex; align-items: center; gap: .5rem;
+  padding: 1rem; border-block-end: 1px solid var(--sg-linea);
+}
+.sg-pannello__chiudi {
+  flex: none; width: 44px; height: 44px; font-size: 1.5rem; line-height: 1;
+  color: var(--sg-inchiostro-2); background: none; border: 0; cursor: pointer;
+  border-radius: var(--sg-raggio);
+}
+.sg-pannello__chiudi:hover { color: var(--sg-inchiostro); background: rgba(0, 0, 0, .05); }
+.sg-pannello__corpo { overflow-y: auto; padding: 1rem; }
+
+.sg-stato {
+  margin: 0; padding: 2rem 0; text-align: center;
+  font: inherit; font-size: .9375rem; color: var(--sg-inchiostro-2);
+}
+
+/* --- categorie suggerite --- */
+.sg-categorie { display: flex; flex-wrap: wrap; gap: .4rem; margin-block-end: 1rem; }
+.sg-categorie__voce {
+  font-size: .75rem; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--sg-inchiostro-2);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
+  padding: .3rem .7rem;
+}
+
+/* --- risultati --- */
+.sg-esiti { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; }
+.sg-esito__link {
+  display: flex; align-items: center; gap: .875rem;
+  padding: .625rem; border-radius: var(--sg-raggio);
+  text-decoration: none; color: inherit;
+}
+.sg-esito__link:hover { background: rgba(0, 0, 0, .04); }
+.sg-esito__link:focus-visible { outline: 2px solid var(--sg-colore); outline-offset: -2px; }
+.sg-esito__foto {
+  flex: none; width: 56px; height: 56px; object-fit: cover;
+  border-radius: calc(var(--sg-raggio) / 2); background: rgba(0, 0, 0, .04);
+}
+.sg-esito__testo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sg-esito__marchio {
+  font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--sg-inchiostro-2);
+}
+.sg-esito__nome {
+  font-size: .9375rem; color: var(--sg-inchiostro); line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.sg-esito__prezzo { font-size: .875rem; color: var(--sg-inchiostro); }
+
+/* Con il pannello aperto la pagina sotto non deve scorrere. */
+html.sg-bloccato { overflow: hidden; }
+
+@media (max-width: 640px) {
+  .sg-pannello__foglio { margin: 0; width: 100%; max-height: 100vh; height: 100%; border-radius: 0; }
+  .sg-barra__invio { padding-inline: .9rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-bolla, .sg-barra__invio { transition: none; }
+}
