@@ -128,33 +128,50 @@ body.sg-bloccato { overflow: hidden; }
   border-bottom: 1px solid var(--sg-linea);
 }
 
-.sg-barra--pannello { position: relative; }
-
-.sg-barra__lente {
-  position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
-  color: var(--sg-inchiostro-2); pointer-events: none;
-}
-
-/* Il campo e' una pillola, come quello dell'assistente. */
-.sg-barra--pannello .sg-barra__campo {
-  padding: .7rem 5rem .7rem 2.7rem;
+/*
+ * LA PILLOLA E' IL CONTENITORE, NON IL CAMPO.
+ *
+ * Prima la pillola era il campo, e lente, croce e macchina fotografica ci
+ * stavano sopra in posizione assoluta, tenute a distanza da tre misure scritte
+ * a mano. Quelle misure erano sbagliate: i due pulsanti si sovrapponevano fra
+ * loro di sedici pixel, e lo spazio riservato a destra era meno di quello che
+ * occupavano davvero, cosi' il testo del campo passava sotto la croce.
+ *
+ * Qui il contenitore e' la pillola e tutto ci sta dentro in fila: il campo
+ * prende lo spazio che avanza e i pulsanti si mettono da soli dove devono. Non
+ * c'e' piu' nessun numero da tenere allineato a mano — che e' la ragione per
+ * cui quel difetto era nato.
+ */
+.sg-barra--pannello {
+  display: flex; align-items: center; gap: .15rem;
+  padding: .2rem .3rem .2rem .9rem;
   background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
   border-radius: 999px;
 }
 
-.sg-barra--pannello .sg-barra__campo:focus { border-color: var(--sg-colore); outline: none; }
+.sg-barra--pannello:focus-within { border-color: var(--sg-colore); }
+
+.sg-barra__lente { flex: 0 0 auto; color: var(--sg-inchiostro-2); pointer-events: none; }
+
+.sg-barra--pannello .sg-barra__campo {
+  flex: 1 1 auto; min-width: 0;
+  padding: .6rem .55rem;
+  background: none; border: 0; border-radius: 0;
+}
+
+.sg-barra--pannello .sg-barra__campo:focus { outline: none; }
 
 .sg-barra__pulisci,
 .sg-barra__foto {
-  position: absolute; top: 50%; transform: translateY(-50%);
+  flex: 0 0 auto;
   display: flex; align-items: center; justify-content: center;
   width: 2.25rem; height: 2.25rem;
   color: var(--sg-inchiostro-2); background: none;
   border: 0; border-radius: 50%; cursor: pointer;
 }
 
-.sg-barra__pulisci { right: 4.6rem; font-size: 1.35rem; line-height: 1; }
-.sg-barra__foto { right: 3.4rem; }
+.sg-barra__pulisci { font-size: 1.35rem; line-height: 1; }
 
 .sg-barra__pulisci:hover,
 .sg-barra__foto:hover { color: var(--sg-inchiostro); background: var(--sg-carta); }
@@ -808,9 +825,6 @@ body.sg-bloccato { overflow: hidden; }
 /* Dove si tocca con il dito, i bersagli piccoli diventano grandi. */
 @media (pointer: coarse) {
   .sg-barra__pulisci, .sg-barra__foto { width: 44px; height: 44px; }
-  .sg-barra--pannello .sg-barra__campo { padding-right: 6rem; }
-  .sg-barra__pulisci { right: 5.4rem; }
-  .sg-barra__foto { right: 3.9rem; }
   .sg-pannello__chiudi, .sg-assistente__chiudi { width: 44px; height: 44px; }
   .sg-pastiglia { min-height: 44px; }
 }
@@ -873,3 +887,89 @@ body.sg-bloccato { overflow: hidden; }
 }
 
 .sg-suggerimento:hover { background: var(--sg-carta); border-color: var(--sg-linea); }
+
+/* ------------------------------------------------- attesa dell'assistente
+ *
+ * Tre pallini, e nessuna parola.
+ *
+ * Il servizio risponde dopo venti-trentacinque secondi. Una frase ferma per
+ * mezzo minuto invecchia male: "sto pensando" dopo dieci secondi sembra una
+ * bugia e dopo venti sembra un guasto. Non e' nemmeno una barra di
+ * avanzamento, che prometterebbe di sapere a che punto siamo: non lo sappiamo.
+ * Tre pallini che si muovono dicono soltanto "sono vivo", che e' l'unica cosa
+ * che si possa dire con onesta'.
+ *
+ * La frase resta comunque nel documento, fuori campo visivo, per chi ascolta
+ * la pagina invece di guardarla: senza, un lettore di schermo troverebbe una
+ * bolla vuota.
+ */
+
+.sg-punti { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem 0; }
+
+.sg-punti i {
+  width: .45rem; height: .45rem;
+  background: var(--sg-inchiostro-2);
+  border-radius: 50%;
+  opacity: .3;
+  animation: sg-pulsa 1.3s ease-in-out infinite;
+}
+
+.sg-punti i:nth-child(2) { animation-delay: .18s; }
+.sg-punti i:nth-child(3) { animation-delay: .36s; }
+
+@keyframes sg-pulsa {
+  0%, 70%, 100% { opacity: .3; transform: translateY(0); }
+  35%           { opacity: 1;  transform: translateY(-.18rem); }
+}
+
+/* Senza movimento restano tre pallini fermi: dicono comunque "sta lavorando". */
+@media (prefers-reduced-motion: reduce) {
+  .sg-punti i { animation: none; opacity: .55; }
+}
+
+/* --------------------------------------------- la risposta impaginata
+ *
+ * L'assistente scrive in Markdown; il server lo converte in pochi tag sicuri
+ * (vedi Frontend\Assistente::impagina). Qui si da' loro una tipografia che
+ * stia dentro una bolla stretta.
+ */
+
+.sg-msg__testo p { margin: 0 0 .6rem; }
+.sg-msg__testo p:last-child { margin-bottom: 0; }
+
+/*
+ * Il tipo di pallino si dichiara: quasi tutti i temi azzerano `list-style`
+ * sugli elenchi per i menu, e senza questa riga le voci numerate perdevano il
+ * numero — che in una risposta che dice "ecco tre opzioni" e' l'unica cosa che
+ * le tiene insieme.
+ */
+.sg-msg__testo ul,
+.sg-msg__testo ol { margin: 0 0 .6rem; padding-left: 1.3rem; }
+.sg-msg__testo ul { list-style: disc outside; }
+.sg-msg__testo ol { list-style: decimal outside; }
+.sg-msg__testo ul:last-child,
+.sg-msg__testo ol:last-child { margin-bottom: 0; }
+
+.sg-msg__testo li { margin-bottom: .35rem; }
+.sg-msg__testo li:last-child { margin-bottom: 0; }
+.sg-msg__testo li::marker { color: var(--sg-inchiostro-2); }
+
+.sg-msg__testo strong { font-weight: 600; }
+/* Un collegamento deve sembrare un collegamento anche dentro una bolla. */
+.sg-msg__testo a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .18em;
+}
+
+.sg-msg__testo a:hover { text-decoration-thickness: 2px; }
+
+/*
+ * Il testo impaginato non e' piu' preformattato: gli a capo li fanno i tag.
+ * Lasciando `pre-wrap`, gli a capo del Markdown si sarebbero sommati a quelli
+ * dei paragrafi, e ogni voce di elenco avrebbe avuto una riga vuota sopra.
+ */
+.sg-msg__testo:has(p),
+.sg-msg__testo:has(ul),
+.sg-msg__testo:has(ol) { white-space: normal; }

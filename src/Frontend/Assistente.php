@@ -131,6 +131,20 @@ final class Assistente {
 			self::manda( array( 'errore' => $errore->get_error_message() ) );
 		}
 
+		/*
+		 * La risposta impaginata arriva alla fine, e prende il posto del testo
+		 * grezzo mostrato durante l'attesa.
+		 *
+		 * PERCHE' NON SI IMPAGINA PEZZO PER PEZZO. Un pezzo puo' tagliare in
+		 * due un asterisco doppio o un collegamento, e impaginare meta' segno
+		 * produce spazzatura a schermo. Si impagina quando la frase e' intera.
+		 * Il testo continua a partire a pezzi, cosi' il giorno in cui il
+		 * servizio streamera' davvero si vedra' comparire mentre si scrive.
+		 */
+		if ( '' !== trim( $risposta ) ) {
+			self::manda( array( 'html' => self::impagina( $risposta ) ) );
+		}
+
 		$citati = self::citati( $risposta, $fonti );
 
 		if ( ! empty( $citati ) ) {
@@ -252,6 +266,208 @@ final class Assistente {
 		$testo = (string) preg_replace( '/[^a-z0-9]+/', ' ', $testo );
 
 		return trim( (string) preg_replace( '/\s+/', ' ', $testo ) );
+	}
+
+	/**
+	 * La risposta, impaginata.
+	 *
+	 * PERCHE' SERVE. L'assistente scrive in Markdown: elenchi numerati,
+	 * grassetti, collegamenti, e — su questo catalogo — anche le figure dei
+	 * prodotti. Il browser inserisce il testo con textContent, quindi quei
+	 * segni si vedevano tali e quali: righe come
+	 * "![Immagine](https://www.onilli.it/wp-content/uploads/…​.jpg)" stampate
+	 * per intero dentro la risposta.
+	 *
+	 * PERCHE' NON SI USA UNA LIBRERIA. Qui non si impagina un documento: si
+	 * impagina la frase di un servizio esterno, cioe' testo di cui non ci si
+	 * fida. Un convertitore generico accetta HTML dentro il Markdown, e da li'
+	 * passa qualunque cosa. Si fa il contrario: prima si mette al sicuro TUTTO
+	 * il testo, poi si riaccendono cinque segni sulla stringa gia' sicura, e
+	 * alla fine si passa comunque da wp_kses con un elenco chiuso di tag. Tre
+	 * sbarramenti, nessun tag che non sia stato scritto qui dentro.
+	 */
+	private static function impagina( string $grezzo ): string {
+		/*
+		 * Le figure si tolgono. Le foto dei prodotti stanno gia' nelle schede
+		 * sotto la risposta: ripeterle dentro il testo raddoppia il peso della
+		 * pagina e sposta le righe in basso mentre si caricano.
+		 */
+		$testo = self::sostituisci( '/!\[[^\]]*\]\([^)\s]*\)/u', '', $grezzo );
+
+		/*
+		 * E con le figure se ne va anche il marcatore che le annunciava.
+		 *
+		 * Successo davvero: l'assistente elencava le opzioni come "1. <figura>",
+		 * e tolta la figura restava la riga "1." da sola. Quella riga non e' piu'
+		 * una voce di elenco — le manca il contenuto — quindi il blocco intero
+		 * smetteva di essere riconosciuto come elenco e precipitava a capoverso,
+		 * portandosi dietro le voci vere. A schermo restava un buco fra la frase
+		 * d'apertura e quella di chiusura.
+		 */
+		$testo = self::sostituisci( '/^[ \t]*(?:[-*•]|\d+[.)])[ \t]*$/mu', '', $testo );
+
+		// Da qui in poi non esiste piu' HTML: esiste solo testo.
+		$testo = esc_html( $testo );
+
+		$fuori = array();
+
+		foreach ( preg_split( '/\R{2,}/u', trim( $testo ) ) ?: array() as $blocco ) {
+			$blocco = trim( $blocco );
+
+			if ( '' === $blocco ) {
+				continue;
+			}
+
+			$fatto = self::blocco( $blocco );
+
+			if ( '' !== $fatto ) {
+				$fuori[] = $fatto;
+			}
+		}
+
+		/*
+		 * Due elenchi attaccati sono un elenco solo. L'assistente separa le voci
+		 * numerate con una riga vuota, e ogni voce diventava quindi un elenco a
+		 * se': a schermo la numerazione ripartiva da 1 a ogni riga.
+		 */
+		$html = implode( "\n", $fuori );
+		$html = self::sostituisci( '#</(ol|ul)>\s*<\1>#u', '', $html );
+
+		/*
+		 * Una risposta fatta di sole figure non lascia nulla da leggere. Meglio
+		 * dirlo con una stringa vuota — chi disegna toglie la bolla e restano le
+		 * schede — che mostrare un rettangolo vuoto.
+		 */
+		if ( '' === trim( wp_strip_all_tags( $html ) ) ) {
+			return '';
+		}
+
+		return wp_kses(
+			$html,
+			array(
+				'p'      => array(),
+				'br'     => array(),
+				'strong' => array(),
+				'em'     => array(),
+				'ul'     => array(),
+				'ol'     => array(),
+				'li'     => array(),
+				'a'      => array( 'href' => array(), 'rel' => array() ),
+			)
+		);
+	}
+
+	/**
+	 * Una sostituzione che, se fallisce, non distrugge il testo.
+	 *
+	 * `preg_replace` con il modificatore `u` torna `null` davanti a un byte che
+	 * non e' UTF-8 valido, e un `(string) null` vale stringa vuota: un solo
+	 * carattere malformato in arrivo dal servizio avrebbe cancellato l'intera
+	 * risposta invece di lasciarla imperfetta. Qui, se la sostituzione non
+	 * riesce, si tiene il testo di partenza.
+	 */
+	private static function sostituisci( string $modello, string $con, string $testo ): string {
+		$esito = preg_replace( $modello, $con, $testo );
+
+		return null === $esito ? $testo : $esito;
+	}
+
+	/** Un blocco separato da riga vuota: elenco o capoverso. */
+	private static function blocco( string $blocco ): string {
+		$righe = array_values(
+			array_filter(
+				array_map( 'trim', preg_split( '/\R/u', $blocco ) ?: array() ),
+				static fn( $r ) => '' !== $r
+			)
+		);
+
+		if ( empty( $righe ) ) {
+			return '';
+		}
+
+		$puntato  = true;
+		$numerato = true;
+
+		foreach ( $righe as $riga ) {
+			if ( ! preg_match( '/^[-*•]\s+\S/u', $riga ) ) {
+				$puntato = false;
+			}
+
+			if ( ! preg_match( '/^\d+[.)]\s+\S/u', $riga ) ) {
+				$numerato = false;
+			}
+		}
+
+		if ( $puntato || $numerato ) {
+			$voci = array();
+
+			foreach ( $righe as $riga ) {
+				$contenuto = self::segni( self::sostituisci( '/^([-*•]|\d+[.)])\s+/u', '', $riga ) );
+
+				// Una voce senza contenuto non e' una voce: non si stampa.
+				if ( '' === trim( wp_strip_all_tags( $contenuto ) ) ) {
+					continue;
+				}
+
+				$voci[] = '<li>' . $contenuto . '</li>';
+			}
+
+			if ( empty( $voci ) ) {
+				return '';
+			}
+
+			$tag = $puntato ? 'ul' : 'ol';
+
+			return '<' . $tag . '>' . implode( '', $voci ) . '</' . $tag . '>';
+		}
+
+		/*
+		 * Un a capo singolo dentro un capoverso e' un a capo voluto: l'assistente
+		 * lo usa per spezzare un elenco che non ha marcato come tale.
+		 */
+		$capoverso = self::segni( implode( '<br>', $righe ) );
+
+		return '' === trim( wp_strip_all_tags( $capoverso ) ) ? '' : '<p>' . $capoverso . '</p>';
+	}
+
+	/**
+	 * I cinque segni che si riaccendono, sul testo gia' messo al sicuro.
+	 *
+	 * I collegamenti valgono solo se portano a questo sito. Un indirizzo
+	 * scritto da un modello puo' portare ovunque, e un negozio non manda i
+	 * propri clienti dove capita: se l'indirizzo e' altrove resta il testo,
+	 * senza il collegamento.
+	 */
+	private static function segni( string $testo ): string {
+		$nostro = wp_parse_url( home_url(), PHP_URL_HOST );
+
+		$testo = (string) preg_replace_callback(
+			'/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/u',
+			static function ( array $pezzi ) use ( $nostro ): string {
+				$url = html_entity_decode( $pezzi[2], ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+				if ( wp_parse_url( $url, PHP_URL_HOST ) !== $nostro ) {
+					return $pezzi[1];
+				}
+
+				return '<a href="' . esc_url( $url ) . '" rel="nofollow">' . $pezzi[1] . '</a>';
+			},
+			$testo
+		);
+
+		// Grassetto e corsivo. Il corsivo solo con l'underscore: l'asterisco
+		// singolo compare troppo spesso da solo per essere un segno affidabile.
+		$testo = (string) preg_replace( '/\*\*([^*]+)\*\*/u', '<strong>$1</strong>', $testo );
+		$testo = (string) preg_replace( '/(?<![\w_])_([^_]+)_(?![\w_])/u', '<em>$1</em>', $testo );
+
+		/*
+		 * I cancelletti dei titoli si tolgono a ogni riga, non solo alla prima:
+		 * dentro un capoverso le righe sono gia' unite da <br>, e un ancoraggio
+		 * al solo inizio della stringa ne avrebbe ripulita una su tre.
+		 */
+		$testo = (string) preg_replace( '/(^|<br>)\s*#{1,6}\s+/u', '$1', $testo );
+
+		return $testo;
 	}
 
 	/**

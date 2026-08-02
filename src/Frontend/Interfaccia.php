@@ -176,7 +176,29 @@ final class Interfaccia {
 						)
 					)
 				),
-				'esempi'      => array_values( (array) apply_filters( 'storegentic_esempi_assistente', array(
+				/*
+				 * DUE ELENCHI DIVERSI, PER DUE STRUMENTI DIVERSI.
+				 *
+				 * Ne avevo usato uno solo, e i suggerimenti del pannello di
+				 * ricerca erano domande da assistente. Chi ne toccava una
+				 * lanciava una ricerca su "Che cosa abbinate a un vestito nero?"
+				 * e finiva su una pagina che diceva "nessun gioiello
+				 * corrisponde". Misurato sul servizio: quella domanda torna 0
+				 * risultati, mentre "gioielli per un vestito nero" ne torna 48.
+				 * Non e' un difetto della ricerca — la forma interrogativa non
+				 * e' una descrizione di prodotto — ed era il suggerimento a
+				 * mandare le persone nel posto sbagliato.
+				 *
+				 * La ricerca suggerisce cose da cercare; l'assistente suggerisce
+				 * cose da chiedere.
+				 */
+				'esempi'      => array_values( (array) apply_filters( 'storegentic_esempi_ricerca', array(
+					__( 'collana di perle bianche', 'storegentic' ),
+					__( 'orecchini piccoli da tutti i giorni', 'storegentic' ),
+					__( 'regalo per una laurea sotto i 50 euro', 'storegentic' ),
+					__( 'bracciale con pietre verdi', 'storegentic' ),
+				) ) ),
+				'esempiChat'  => array_values( (array) apply_filters( 'storegentic_esempi_assistente', array(
 					__( 'Un regalo per mia madre sotto i 60 €', 'storegentic' ),
 					__( 'Che cosa abbinate a un vestito nero?', 'storegentic' ),
 					__( 'Avete orecchini con perle?', 'storegentic' ),
@@ -407,7 +429,7 @@ final class Interfaccia {
 					</button>
 				</form>
 
-				<p class="sg-assistente__nota"><?php esc_html_e( 'Risponde una intelligenza artificiale. Per gli ordini scrivi o telefona al negozio.', 'storegentic' ); ?></p>
+				<p class="sg-assistente__nota"><?php esc_html_e( 'Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio.', 'storegentic' ); ?></p>
 			</div>
 		</div>
 		<?php

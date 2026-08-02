@@ -267,7 +267,7 @@
       var recenti = Storico.leggi();
       if (recenti.length) { esiti.appendChild(this.gruppo(T.recenti, recenti, true)); }
 
-      var esempi = (C.esempi || []).slice(0, 3);
+      var esempi = (C.esempi || []).slice(0, 4);
       if (esempi.length) { esiti.appendChild(this.gruppo(T.suggeriti, esempi, false)); }
     },
 
@@ -741,7 +741,7 @@
     saluta: function () {
       var self = this;
       var benvenuto = this.bolla('assistente', C.saluto);
-      var esempi = (C.esempi || []).slice(0, 3);
+      var esempi = (C.esempiChat || []).slice(0, 3);
 
       if (!esempi.length) { return; }
 
@@ -795,23 +795,27 @@
 
       this.bolla('cliente', domanda);
 
-      var risposta = this.bolla('assistente', T.sto);
+      var risposta = this.bolla('assistente', '');
       var corpo = $('.sg-msg__testo', risposta);
       risposta.classList.add('sg-msg--attesa');
 
       /*
-       * Misurato sul servizio: una risposta arriva dopo venti-trentacinque
-       * secondi, e arriva tutta insieme — il flusso a pezzi che il contratto
-       * dichiara oggi non e' progressivo. Un'attesa cosi' lunga senza nulla a
-       * schermo si legge come un guasto: dopo otto secondi si dice che il
-       * lavoro e' in corso, e si offre di smettere.
+       * L'ATTESA NON PARLA. Il servizio impiega dai venti ai trentacinque
+       * secondi, e una frase ferma per mezzo minuto — "sto pensando", "ci vuole
+       * qualche secondo" — invecchia male: dopo dieci secondi sembra una bugia,
+       * dopo venti sembra un guasto. Tre pallini che si muovono dicono la
+       * stessa cosa senza promettere tempi.
+       *
+       * La frase resta per chi non vede lo schermo: e' fuori campo visivo ma
+       * dentro l'annuncio garbato del pannello, altrimenti un lettore di
+       * schermo troverebbe una bolla vuota.
        */
-      this.nota = window.setTimeout(function () {
-        if (!self.inCorso) { return; }
-        var n = elemento('p', 'sg-msg__nota', T.staCercando);
-        risposta.appendChild(n);
-        self.inFondo();
-      }, 8000);
+      corpo.appendChild(elemento('span', 'sg-fuori-schermo', T.sto));
+
+      var pallini = elemento('span', 'sg-punti');
+      pallini.setAttribute('aria-hidden', 'true');
+      for (var i = 0; i < 3; i++) { pallini.appendChild(document.createElement('i')); }
+      corpo.appendChild(pallini);
 
       this.mostraFermata(true);
 
@@ -824,11 +828,24 @@
       this.ascolta(domanda, storia, {
         testo: function (pezzo) {
           if (!accumulato) {
-            corpo.textContent = '';
+            corpo.textContent = '';   // via i pallini
             risposta.classList.remove('sg-msg--attesa');
           }
           accumulato += pezzo;
           corpo.textContent = accumulato;
+          self.inFondo();
+        },
+
+        /*
+         * L'assistente scrive in Markdown: elenchi, grassetti, collegamenti e
+         * perfino le figure dei prodotti. Inserito con textContent quel codice
+         * si vedeva tale e quale. Il server manda la versione impaginata a
+         * risposta finita, gia' ripulita e passata da wp_kses: qui si inserisce
+         * e basta, come per le schede.
+         */
+        impaginato: function (html) {
+          corpo.innerHTML = html;
+          risposta.classList.remove('sg-msg--attesa');
           self.inFondo();
         },
 
@@ -854,11 +871,9 @@
 
         fine: function () {
           self.inCorso = false;
-          window.clearTimeout(self.nota);
           self.mostraFermata(false);
           if (self.invia) { self.invia.disabled = false; }
           risposta.classList.remove('sg-msg--attesa');
-          $$('.sg-msg__nota', risposta).forEach(function (n) { n.remove(); });
 
           if (accumulato) {
             self.storia.push({ chi: 'assistente', testo: accumulato });
@@ -939,6 +954,7 @@
                 catch (e) { return; }
 
                 if (dati.testo) { su.testo(dati.testo); }
+                if (dati.html) { su.impaginato(dati.html); }
                 if (dati.prodotti) { su.prodotti(dati.prodotti); }
                 if (dati.errore) { su.errore(dati.errore); }
                 if (dati.fine) { finisci(); }
