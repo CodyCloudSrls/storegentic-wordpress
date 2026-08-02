@@ -31,8 +31,47 @@
  * @package Storegentic
  */
 
+use Storegentic\Api\Contratto;
 use Storegentic\Catalogo\Sincronizzazione;
 use Storegentic\Impostazioni;
+
+/*
+ * LE IMPOSTAZIONI VERE SI METTONO DA PARTE PRIMA DI TOCCARLE.
+ *
+ * Questo collaudo ha bisogno di una chiave finta e di un lotto piccolo, quindi
+ * scrive nelle impostazioni del negozio. Finiva rimettendo valori "puliti" —
+ * chiave vuota, plugin spento — che sono i valori giusti per un negozio appena
+ * installato e sbagliatissimi per un negozio in funzione.
+ *
+ * Costo reale, non ipotetico: eseguito su questo sito, ha scollegato il plugin.
+ * Ricerca e assistente sono spariti dalle pagine pubbliche, e il collaudo ha
+ * chiuso annunciando "stato ripulito".
+ *
+ * Adesso si conserva l'opzione intera e la si rimette com'era, anche se il
+ * collaudo si interrompe a meta' per un errore fatale: la registrazione su
+ * shutdown vale in ogni caso di uscita.
+ */
+$GLOBALS['sg_impostazioni_vere'] = get_option( Impostazioni::CHIAVE );
+
+register_shutdown_function(
+	static function (): void {
+		if ( ! is_array( $GLOBALS['sg_impostazioni_vere'] ?? null ) ) {
+			return;
+		}
+
+		update_option( Impostazioni::CHIAVE, $GLOBALS['sg_impostazioni_vere'] );
+
+		/*
+		 * Cambiando la chiave il plugin butta il contratto, com'e' giusto. Qui
+		 * la chiave e' tornata quella vera, quindi il contratto si rilegge
+		 * subito: senza, il negozio resterebbe senza ricerca fino alla prossima
+		 * visita che lo rinnova.
+		 */
+		if ( Impostazioni::configurato() && Impostazioni::leggi( 'attivo' ) ) {
+			Contratto::ottieni( true );
+		}
+	}
+);
 
 /**
  * Rete simulata: si intercetta pre_http_request e si risponde secondo un
@@ -244,6 +283,10 @@ prova( 'tutti i prodotti spediti nonostante il cambio di lotto',
     count( $GLOBALS['visti'] ) . "/$attesi SKU distinti" );
 
 Sincronizzazione::azzera();
-Impostazioni::salva( array( 'chiave' => '', 'attivo' => false, 'lotto' => 200 ) );
 delete_transient( 'storegentic_contratto' );
-echo "\nstato ripulito.\n";
+
+/*
+ * Le impostazioni le rimette a posto la funzione registrata in cima, non
+ * questa riga: cosi' vale anche se il collaudo non arriva fin qui.
+ */
+echo "\nstato della sincronizzazione azzerato; impostazioni del negozio ripristinate.\n";
