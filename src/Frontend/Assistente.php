@@ -145,7 +145,16 @@ final class Assistente {
 			self::manda( array( 'html' => self::impagina( $risposta ) ) );
 		}
 
-		$citati = self::citati( $risposta, $fonti );
+		/*
+		 * Le schede dei prodotti che la risposta nomina. Il riconoscimento sta
+		 * in Frontend\Citazioni; le fonti si passano soltanto perche' servono a
+		 * sciogliere gli omonimi, e non introducono mai un prodotto da sole.
+		 *
+		 * Nessun tetto: quante schede mostrare e' una decisione di vetrina, e
+		 * tenerla qui faceva sparire citazioni vere. A una domanda sulle parure
+		 * la risposta ne nominava dieci e se ne vedevano sei.
+		 */
+		$citati = Scheda::con_html( Citazioni::schede( $risposta, $fonti ), 'riga' );
 
 		if ( ! empty( $citati ) ) {
 			self::manda( array( 'prodotti' => $citati ) );
@@ -201,71 +210,6 @@ final class Assistente {
 				'score' => $f['score'] ?? null,
 			);
 		}
-	}
-
-	/**
-	 * Solo i prodotti che la risposta nomina davvero.
-	 *
-	 * PERCHE' NON SI MOSTRANO TUTTE LE FONTI. Le fonti sono cio' che il
-	 * servizio ha letto per rispondere, non cio' che consiglia: su una domanda
-	 * di prova la risposta proponeva un bracciale da 20 €, un paio di
-	 * orecchini da 29 € e un anello da 39 €, mentre le fonti erano tre anelli
-	 * da 69 e 98 €. Mostrare quelle sotto quel testo avrebbe messo in
-	 * contraddizione le parole e le figure nella stessa schermata.
-	 *
-	 * Si confrontano quindi i nomi. Il confronto ignora accenti, maiuscole e
-	 * punteggiatura, e si accontenta delle prime parole del nome: la risposta
-	 * puo' abbreviare "Collana con perle Maiorca olografiche e chiusura in
-	 * argento" in "Collana con perle Maiorca".
-	 *
-	 * Se la risposta non nomina nulla — succede con le domande generiche —
-	 * non si mostra nulla. Meglio nessuna scheda che la scheda sbagliata.
-	 *
-	 * @param array<string,array<string,mixed>> $fonti
-	 * @return array<int,array<string,mixed>>
-	 */
-	private static function citati( string $risposta, array $fonti ): array {
-		if ( '' === trim( $risposta ) || empty( $fonti ) ) {
-			return array();
-		}
-
-		$piatta  = self::confrontabile( $risposta );
-		$trovati = array();
-
-		foreach ( $fonti as $f ) {
-			$nome = self::confrontabile( (string) ( $f['name'] ?? '' ) );
-
-			if ( '' === $nome ) {
-				continue;
-			}
-
-			$parole = explode( ' ', $nome );
-			$inizio = implode( ' ', array_slice( $parole, 0, 5 ) );
-
-			// Meno di tre parole non identificano un prodotto: "anello oro"
-			// comparirebbe in qualunque risposta che parli di anelli.
-			if ( count( $parole ) >= 3 && str_contains( $piatta, $inizio ) ) {
-				$trovati[] = $f;
-			}
-		}
-
-		/*
-		 * Sei bastano: l'elenco sta sotto una risposta, non e' il catalogo.
-		 *
-		 * Il markup si aggiunge qui. Il browser inserisce l'HTML che riceve e
-		 * non ne costruisce: e' la stessa regola che vale per la ricerca, ed e'
-		 * il motivo per cui una scheda ha lo stesso aspetto ovunque compaia.
-		 */
-		return Scheda::con_html( array_slice( Risolutore::schede( $trovati ), 0, 6 ), 'riga' );
-	}
-
-	/** Testo ridotto alla forma in cui due nomi si possono confrontare. */
-	private static function confrontabile( string $testo ): string {
-		$testo = remove_accents( $testo );
-		$testo = strtolower( $testo );
-		$testo = (string) preg_replace( '/[^a-z0-9]+/', ' ', $testo );
-
-		return trim( (string) preg_replace( '/\s+/', ' ', $testo ) );
 	}
 
 	/**
