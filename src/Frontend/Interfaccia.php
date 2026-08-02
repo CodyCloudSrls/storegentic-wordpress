@@ -56,7 +56,11 @@ final class Interfaccia {
 		 * c'e', il negozio si comporta come se Storegentic non fosse
 		 * configurato: nessun comando in pagina.
 		 */
-		if ( '' === Contratto::endpoint_in_cache( 'search' ) ) {
+		/*
+		 * Basta che ci sia UN modo disponibile. Prima si pretendeva la ricerca,
+		 * e un negozio che avesse solo l'assistente non vedeva nulla.
+		 */
+		if ( empty( Finestra::modi() ) ) {
 			return false;
 		}
 
@@ -89,12 +93,6 @@ final class Interfaccia {
 		}
 
 		return false;
-	}
-
-	/** L'assistente si mostra solo se il servizio lo dichiara acceso. */
-	private static function assistente_acceso(): bool {
-		return (bool) Impostazioni::leggi( 'assistente' )
-			&& '' !== Contratto::endpoint_in_cache( 'agentChat' );
 	}
 
 	public static function risorse(): void {
@@ -132,11 +130,17 @@ final class Interfaccia {
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'pagina'     => esc_url_raw( Pagina::indirizzo() ),
 				'suPagina'   => Pagina::nostra(),
-				'modalita'   => (string) $i['modalita'],
+				'modi'       => array_keys( Finestra::modi() ),
+				/*
+				 * Se il negozio ha la pagina dei risultati, l'Invio ci porta:
+				 * e' un indirizzo vero, si condivide e il tasto Indietro
+				 * funziona. La finestra tiene i risultati solo quando quella
+				 * pagina non c'e' — ed e' allora che deve bastare a se stessa.
+				 */
+				'inPagina'   => 'pagina' === (string) $i['risultati'] && Pagina::disponibile(),
 				'posizione'  => (string) $i['posizione'],
 				'segnaposto' => '' !== $i['segnaposto'] ? (string) $i['segnaposto'] : __( 'Che cosa stai cercando?', 'storegentic' ),
 				'saluto'     => '' !== $i['saluto'] ? (string) $i['saluto'] : __( 'Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa.', 'storegentic' ),
-				'assistente' => self::assistente_acceso(),
 				'analitica'  => (bool) $i['analitica'],
 				/*
 				 * Il peso massimo di una foto dopo il rimpicciolimento nel
@@ -198,37 +202,61 @@ final class Interfaccia {
 					__( 'regalo per una laurea sotto i 50 euro', 'storegentic' ),
 					__( 'bracciale con pietre verdi', 'storegentic' ),
 				) ) ),
+				/*
+				 * LE CATEGORIE DEL NEGOZIO, per lo stato d'apertura.
+				 *
+				 * Una finestra che si apre su quattro righe di suggerimenti e
+				 * settecento pixel di vuoto non dice cosa c'e' in negozio. Le
+				 * categorie lo dicono in un colpo d'occhio, e sono un modo di
+				 * cominciare per chi non ha una parola in mente.
+				 *
+				 * Si leggono da WooCommerce, quindi funzionano su qualunque
+				 * catalogo senza configurare niente.
+				 */
+				'categorie'   => self::categorie_in_vetrina(),
 				'esempiChat'  => array_values( (array) apply_filters( 'storegentic_esempi_assistente', array(
 					__( 'Un regalo per mia madre sotto i 60 €', 'storegentic' ),
 					__( 'Che cosa abbinate a un vestito nero?', 'storegentic' ),
 					__( 'Avete orecchini con perle?', 'storegentic' ),
 				) ) ),
+				/*
+				 * Tutti i testi passano da qui, tradotti: il JavaScript non ne
+				 * scrive nessuno. Un plugin che stampa frasi scritte nel codice
+				 * non si puo' tradurre, e chi lo installa in un'altra lingua se
+				 * ne accorge quando e' gia' in produzione.
+				 */
 				'testi'      => array(
 					'chiudi'        => __( 'Chiudi', 'storegentic' ),
 					'cerca'         => __( 'Cerca', 'storegentic' ),
 					'inCorso'       => __( 'Sto cercando…', 'storegentic' ),
 					'nessuno'       => __( 'Nessun risultato. Prova con parole diverse.', 'storegentic' ),
 					'errore'        => __( 'La ricerca non ha risposto. Riprova fra poco.', 'storegentic' ),
-					'risultati'     => __( 'Risultati', 'storegentic' ),
-					'categorie'     => __( 'Categorie suggerite', 'storegentic' ),
 					'recenti'       => __( 'Le tue ultime ricerche', 'storegentic' ),
 					'suggeriti'     => __( 'Prova con', 'storegentic' ),
+					'sfoglia'       => __( 'Oppure sfoglia', 'storegentic' ),
 					/* translators: %s: le parole scritte da chi cerca. */
 					'cercaNel'      => __( 'Cerca «%s» nel catalogo', 'storegentic' ),
-					'tutti'         => __( 'Vedi tutti i risultati', 'storegentic' ),
+					'tutti'         => __( 'Apri la pagina dei risultati', 'storegentic' ),
+					'pulisci'       => __( 'Cancella', 'storegentic' ),
+
+					'ordina'        => __( 'Ordina i risultati', 'storegentic' ),
+					'piuPertinenti' => __( 'Più pertinenti', 'storegentic' ),
+					'prezzoSu'      => __( 'Prezzo crescente', 'storegentic' ),
+					'prezzoGiu'     => __( 'Prezzo decrescente', 'storegentic' ),
+					'unGioiello'    => __( '1 risultato', 'storegentic' ),
+					/* translators: %d: quanti risultati. */
+					'nGioielli'     => __( '%d risultati', 'storegentic' ),
+
+					'fotoTitolo'    => __( 'Cerca con una foto', 'storegentic' ),
+					'fotoSpiega'    => __( 'Scegli una foto o trascinala qui: ti mostro i prodotti che le somigliano di più.', 'storegentic' ),
 					'fotoInCorso'   => __( 'Sto guardando la foto…', 'storegentic' ),
 					'fotoErrore'    => __( 'Non riesco a leggere questa foto. Prova con un altro file.', 'storegentic' ),
-					'fotoTroppo'    => __( 'La foto è troppo grande.', 'storegentic' ),
-					'fotoSimili'    => __( 'Gioielli che somigliano alla tua foto', 'storegentic' ),
-					'assistente'    => __( 'Assistente', 'storegentic' ),
-					'apriAssistente' => __( 'Chiedi all’assistente', 'storegentic' ),
-					'scrivi'        => __( 'Scrivi la tua domanda', 'storegentic' ),
-					'invia'         => __( 'Invia', 'storegentic' ),
+					'fotoSimili'    => __( 'I più simili alla tua foto', 'storegentic' ),
+					'fotoAltra'     => __( 'Cambia foto', 'storegentic' ),
+
 					'sto'           => __( 'Sto pensando…', 'storegentic' ),
-					'staCercando'   => __( 'Sto leggendo il catalogo. Ci vuole qualche secondo.', 'storegentic' ),
 					'fermata'       => __( 'Va bene, ho smesso.', 'storegentic' ),
 					'assErrore'     => __( 'Non riesco a rispondere adesso. Riprova fra poco.', 'storegentic' ),
-					'pulisci'       => __( 'Ricomincia', 'storegentic' ),
 				),
 			)
 		);
@@ -260,12 +288,74 @@ final class Interfaccia {
 		return false !== $quando ? (string) $quando : \Storegentic\VERSIONE;
 	}
 
+	/**
+	 * Le categorie da mostrare quando la finestra si apre.
+	 *
+	 * Solo quelle di primo livello e non vuote, ordinate per numero di
+	 * prodotti: sono la mappa del negozio, non l'albero completo. Il risultato
+	 * si conserva un'ora, perche' e' uguale per tutti i visitatori e cambia
+	 * quando cambia il catalogo, non quando cambia la pagina.
+	 *
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function categorie_in_vetrina(): array {
+		$pronte = get_transient( 'storegentic_categorie_vetrina' );
+
+		if ( is_array( $pronte ) ) {
+			return $pronte;
+		}
+
+		$voci = array();
+
+		if ( taxonomy_exists( 'product_cat' ) ) {
+			$termini = get_terms(
+				array(
+					'taxonomy'   => 'product_cat',
+					'parent'     => 0,
+					'hide_empty' => true,
+					'orderby'    => 'count',
+					'order'      => 'DESC',
+					'number'     => 8,
+				)
+			);
+
+			if ( ! is_wp_error( $termini ) ) {
+				foreach ( $termini as $t ) {
+					$url = get_term_link( $t );
+
+					if ( is_wp_error( $url ) ) {
+						continue;
+					}
+
+					$voci[] = array(
+						'etichetta' => (string) $t->name,
+						'conteggio' => (int) $t->count,
+						'url'       => (string) $url,
+					);
+				}
+			}
+		}
+
+		set_transient( 'storegentic_categorie_vetrina', $voci, HOUR_IN_SECONDS );
+
+		return $voci;
+	}
+
 	/** I colori scelti nell'amministrazione diventano variabili CSS. */
 	private static function variabili(): string {
 		return Palette::css();
 	}
 
 	/**
+	 * Lo shortcode [storegentic]: un comando dentro il contenuto.
+	 *
+	 * Non e' una seconda ricerca. E' un pulsante che apre la stessa finestra
+	 * del lanciatore, perche' due campi di ricerca diversi nella stessa pagina
+	 * sono due comportamenti da spiegare invece di uno.
+	 *
+	 * Serve a chi vuole la ricerca dentro una pagina — in una sezione della
+	 * home, in fondo a un articolo — senza dipendere dal pulsante fisso.
+	 *
 	 * @param array<string,mixed>|string $attributi
 	 */
 	public static function shortcode( $attributi = array() ): string {
@@ -275,26 +365,28 @@ final class Interfaccia {
 
 		$a = shortcode_atts(
 			array(
-				'etichetta'  => (string) Impostazioni::leggi( 'etichetta' ),
-				'segnaposto' => (string) Impostazioni::leggi( 'segnaposto' ),
+				'etichetta' => '',
+				'modo'      => '',
 			),
 			is_array( $attributi ) ? $attributi : array(),
 			'storegentic'
 		);
 
-		$segnaposto = '' !== $a['segnaposto'] ? $a['segnaposto'] : __( 'Che cosa stai cercando?', 'storegentic' );
-		$id         = 'sg-campo-' . (string) wp_unique_id();
+		$modi      = Finestra::modi();
+		$modo      = isset( $modi[ $a['modo'] ] ) ? (string) $a['modo'] : '';
+		$etichetta = '' !== $a['etichetta'] ? (string) $a['etichetta'] : Finestra::etichetta();
 
 		ob_start();
 		?>
-		<form class="sg-barra" role="search" method="get" action="<?php echo esc_url( Pagina::indirizzo() ); ?>" data-sg-barra>
-			<label class="sg-fuori-schermo" for="<?php echo esc_attr( $id ); ?>">
-				<?php echo esc_html( '' !== $a['etichetta'] ? $a['etichetta'] : __( 'Cerca nel catalogo', 'storegentic' ) ); ?>
-			</label>
-			<input type="search" id="<?php echo esc_attr( $id ); ?>" name="q" class="sg-barra__campo" data-sg-campo
-			       placeholder="<?php echo esc_attr( $segnaposto ); ?>" autocomplete="off">
-			<button type="submit" class="sg-barra__invio"><?php esc_html_e( 'Cerca', 'storegentic' ); ?></button>
-		</form>
+		<button type="button" class="sg-invito" data-sg-apri
+		        <?php echo '' !== $modo ? 'data-sg-modo-iniziale="' . esc_attr( $modo ) . '"' : ''; ?>
+		        aria-haspopup="dialog" aria-controls="sg-finestra">
+			<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+			     stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+				<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path>
+			</svg>
+			<?php echo esc_html( $etichetta ); ?>
+		</button>
 		<?php
 		return (string) ob_get_clean();
 	}
@@ -311,127 +403,7 @@ final class Interfaccia {
 			return;
 		}
 
-		self::pannello_ricerca();
-
-		if ( self::assistente_acceso() ) {
-			self::widget_assistente();
-		}
-	}
-
-	private static function pannello_ricerca(): void {
-		$modalita = (string) Impostazioni::leggi( 'modalita' );
-		?>
-		<?php if ( 'fluttuante' === $modalita ) : ?>
-		<button type="button" class="sg-bolla sg-bolla--<?php echo esc_attr( (string) Impostazioni::leggi( 'posizione' ) ); ?>"
-		        data-storegentic aria-haspopup="dialog" aria-controls="sg-pannello">
-			<span class="sg-fuori-schermo"><?php esc_html_e( 'Apri la ricerca', 'storegentic' ); ?></span>
-			<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false" fill="none"
-			     stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-				<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
-			</svg>
-		</button>
-		<?php endif; ?>
-
-		<div class="sg-pannello" id="sg-pannello" role="dialog" aria-modal="true"
-		     aria-label="<?php esc_attr_e( 'Ricerca nel catalogo', 'storegentic' ); ?>" hidden>
-			<div class="sg-pannello__velo" data-sg-chiudi></div>
-			<div class="sg-pannello__foglio">
-				<div class="sg-pannello__testa">
-					<form class="sg-barra sg-barra--pannello" role="search" method="get"
-					      action="<?php echo esc_url( Pagina::indirizzo() ); ?>" data-sg-barra>
-						<label class="sg-fuori-schermo" for="sg-campo-pannello"><?php esc_html_e( 'Cerca nel catalogo', 'storegentic' ); ?></label>
-						<svg class="sg-barra__lente" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"
-						     fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-							<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
-						</svg>
-						<input type="search" id="sg-campo-pannello" name="q" class="sg-barra__campo" data-sg-campo
-						       placeholder="<?php echo esc_attr( (string) ( Impostazioni::leggi( 'segnaposto' ) ?: __( 'Che cosa stai cercando?', 'storegentic' ) ) ); ?>"
-						       autocomplete="off" enterkeyhint="search">
-						<button type="button" class="sg-barra__pulisci" data-sg-pulisci hidden
-						        aria-label="<?php esc_attr_e( 'Cancella la ricerca', 'storegentic' ); ?>">&times;</button>
-						<button type="button" class="sg-barra__foto" data-sg-scegli-foto
-						        aria-label="<?php esc_attr_e( 'Cerca con una foto', 'storegentic' ); ?>">
-							<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" fill="none"
-							     stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M3 8.5A1.5 1.5 0 014.5 7h2L8 5h8l1.5 2h2A1.5 1.5 0 0121 8.5v9A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5z"></path>
-								<circle cx="12" cy="12.5" r="3.2"></circle>
-							</svg>
-						</button>
-						<input type="file" accept="image/*" class="sg-fuori-schermo" data-sg-file
-						       aria-label="<?php esc_attr_e( 'Scegli una foto dal dispositivo', 'storegentic' ); ?>">
-					</form>
-					<button type="button" class="sg-pannello__chiudi" data-sg-chiudi
-					        aria-label="<?php esc_attr_e( 'Chiudi la ricerca', 'storegentic' ); ?>">&times;</button>
-				</div>
-				<div class="sg-pannello__corpo" id="sg-esiti" data-sg-esiti aria-live="polite"></div>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
-	 * L'assistente.
-	 *
-	 * Il pulsante che lo apre e' un elemento solo, sempre visibile: e' l'
-	 * unico modo perche' chi non sa cosa cercare sappia che puo' chiedere.
-	 * La conversazione vive nella pagina e non sul server, per la ragione
-	 * spiegata in Frontend\Assistente.
-	 */
-	private static function widget_assistente(): void {
-		?>
-		<button type="button" class="sg-chiama sg-chiama--<?php echo esc_attr( (string) Impostazioni::leggi( 'posizione' ) ); ?>"
-		        data-sg-apri-assistente aria-haspopup="dialog" aria-controls="sg-assistente" aria-expanded="false">
-			<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false" fill="none"
-			     stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-				<path d="M21 11.5a7.5 7.5 0 01-10.9 6.7L4 20l1.9-5.7A7.5 7.5 0 1121 11.5z"></path>
-			</svg>
-			<span class="sg-chiama__testo"><?php esc_html_e( 'Ti aiuto a scegliere', 'storegentic' ); ?></span>
-		</button>
-
-		<div class="sg-assistente" id="sg-assistente" role="dialog" aria-modal="true"
-		     aria-label="<?php esc_attr_e( 'Assistente del negozio', 'storegentic' ); ?>" hidden>
-			<div class="sg-assistente__velo" data-sg-chiudi-assistente></div>
-			<div class="sg-assistente__foglio">
-				<header class="sg-assistente__testa">
-					<span class="sg-assistente__titolo"><?php esc_html_e( 'Ti aiuto a scegliere', 'storegentic' ); ?></span>
-					<button type="button" class="sg-assistente__pulisci" data-sg-pulisci-chat hidden><?php esc_html_e( 'Ricomincia', 'storegentic' ); ?></button>
-					<button type="button" class="sg-assistente__chiudi" data-sg-chiudi-assistente
-					        aria-label="<?php esc_attr_e( 'Chiudi l’assistente', 'storegentic' ); ?>">&times;</button>
-				</header>
-
-				<div class="sg-assistente__corpo" data-sg-conversazione aria-live="polite" aria-atomic="false"></div>
-
-				<form class="sg-assistente__modulo" data-sg-chiedi>
-					<label class="sg-fuori-schermo" for="sg-chat-campo"><?php esc_html_e( 'Scrivi la tua domanda', 'storegentic' ); ?></label>
-					<textarea id="sg-chat-campo" class="sg-assistente__campo" data-sg-chat-campo rows="1"
-					          placeholder="<?php esc_attr_e( 'Scrivi qui…', 'storegentic' ); ?>"
-					          enterkeyhint="send" maxlength="500"></textarea>
-					<button type="submit" class="sg-assistente__invia" data-sg-chat-invia
-					        aria-label="<?php esc_attr_e( 'Invia', 'storegentic' ); ?>">
-						<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" fill="none"
-						     stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M4 12h15M13 6l6 6-6 6"></path>
-						</svg>
-					</button>
-
-					<?php
-					/*
-					 * Misurato sul servizio: una risposta arriva dopo venti-trenta
-					 * secondi. Chi cambia idea deve poter smettere invece di
-					 * guardare i puntini fino alla fine.
-					 */
-					?>
-					<button type="button" class="sg-assistente__ferma" data-sg-ferma hidden
-					        aria-label="<?php esc_attr_e( 'Ferma la risposta', 'storegentic' ); ?>">
-						<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="currentColor">
-							<rect x="7" y="7" width="10" height="10" rx="2"></rect>
-						</svg>
-					</button>
-				</form>
-
-				<p class="sg-assistente__nota"><?php esc_html_e( 'Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio.', 'storegentic' ); ?></p>
-			</div>
-		</div>
-		<?php
+		Finestra::lanciatore();
+		Finestra::disegna();
 	}
 }

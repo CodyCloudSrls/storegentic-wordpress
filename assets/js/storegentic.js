@@ -206,84 +206,223 @@
       });
   }
 
-  /* ================================================ pannello di ricerca */
+  /* ==================================================== la finestra
+   *
+   * UN CONTENITORE, TRE MODI. La finestra si apre da un pulsante che il plugin
+   * disegna da se': non si aggancia a niente del tema, perche' un plugin
+   * universale non puo' sapere se il tema ha una lente, dove sta, e cosa fa
+   * quando la si tocca.
+   *
+   * Ogni modo ha il proprio pannello, il proprio corpo che scorre e la propria
+   * riga di comando in basso. Cambiare modo non ricarica nulla e non perde
+   * nulla: chi ha cercato "collana", e' passato alla foto e torna indietro,
+   * ritrova i suoi risultati.
+   */
 
-  var Pannello = {
-    attesa: null,
-    annulla: null,
-    ultima: '',
+  var Finestra = {
+    modo: null,
     tornaA: null,
+    stato: {},        // per ogni modo: che cosa c'e' dentro adesso
+    annulla: null,
 
-    foglio: function () { return $('#sg-pannello'); },
-    esiti: function () { return $('[data-sg-esiti]'); },
-    campo: function () { return $('#sg-campo-pannello'); },
-    aperto: function () { var p = this.foglio(); return !!p && !p.hidden; },
+    radice: function () { return $('#sg-finestra'); },
+    corpo: function (modo) { return $('[data-sg-corpo="' + (modo || this.modo) + '"]'); },
+    aperta: function () { var r = this.radice(); return !!r && !r.hidden; },
 
-    apri: function (precompila) {
-      var p = this.foglio();
-      if (!p) { return; }
+    avvia: function () {
+      var self = this;
+      var radice = this.radice();
+      if (!radice) { return; }
+
+      this.modi = (C.modi || []).slice();
+      this.modo = this.modi[0] || null;
+
+      $$('[data-sg-modo]', radice).forEach(function (b) {
+        b.addEventListener('click', function () { self.cambia(b.getAttribute('data-sg-modo')); });
+      });
+
+      // Frecce fra le linguette: e' il comportamento che ci si aspetta da un
+      // gruppo di schede, ed e' l'unico modo di girarle senza mouse.
+      var linguette = $$('[data-sg-modo]', radice);
+      linguette.forEach(function (b, i) {
+        b.addEventListener('keydown', function (e) {
+          var passo = e.key === 'ArrowRight' ? 1 : (e.key === 'ArrowLeft' ? -1 : 0);
+          if (!passo) { return; }
+          e.preventDefault();
+          var n = linguette[(i + passo + linguette.length) % linguette.length];
+          n.focus();
+          self.cambia(n.getAttribute('data-sg-modo'));
+        });
+      });
+
+      this.agganciaCerca();
+      this.agganciaFoto();
+      if (this.modi.indexOf('chat') !== -1) { Assistente.avvia(this); }
+    },
+
+    /* ------------------------------------------------- apri e chiudi */
+
+    apri: function (modo, precompila) {
+      var self = this;
+      var radice = this.radice();
+      if (!radice) { return; }
 
       this.tornaA = document.activeElement;
-      p.hidden = false;
-      document.body.classList.add('sg-bloccato');
+      radice.hidden = false;
+      document.body.classList.add('sg-bloccato', 'sg-finestra-aperta');
+      $$('[data-sg-apri]').forEach(function (b) { b.setAttribute('aria-expanded', 'true'); });
 
-      var campo = this.campo();
+      if (modo && this.modi.indexOf(modo) !== -1) { this.cambia(modo); }
+      else { this.cambia(this.modo, true); }
 
-      if (campo) {
-        if (precompila) { campo.value = precompila; }
-        window.requestAnimationFrame(function () { campo.focus(); campo.select(); });
+      if (precompila && this.modi.indexOf('cerca') !== -1) {
+        var campo = $('[data-sg-campo-cerca]');
+        if (campo) { campo.value = precompila; }
       }
 
-      if (campo && campo.value.trim().length >= 2) { this.suggerisci(campo.value); }
-      else { this.iniziale(); }
+      window.requestAnimationFrame(function () { self.fuocoIniziale(); });
+      segnala('widget_open', { mode: this.modo });
     },
 
     chiudi: function () {
-      var p = this.foglio();
-      if (!p || p.hidden) { return; }
+      var radice = this.radice();
+      if (!radice || radice.hidden) { return; }
 
-      p.hidden = true;
-      document.body.classList.remove('sg-bloccato');
+      radice.hidden = true;
+      document.body.classList.remove('sg-bloccato', 'sg-finestra-aperta');
+      $$('[data-sg-apri]').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
 
       if (this.annulla) { this.annulla.abort(); this.annulla = null; }
       if (this.tornaA && document.contains(this.tornaA)) { this.tornaA.focus(); }
       this.tornaA = null;
     },
 
-    /**
-     * Lo stato d'apertura non e' mai vuoto.
-     *
-     * Un pannello che si apre su un rettangolo bianco lascia chi lo guarda a
-     * chiedersi che cosa ci si possa scrivere. Qui ci sono le sue ultime
-     * ricerche, se ne ha, e degli esempi: dicono con quale linguaggio conviene
-     * parlare a questa ricerca, che capisce le frasi e non solo le parole.
+    /*
+     * Il fuoco entra dove si scrive, non sul primo elemento in ordine di
+     * documento: aprendo la ricerca si vuole poter digitare subito. Nel modo
+     * foto non c'e' un campo, e allora prende il pulsante che apre i file.
      */
-    iniziale: function () {
-      var esiti = this.esiti();
-      if (!esiti) { return; }
+    fuocoIniziale: function () {
+      var pannello = $('[data-sg-pannello="' + this.modo + '"]');
+      if (!pannello) { return; }
 
-      esiti.textContent = '';
+      var bersaglio = $('input[type="search"], textarea, [data-sg-scegli-foto]', pannello);
+      if (bersaglio) { bersaglio.focus(); }
+    },
+
+    /* --------------------------------------------------- cambio modo */
+
+    cambia: function (modo, forza) {
+      if (!modo || (modo === this.modo && !forza)) { return; }
+
+      this.modo = modo;
+
+      $$('[data-sg-pannello]').forEach(function (p) {
+        p.hidden = p.getAttribute('data-sg-pannello') !== modo;
+      });
+
+      $$('[data-sg-modo]').forEach(function (b) {
+        var suo = b.getAttribute('data-sg-modo') === modo;
+        b.setAttribute('aria-selected', suo ? 'true' : 'false');
+        b.tabIndex = suo ? 0 : -1;
+      });
+
+      // Ogni modo che si apre per la prima volta dice cosa sa fare.
+      if (!this.stato[modo]) { this.stato[modo] = 'iniziale'; this.iniziale(modo); }
+    },
+
+    iniziale: function (modo) {
+      var corpo = this.corpo(modo);
+      if (!corpo) { return; }
+
+      if (modo === 'cerca') { this.inizialeCerca(corpo); }
+      else if (modo === 'foto') { this.inizialeFoto(corpo); }
+    },
+
+    /* ------------------------------------------------------- stati */
+
+    vuota: function (modo) {
+      var corpo = this.corpo(modo);
+      if (corpo) { corpo.textContent = ''; }
+      return corpo;
+    },
+
+    dice: function (modo, testo, classe) {
+      var corpo = this.vuota(modo);
+      if (!corpo) { return; }
+      corpo.appendChild(elemento('p', 'sg-stato ' + (classe || ''), testo));
+    },
+
+    attende: function (modo, testo) {
+      var corpo = this.vuota(modo);
+      if (!corpo) { return; }
+
+      var blocco = elemento('div', 'sg-attesa');
+      var punti = elemento('span', 'sg-punti');
+      punti.setAttribute('aria-hidden', 'true');
+      for (var i = 0; i < 3; i++) { punti.appendChild(document.createElement('i')); }
+      blocco.appendChild(punti);
+      blocco.appendChild(elemento('p', 'sg-attesa__testo', testo));
+      corpo.appendChild(blocco);
+    },
+
+    /* ------------------------------------------------ modo: cerca */
+
+    inizialeCerca: function (corpo) {
+      corpo.textContent = '';
 
       var recenti = Storico.leggi();
-      if (recenti.length) { esiti.appendChild(this.gruppo(T.recenti, recenti, true)); }
+      if (recenti.length) { corpo.appendChild(this.gruppo(T.recenti, recenti, true)); }
 
       var esempi = (C.esempi || []).slice(0, 4);
-      if (esempi.length) { esiti.appendChild(this.gruppo(T.suggeriti, esempi, false)); }
+      if (esempi.length) { corpo.appendChild(this.gruppo(T.suggeriti, esempi, false)); }
+
+      /*
+       * Le categorie del negozio chiudono lo stato d'apertura. Senza, la
+       * finestra si apriva su quattro righe di testo e settecento pixel di
+       * vuoto: non diceva che cosa ci fosse in negozio, e chi non aveva una
+       * parola in mente non aveva da dove cominciare.
+       */
+      var categorie = C.categorie || [];
+      if (!categorie.length) { return; }
+
+      var sezione = elemento('section', 'sg-gruppo');
+      sezione.appendChild(elemento('h2', 'sg-gruppo__titolo', T.sfoglia));
+
+      var griglia = elemento('div', 'sg-categorie');
+
+      categorie.forEach(function (c) {
+        var a = elemento('a', 'sg-categoria');
+        a.href = c.url;
+        a.appendChild(elemento('span', 'sg-categoria__nome', c.etichetta));
+        a.appendChild(elemento('span', 'sg-categoria__conto', String(c.conteggio)));
+        griglia.appendChild(a);
+      });
+
+      sezione.appendChild(griglia);
+      corpo.appendChild(sezione);
     },
 
     gruppo: function (titolo, voci, conCestino) {
       var self = this;
       var sezione = elemento('section', 'sg-gruppo');
-
       sezione.appendChild(elemento('h2', 'sg-gruppo__titolo', titolo));
 
       var lista = elemento('ul', 'sg-suggerimenti');
 
       voci.forEach(function (v) {
         var li = elemento('li');
-        var a = elemento('a', 'sg-suggerimento', v);
-        a.href = indirizzoRicerca(v);
-        li.appendChild(a);
+        var b = elemento('button', 'sg-suggerimento', v);
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          var campo = $('[data-sg-campo-cerca]');
+          if (campo) { campo.value = v; }
+
+          if (C.inPagina) { Storico.aggiungi(v); window.location.href = indirizzoRicerca(v); return; }
+
+          self.cerca(v);
+        });
+        li.appendChild(b);
         lista.appendChild(li);
       });
 
@@ -292,95 +431,136 @@
       if (conCestino) {
         var via = elemento('button', 'sg-gruppo__via', T.pulisci);
         via.type = 'button';
-        via.addEventListener('click', function () { Storico.svuota(); self.iniziale(); });
+        via.addEventListener('click', function () { Storico.svuota(); self.inizialeCerca(self.corpo('cerca')); });
         sezione.appendChild(via);
       }
 
       return sezione;
     },
 
-    stato: function (testo, classe) {
-      var esiti = this.esiti();
-      if (!esiti) { return; }
+    agganciaCerca: function () {
+      var self = this;
+      var modulo = $('[data-sg-cerca]');
+      if (!modulo) { return; }
 
-      esiti.textContent = '';
-      esiti.appendChild(elemento('p', 'sg-stato ' + (classe || ''), testo));
+      var campo = $('[data-sg-campo-cerca]', modulo);
+      var pulisci = $('[data-sg-pulisci]', modulo);
+
+      /*
+       * QUANDO IL NEGOZIO HA LA PAGINA DEI RISULTATI, L'INVIO CI PORTA.
+       *
+       * Il modulo e' un GET vero verso quella pagina: non si annulla nulla e
+       * il browser naviga da solo — che e' anche il motivo per cui la ricerca
+       * a parole funziona con JavaScript spento. La finestra tiene i risultati
+       * solo quando quella pagina non c'e', ed e' allora che deve bastare a se
+       * stessa.
+       */
+      modulo.addEventListener('submit', function (e) {
+        var domanda = campo ? campo.value.trim() : '';
+
+        if (domanda.length < 2) { e.preventDefault(); return; }
+
+        Storico.aggiungi(domanda);
+
+        if (C.inPagina) { return; }   // lascia navigare il modulo
+
+        e.preventDefault();
+        self.cerca(domanda);
+      });
+
+      if (campo) {
+        campo.addEventListener('input', function () {
+          if (pulisci) { pulisci.hidden = campo.value.length === 0; }
+          self.suggerisci(campo.value);
+        });
+      }
+
+      if (pulisci) {
+        pulisci.addEventListener('click', function () {
+          campo.value = '';
+          pulisci.hidden = true;
+          self.ultimoSuggerito = '';
+          self.inizialeCerca(self.corpo('cerca'));
+          campo.focus();
+        });
+      }
     },
 
-    /**
-     * I suggerimenti mentre si scrive.
-     *
-     * Non e' la ricerca semantica: quella costa otto secondi e parte quando si
-     * preme Invio. Qui rispondono i nomi dei prodotti e delle categorie del
-     * negozio, che si trovano in pochi millisecondi. Vedi Frontend\Suggerimenti.
+    /*
+     * Mentre si scrive rispondono i nomi dei prodotti, letti dal negozio in
+     * pochi millisecondi. La ricerca semantica parte all'invio: costa secondi,
+     * e lanciarla a ogni tasto sarebbe una fila di richieste inutili.
+     * Vedi Frontend\Suggerimenti.
      */
     suggerisci: function (testo) {
       var self = this;
       testo = (testo || '').trim();
 
-      window.clearTimeout(this.attesa);
+      window.clearTimeout(this.attesaSugg);
 
       if (testo.length < 2) {
-        this.ultima = '';
-        this.iniziale();
+        this.ultimoSuggerito = '';
+        this.inizialeCerca(this.corpo('cerca'));
         return;
       }
 
-      if (testo === this.ultima) { return; }
+      if (testo === this.ultimoSuggerito) { return; }
 
-      this.attesa = window.setTimeout(function () {
-        self.ultima = testo;
+      this.attesaSugg = window.setTimeout(function () {
+        self.ultimoSuggerito = testo;
 
-        /*
-         * Le risposte non tornano nell'ordine in cui partono: senza annullare
-         * la precedente, quella di due lettere fa puo' arrivare per ultima e
-         * sovrascrivere i suggerimenti giusti.
-         */
-        if (self.annulla) { self.annulla.abort(); }
-        self.annulla = new AbortController();
+        if (self.annullaSugg) { self.annullaSugg.abort(); }
+        self.annullaSugg = new AbortController();
 
         fetch(C.ponte + '/suggerimenti?q=' + encodeURIComponent(testo), {
           credentials: 'same-origin',
-          signal: self.annulla.signal,
+          signal: self.annullaSugg.signal,
           headers: { 'X-WP-Nonce': C.nonce }
         })
           .then(function (r) { return r.json(); })
-          .then(function (dati) {
-            self.annulla = null;
-            if (self.campo() && self.campo().value.trim() !== testo) { return; }
-            self.mostraSuggerimenti(testo, (dati && dati.voci) || []);
+          .then(function (d) {
+            self.annullaSugg = null;
+            var campo = $('[data-sg-campo-cerca]');
+            if (campo && campo.value.trim() !== testo) { return; }
+            self.mostraSuggerimenti(testo, (d && d.voci) || []);
           })
           ['catch'](function (e) {
             if (e && e.name === 'AbortError') { return; }
-            self.annulla = null;
-            // Restano comunque la riga "cerca" e lo storico: non si blocca niente.
+            self.annullaSugg = null;
             self.mostraSuggerimenti(testo, []);
           });
       }, 160);
     },
 
     mostraSuggerimenti: function (testo, voci) {
-      var esiti = this.esiti();
-      if (!esiti) { return; }
-
-      esiti.textContent = '';
+      var self = this;
+      var corpo = this.vuota('cerca');
+      if (!corpo) { return; }
 
       /*
-       * La prima riga e' sempre la ricerca vera: chi ha scritto una frase
-       * ("regalo per una laurea") non trova nulla fra i nomi dei prodotti, e
-       * deve poter arrivare alla ricerca semantica con un colpo solo.
+       * La prima riga porta sempre alla ricerca vera: chi scrive una frase
+       * intera non la trova fra i nomi dei prodotti, e deve poterci arrivare
+       * senza rileggere l'elenco. E' un collegamento quando si va in pagina —
+       * cosi' si apre in una scheda nuova col tasto centrale, come ci si
+       * aspetta da un link — e un pulsante quando si resta dentro.
        */
-      var vai = elemento('a', 'sg-vai');
-      vai.href = indirizzoRicerca(testo);
-      vai.appendChild(elemento('span', 'sg-vai__lente', '\u2315'));
-      vai.appendChild(elemento('span', 'sg-vai__testo', T.cercaNel.replace('%s', testo)));
-      esiti.appendChild(vai);
+      var vai;
 
-      if (!voci.length) {
-        var storico = Storico.leggi();
-        if (storico.length) { esiti.appendChild(this.gruppo(T.recenti, storico, true)); }
-        return;
+      if (C.inPagina) {
+        vai = elemento('a', 'sg-vai');
+        vai.href = indirizzoRicerca(testo);
+        vai.addEventListener('click', function () { Storico.aggiungi(testo); });
+      } else {
+        vai = elemento('button', 'sg-vai');
+        vai.type = 'button';
+        vai.addEventListener('click', function () { self.cerca(testo); });
       }
+
+      vai.appendChild(elemento('span', 'sg-vai__segno', '⌕'));
+      vai.appendChild(elemento('span', 'sg-vai__testo', (T.cercaNel || '%s').replace('%s', testo)));
+      corpo.appendChild(vai);
+
+      if (!voci.length) { return; }
 
       var lista = elemento('ul', 'sg-voci');
 
@@ -394,71 +574,566 @@
         lista.appendChild(li);
       });
 
-      esiti.appendChild(lista);
+      corpo.appendChild(lista);
     },
 
-    mostra: function (dati, domanda) {
-      var esiti = this.esiti();
-      if (!esiti) { return; }
+    cerca: function (domanda) {
+      var self = this;
+      domanda = (domanda || '').trim();
 
-      var risultati = dati.risultati || [];
+      if (domanda.length < 2) { return; }
 
-      if (!risultati.length) { this.stato(T.nessuno, 'sg-stato--vuoto'); return; }
+      window.clearTimeout(this.attesaSugg);
+      if (this.annullaSugg) { this.annullaSugg.abort(); this.annullaSugg = null; }
 
-      esiti.textContent = '';
+      this.attende('cerca', T.inCorso);
+      Storico.aggiungi(domanda);
 
-      if (domanda && (dati.categorie || []).length > 1) {
-        var pastiglie = elemento('div', 'sg-pastiglie');
-        dati.categorie.slice(0, 5).forEach(function (c) {
-          var a = elemento('a', 'sg-pastiglia', c.etichetta);
-          a.href = indirizzoRicerca(domanda + ' ' + c.etichetta);
-          pastiglie.appendChild(a);
+      if (this.annulla) { this.annulla.abort(); }
+      this.annulla = new AbortController();
+
+      chiama('/ricerca', { query: domanda, topK: 36, forma: 'griglia' }, this.annulla.signal)
+        .then(function (dati) {
+          self.annulla = null;
+          self.risultati('cerca', dati, domanda);
+          segnala('search_query', { query: domanda, results: (dati.risultati || []).length });
+        })
+        ['catch'](function (e) {
+          if (e && e.name === 'AbortError') { return; }
+          self.annulla = null;
+          self.dice('cerca', (e && e.message) || T.errore, 'sg-stato--male');
         });
-        esiti.appendChild(pastiglie);
-      }
+    },
 
-      var lista = elemento('div', 'sg-righe');
+    /* -------------------------------------------------- modo: foto */
 
-      risultati.forEach(function (r) {
-        var nodo = daHtml(r.html);
-        if (!nodo) { return; }
-        nodo.addEventListener('click', function () {
-          segnala('search_result_click', { query: domanda, sku: r.sku });
-        });
-        lista.appendChild(nodo);
+    inizialeFoto: function (corpo) {
+      corpo.textContent = '';
+
+      var invito = elemento('div', 'sg-invito-foto');
+      invito.appendChild(elemento('p', 'sg-invito-foto__titolo', T.fotoTitolo));
+      invito.appendChild(elemento('p', 'sg-invito-foto__testo', T.fotoSpiega));
+      corpo.appendChild(invito);
+    },
+
+    agganciaFoto: function () {
+      var self = this;
+      var pannello = $('[data-sg-pannello="foto"]');
+      if (!pannello) { return; }
+
+      var file = $('[data-sg-file]', pannello);
+      var bottone = $('[data-sg-scegli-foto]', pannello);
+      if (!file || !bottone) { return; }
+
+      bottone.addEventListener('click', function () { file.click(); });
+
+      file.addEventListener('change', function () {
+        var scelto = file.files && file.files[0];
+        if (scelto) { self.conFoto(scelto); }
+        file.value = '';   // rimettendo a zero, la stessa foto si puo' riprovare
       });
 
-      esiti.appendChild(lista);
-
-      if (domanda) {
-        var tutti = elemento('a', 'sg-tutti', T.tutti);
-        tutti.href = indirizzoRicerca(domanda);
-        esiti.appendChild(tutti);
-      }
+      /*
+       * Trascinare una foto dentro la finestra e' il gesto naturale su un
+       * computer, e non costa niente: sono quattro ascoltatori.
+       */
+      pannello.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        pannello.classList.add('sg-pannello--goccia');
+      });
+      pannello.addEventListener('dragleave', function () { pannello.classList.remove('sg-pannello--goccia'); });
+      pannello.addEventListener('drop', function (e) {
+        e.preventDefault();
+        pannello.classList.remove('sg-pannello--goccia');
+        var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) { self.conFoto(f); }
+      });
     },
 
-    /** Le frecce muovono il fuoco fra i risultati; dal primo si torna su. */
-    tastiera: function (e) {
-      if (e.key === 'Escape') { e.preventDefault(); this.chiudi(); return; }
-      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') { return; }
+    conFoto: function (file) {
+      var self = this;
 
-      var voci = $$('.sg-vai, .sg-voce, .sg-riga, .sg-suggerimento', this.esiti());
-      if (!voci.length) { return; }
+      this.attende('foto', T.fotoInCorso);
 
-      var posto = voci.indexOf(document.activeElement);
-      e.preventDefault();
+      cercaConFoto(file, {
+        quanti: 36,
+        forma: 'griglia',
+        anteprima: function (dati) { self.anteprimaFoto = dati; },
+        stato: function (messaggio, classe) {
+          if (classe === 'sg-stato--male') { self.dice('foto', messaggio, classe); }
+        },
+        esito: function (dati) { self.risultati('foto', dati, '', self.anteprimaFoto); }
+      });
+    },
 
-      if (e.key === 'ArrowDown') {
-        voci[posto < 0 ? 0 : Math.min(posto + 1, voci.length - 1)].focus();
-      } else if (posto <= 0) {
-        var campo = this.campo();
-        if (campo) { campo.focus(); }
-      } else {
-        voci[posto - 1].focus();
+    /* --------------------------------------------- i risultati, dentro */
+
+    risultati: function (modo, dati, domanda, anteprima) {
+      var self = this;
+      var corpo = this.vuota(modo);
+      if (!corpo) { return; }
+
+      var elenco = dati.risultati || [];
+
+      if (anteprima) {
+        var riga = elemento('div', 'sg-con-foto');
+        var img = elemento('img', 'sg-con-foto__img');
+        img.src = anteprima;
+        img.alt = '';
+        riga.appendChild(img);
+        riga.appendChild(elemento('p', 'sg-con-foto__testo', elenco.length ? T.fotoSimili : T.nessuno));
+        var via = elemento('button', 'sg-con-foto__via', T.fotoAltra);
+        via.type = 'button';
+        via.addEventListener('click', function () {
+          self.stato[modo] = 'iniziale';
+          self.inizialeFoto(self.vuota(modo));
+        });
+        riga.appendChild(via);
+        corpo.appendChild(riga);
       }
+
+      if (!elenco.length) {
+        if (!anteprima) { this.dice(modo, T.nessuno, 'sg-stato--vuoto'); }
+        return;
+      }
+
+      // Barra di affinamento: conteggio, categorie, ordine.
+      corpo.appendChild(this.barra(modo, dati, domanda));
+
+      var griglia = elemento('div', 'sg-griglia');
+      griglia.setAttribute('data-sg-griglia', modo);
+
+      elenco.forEach(function (r, i) {
+        var cella = elemento('div', 'sg-cella');
+        cella.setAttribute('data-ordine', String(i));
+        cella.setAttribute('data-categoria', r.categoria || '');
+        cella.setAttribute('data-valore', r.valore === null || r.valore === undefined ? '' : String(r.valore));
+        var nodo = daHtml(r.html);
+        if (nodo) { cella.appendChild(nodo); }
+        cella.addEventListener('click', function () {
+          segnala('search_result_click', { query: domanda, sku: r.sku });
+        });
+        griglia.appendChild(cella);
+      });
+
+      corpo.appendChild(griglia);
+
+      /*
+       * Il collegamento alla pagina dei risultati c'e' solo se la pagina c'e',
+       * e sta in fondo: e' un "e se non basta", non un comando. La finestra si
+       * regge da sola anche quando quella pagina non e' raggiungibile da
+       * nessun menu.
+       */
+      if (domanda && C.pagina) {
+        var tutti = elemento('a', 'sg-tutti', T.tutti);
+        tutti.href = indirizzoRicerca(domanda);
+        corpo.appendChild(tutti);
+      }
+
+      corpo.scrollTop = 0;
+    },
+
+    barra: function (modo, dati, domanda) {
+      var self = this;
+      var barra = elemento('div', 'sg-barra-esiti');
+
+      var conto = elemento('p', 'sg-barra-esiti__conto');
+      conto.setAttribute('data-sg-conto', modo);
+      conto.textContent = self.conteggio((dati.risultati || []).length);
+      barra.appendChild(conto);
+
+      var comandi = elemento('div', 'sg-barra-esiti__comandi');
+
+      var categorie = (dati.categorie || []).slice(0, 6);
+      if (categorie.length > 1) {
+        var pastiglie = elemento('div', 'sg-filtri-veloci');
+        categorie.forEach(function (c) {
+          var b = elemento('button', 'sg-pastiglia', c.etichetta + ' ' + c.conteggio);
+          b.type = 'button';
+          b.setAttribute('aria-pressed', 'false');
+          b.addEventListener('click', function () {
+            var acceso = b.getAttribute('aria-pressed') === 'true';
+            $$('.sg-pastiglia', pastiglie).forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+            b.setAttribute('aria-pressed', acceso ? 'false' : 'true');
+            self.applica(modo, acceso ? '' : c.etichetta);
+          });
+          pastiglie.appendChild(b);
+        });
+        comandi.appendChild(pastiglie);
+      }
+
+      var ordina = elemento('select', 'sg-ordina');
+      ordina.setAttribute('aria-label', T.ordina);
+      [['rilevanza', T.piuPertinenti], ['crescente', T.prezzoSu], ['decrescente', T.prezzoGiu]].forEach(function (o) {
+        var op = elemento('option', null, o[1]);
+        op.value = o[0];
+        ordina.appendChild(op);
+      });
+      ordina.addEventListener('change', function () { self.ordina(modo, ordina.value); });
+      comandi.appendChild(ordina);
+
+      barra.appendChild(comandi);
+
+      return barra;
+    },
+
+    celle: function (modo) { return $$('[data-sg-griglia="' + modo + '"] .sg-cella'); },
+
+    conteggio: function (n) {
+      return n === 1 ? (T.unGioiello || '1 risultato') : (T.nGioielli || '%d risultati').replace('%d', n);
+    },
+
+    applica: function (modo, categoria) {
+      var visibili = 0;
+      var voluta = (categoria || '').toLowerCase();
+
+      this.celle(modo).forEach(function (cella) {
+        var sua = (cella.getAttribute('data-categoria') || '').toLowerCase();
+        var passa = !voluta || sua === voluta;
+        cella.hidden = !passa;
+        if (passa) { visibili++; }
+      });
+
+      var conto = $('[data-sg-conto="' + modo + '"]');
+      if (conto) { conto.textContent = this.conteggio(visibili); }
+    },
+
+    /*
+     * Si riordina con la proprieta' `order` invece di spostare i nodi: nessun
+     * elemento viene tolto e rimesso, quindi le foto gia' scaricate non si
+     * ricaricano e il fuoco della tastiera non si perde.
+     */
+    ordina: function (modo, come) {
+      this.celle(modo).forEach(function (cella) {
+        var valore = parseFloat(cella.getAttribute('data-valore'));
+        var ordine;
+
+        if (come === 'rilevanza') { ordine = parseInt(cella.getAttribute('data-ordine'), 10) || 0; }
+        else if (isNaN(valore)) { ordine = 99999; }   // senza prezzo, in fondo
+        else { ordine = come === 'crescente' ? Math.round(valore) : 99998 - Math.round(valore); }
+
+        cella.style.order = String(ordine);
+      });
     }
   };
 
+  /* ==================================================== l'assistente
+   *
+   * E' un modo della finestra, non una finestra sua: apertura, chiusura e
+   * fuoco li gestisce la finestra. Qui c'e' solo la conversazione.
+   */
+
+  var Assistente = {
+    storia: [],
+    inCorso: false,
+    annulla: null,
+
+    avvia: function (finestra) {
+      var self = this;
+      this.finestra = finestra;
+
+      this.corpo = $('[data-sg-corpo="chat"]');
+      this.campo = $('[data-sg-campo-chat]');
+      this.invia = $('[data-sg-invia-chat]');
+      this.ferma = $('[data-sg-ferma]');
+
+      if (!this.corpo) { return; }
+
+      var modulo = $('[data-sg-chiedi]');
+      if (modulo) {
+        modulo.addEventListener('submit', function (e) {
+          e.preventDefault();
+          self.chiedi(self.campo ? self.campo.value : '');
+        });
+      }
+
+      if (this.ferma) {
+        this.ferma.addEventListener('click', function () {
+          if (self.annulla) { self.annulla.abort(); }
+        });
+      }
+
+      var pulisci = $('[data-sg-ricomincia]');
+      if (pulisci) { pulisci.addEventListener('click', function () { self.ricomincia(); }); }
+
+      if (this.campo) {
+        // Invio manda, Maiusc+Invio va a capo: la convenzione di ogni chat.
+        this.campo.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            self.chiedi(self.campo.value);
+          }
+        });
+
+        // Il campo cresce con il testo, fino a un tetto.
+        this.campo.addEventListener('input', function () {
+          self.campo.style.height = 'auto';
+          self.campo.style.height = Math.min(120, self.campo.scrollHeight) + 'px';
+        });
+      }
+
+      this.ripristina();
+      if (!this.storia.length) { this.saluta(); }
+    },
+
+    saluta: function () {
+      var self = this;
+      var benvenuto = this.bolla('assistente', C.saluto);
+      var esempi = (C.esempiChat || []).slice(0, 3);
+
+      if (!esempi.length) { return; }
+
+      var lista = elemento('div', 'sg-avvii');
+
+      esempi.forEach(function (e) {
+        var b = elemento('button', 'sg-avvio', e);
+        b.type = 'button';
+        b.addEventListener('click', function () { self.chiedi(e); });
+        lista.appendChild(b);
+      });
+
+      benvenuto.appendChild(lista);
+      this.inFondo();
+    },
+
+    /** Una bolla: la riga, con dentro il corpo che cresce mentre si scrive. */
+    bolla: function (chi, testo) {
+      var riga = elemento('div', 'sg-msg sg-msg--' + chi);
+      riga.appendChild(elemento('div', 'sg-msg__testo', testo || ''));
+      this.corpo.appendChild(riga);
+      this.inFondo();
+      return riga;
+    },
+
+    inFondo: function () {
+      if (this.corpo) { this.corpo.scrollTop = this.corpo.scrollHeight; }
+    },
+
+    mostraFermata: function (attiva) {
+      if (this.ferma) { this.ferma.hidden = !attiva; }
+      if (this.invia) { this.invia.hidden = attiva; }
+    },
+
+    chiedi: function (domanda) {
+      var self = this;
+      domanda = (domanda || '').trim();
+
+      if (!domanda || this.inCorso) { return; }
+
+      this.inCorso = true;
+      if (this.campo) { this.campo.value = ''; this.campo.style.height = 'auto'; }
+      if (this.invia) { this.invia.disabled = true; }
+      this.mostraFermata(true);
+
+      var ricomincia = $('[data-sg-ricomincia]');
+      if (ricomincia) { ricomincia.hidden = false; }
+
+      // Gli avvii suggeriti servono solo finche' non si e' chiesto nulla.
+      $$('.sg-avvii', this.corpo).forEach(function (n) { n.remove(); });
+
+      this.bolla('cliente', domanda);
+
+      var risposta = this.bolla('assistente', '');
+      var corpo = $('.sg-msg__testo', risposta);
+      risposta.classList.add('sg-msg--attesa');
+
+      /*
+       * L'ATTESA NON PARLA. Il servizio impiega dieci secondi e passa, e una
+       * frase ferma per quel tempo invecchia male. Tre pallini dicono "sono
+       * vivo" senza promettere tempi. La frase resta per chi ascolta la pagina
+       * invece di guardarla, altrimenti troverebbe una bolla vuota.
+       */
+      corpo.appendChild(elemento('span', 'sg-fuori-schermo', T.sto));
+      var punti = elemento('span', 'sg-punti');
+      punti.setAttribute('aria-hidden', 'true');
+      for (var i = 0; i < 3; i++) { punti.appendChild(document.createElement('i')); }
+      corpo.appendChild(punti);
+
+      // La storia da mandare e' quella PRIMA di questa domanda.
+      var storia = this.storia.slice();
+      this.storia.push({ chi: 'cliente', testo: domanda });
+
+      var accumulato = '';
+
+      this.ascolta(domanda, storia, {
+        testo: function (pezzo) {
+          if (!accumulato) {
+            corpo.textContent = '';   // via i pallini
+            risposta.classList.remove('sg-msg--attesa');
+          }
+          accumulato += pezzo;
+          corpo.textContent = accumulato;
+          self.inFondo();
+        },
+
+        /*
+         * L'assistente scrive in Markdown: elenchi, grassetti, collegamenti e
+         * perfino le figure dei prodotti. Il server manda la versione
+         * impaginata a risposta finita, gia' ripulita e passata da wp_kses:
+         * qui si inserisce e basta, come per le schede.
+         */
+        impaginato: function (html) {
+          corpo.innerHTML = html;
+          risposta.classList.remove('sg-msg--attesa');
+          self.inFondo();
+        },
+
+        prodotti: function (elenco) {
+          if (!elenco || !elenco.length) { return; }
+
+          var lista = elemento('div', 'sg-righe sg-righe--chat');
+
+          elenco.forEach(function (r) {
+            var nodo = daHtml(r.html);
+            if (nodo) { lista.appendChild(nodo); }
+          });
+
+          risposta.appendChild(lista);
+          self.inFondo();
+        },
+
+        errore: function (messaggio) {
+          risposta.classList.remove('sg-msg--attesa');
+          risposta.classList.add('sg-msg--male');
+          corpo.textContent = messaggio || T.assErrore;
+        },
+
+        fine: function () {
+          self.inCorso = false;
+          self.mostraFermata(false);
+          if (self.invia) { self.invia.disabled = false; }
+          risposta.classList.remove('sg-msg--attesa');
+
+          if (accumulato) {
+            self.storia.push({ chi: 'assistente', testo: accumulato });
+            self.ricorda();
+          } else if (!risposta.classList.contains('sg-msg--male')) {
+            corpo.textContent = T.assErrore;
+            risposta.classList.add('sg-msg--male');
+          }
+
+          if (self.campo) { self.campo.focus(); }
+        }
+      });
+    },
+
+    /**
+     * Legge la risposta mentre arriva.
+     *
+     * Non si usa EventSource: quello sa fare solo richieste GET e non puo'
+     * mandare il nonce in un'intestazione. Con fetch si legge il corpo a
+     * pezzi, che e' la stessa cosa con piu' controllo.
+     */
+    ascolta: function (domanda, storia, su) {
+      var self = this;
+      var finito = false;
+
+      function finisci() {
+        if (finito) { return; }
+        finito = true;
+        su.fine();
+      }
+
+      this.annulla = new AbortController();
+
+      fetch(C.ponte + '/assistente', {
+        method: 'POST',
+        credentials: 'same-origin',
+        signal: this.annulla.signal,
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': C.nonce },
+        body: JSON.stringify({ messaggio: domanda, storia: storia })
+      }).then(function (r) {
+        if (!r.ok || !r.body) { throw new Error(T.assErrore); }
+
+        var lettore = r.body.getReader();
+        var decoder = new TextDecoder();
+        var cuscinetto = '';
+
+        function passo() {
+          return lettore.read().then(function (pezzo) {
+            if (pezzo.done) { finisci(); return; }
+
+            cuscinetto += decoder.decode(pezzo.value, { stream: true });
+
+            /*
+             * Un evento finisce con una riga vuota. Il resto resta nel
+             * cuscinetto: un pacchetto di rete puo' tagliare un evento a
+             * meta', e leggerlo cosi' com'e' darebbe JSON incompleto.
+             */
+            var taglio;
+
+            while ((taglio = cuscinetto.indexOf('\n\n')) !== -1) {
+              var blocco = cuscinetto.slice(0, taglio);
+              cuscinetto = cuscinetto.slice(taglio + 2);
+
+              blocco.split('\n').forEach(function (riga) {
+                if (riga.indexOf('data:') !== 0) { return; }
+
+                var dati;
+                try { dati = JSON.parse(riga.slice(5).trim()); }
+                catch (e) { return; }
+
+                if (dati.testo) { su.testo(dati.testo); }
+                if (dati.html) { su.impaginato(dati.html); }
+                if (dati.prodotti) { su.prodotti(dati.prodotti); }
+                if (dati.errore) { su.errore(dati.errore); }
+                if (dati.fine) { finisci(); }
+              });
+            }
+
+            return passo();
+          });
+        }
+
+        return passo();
+      })['catch'](function (e) {
+        // Chi ha premuto "ferma" non ha bisogno che gli si dica che c'e' stato
+        // un errore: l'errore l'ha voluto lui.
+        su.errore(e && e.name === 'AbortError' ? T.fermata : ((e && e.message) || T.assErrore));
+        finisci();
+      }).then(function () { self.annulla = null; });
+    },
+
+    ricomincia: function () {
+      this.storia = [];
+      if (this.corpo) { this.corpo.textContent = ''; }
+
+      try { window.sessionStorage.removeItem('sg_chat'); } catch (e) {}
+
+      var ricomincia = $('[data-sg-ricomincia]');
+      if (ricomincia) { ricomincia.hidden = true; }
+
+      this.saluta();
+    },
+
+    /*
+     * La conversazione vive nella scheda del browser. Il servizio non tiene il
+     * filo del discorso — il suo indirizzo accetta un messaggio per volta,
+     * senza identificativo di sessione — quindi o lo tiene il browser o non
+     * esiste. Si usa sessionStorage e non localStorage: finita la visita,
+     * finita la conversazione.
+     */
+    ricorda: function () {
+      try { window.sessionStorage.setItem('sg_chat', JSON.stringify(this.storia.slice(-10))); }
+      catch (e) {}
+    },
+
+    ripristina: function () {
+      var salvata;
+
+      try { salvata = JSON.parse(window.sessionStorage.getItem('sg_chat') || '[]'); }
+      catch (e) { return; }
+
+      if (!Array.isArray(salvata) || !salvata.length) { return; }
+
+      var self = this;
+      this.storia = salvata;
+      salvata.forEach(function (t) { self.bolla(t.chi === 'cliente' ? 'cliente' : 'assistente', t.testo); });
+
+      var ricomincia = $('[data-sg-ricomincia]');
+      if (ricomincia) { ricomincia.hidden = false; }
+    }
+  };
   /* ============================================== pagina dei risultati */
 
   var PaginaRisultati = {
@@ -657,410 +1332,63 @@
     }
   };
 
-  /* ======================================================= assistente */
 
-  var Assistente = {
-    storia: [],
-    inCorso: false,
+  /* ============================================== fuoco dentro la finestra */
 
-    avvia: function () {
-      var self = this;
-      var foglio = $('#sg-assistente');
-      if (!foglio) { return; }
+  /*
+   * Il fuoco resta dentro finche' la finestra e' aperta. Senza, premendo Tab
+   * si esce dietro il velo, si continua a navigare una pagina che non si vede,
+   * e non si trova piu' il modo di tornare indietro.
+   */
+  function catturaFuoco(e, dentro) {
+    if (e.key !== 'Tab' || !dentro || dentro.hidden) { return; }
 
-      this.foglio = foglio;
-      this.conversazione = $('[data-sg-conversazione]', foglio);
-      this.campo = $('[data-sg-chat-campo]', foglio);
-      this.invia = $('[data-sg-chat-invia]', foglio);
-
-      $$('[data-sg-apri-assistente]').forEach(function (b) {
-        b.addEventListener('click', function () { self.apri(); });
-      });
-
-      $$('[data-sg-chiudi-assistente]', foglio).forEach(function (b) {
-        b.addEventListener('click', function () { self.chiudi(); });
-      });
-
-      var pulisci = $('[data-sg-pulisci-chat]', foglio);
-      if (pulisci) { pulisci.addEventListener('click', function () { self.ricomincia(); }); }
-
-      var ferma = $('[data-sg-ferma]', foglio);
-      if (ferma) { ferma.addEventListener('click', function () { self.ferma(); }); }
-
-      var modulo = $('[data-sg-chiedi]', foglio);
-      if (modulo) {
-        modulo.addEventListener('submit', function (e) {
-          e.preventDefault();
-          self.chiedi(self.campo ? self.campo.value : '');
-        });
-      }
-
-      if (this.campo) {
-        // Invio manda, Maiusc+Invio va a capo: la convenzione di ogni chat.
-        this.campo.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            self.chiedi(self.campo.value);
-          }
-        });
-
-        // Il campo cresce con il testo, fino a un tetto.
-        this.campo.addEventListener('input', function () {
-          self.campo.style.height = 'auto';
-          self.campo.style.height = Math.min(120, self.campo.scrollHeight) + 'px';
-        });
-      }
-
-      this.ripristina();
-    },
-
-    aperto: function () { return !!this.foglio && !this.foglio.hidden; },
-
-    apri: function () {
-      var self = this;
-      this.tornaA = document.activeElement;
-      this.foglio.hidden = false;
-      document.body.classList.add('sg-bloccato');
-      $$('[data-sg-apri-assistente]').forEach(function (b) { b.setAttribute('aria-expanded', 'true'); });
-
-      if (!this.storia.length) { this.saluta(); }
-
-      window.requestAnimationFrame(function () { if (self.campo) { self.campo.focus(); } });
-    },
-
-    chiudi: function () {
-      if (!this.aperto()) { return; }
-
-      this.foglio.hidden = true;
-      document.body.classList.remove('sg-bloccato');
-      $$('[data-sg-apri-assistente]').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
-
-      if (this.tornaA && document.contains(this.tornaA)) { this.tornaA.focus(); }
-    },
-
-    saluta: function () {
-      var self = this;
-      var benvenuto = this.bolla('assistente', C.saluto);
-      var esempi = (C.esempiChat || []).slice(0, 3);
-
-      if (!esempi.length) { return; }
-
-      var lista = elemento('div', 'sg-avvii');
-
-      esempi.forEach(function (e) {
-        var b = elemento('button', 'sg-avvio', e);
-        b.type = 'button';
-        b.addEventListener('click', function () { self.chiedi(e); });
-        lista.appendChild(b);
-      });
-
-      benvenuto.appendChild(lista);
-      this.inFondo();
-    },
-
-    /**
-     * Una bolla della conversazione.
-     *
-     * @returns {Element} la riga; dentro c'e' il corpo, che cresce mentre la
-     *                    risposta arriva.
-     */
-    bolla: function (chi, testo) {
-      var riga = elemento('div', 'sg-msg sg-msg--' + chi);
-      riga.appendChild(elemento('div', 'sg-msg__testo', testo || ''));
-      this.conversazione.appendChild(riga);
-      this.inFondo();
-      return riga;
-    },
-
-    inFondo: function () {
-      if (this.conversazione) { this.conversazione.scrollTop = this.conversazione.scrollHeight; }
-    },
-
-    chiedi: function (domanda) {
-      var self = this;
-      domanda = (domanda || '').trim();
-
-      if (!domanda || this.inCorso) { return; }
-
-      this.inCorso = true;
-
-      if (this.campo) { this.campo.value = ''; this.campo.style.height = 'auto'; }
-      if (this.invia) { this.invia.disabled = true; }
-
-      var pulisci = $('[data-sg-pulisci-chat]', this.foglio);
-      if (pulisci) { pulisci.hidden = false; }
-
-      // Gli avvii suggeriti servono solo finche' non si e' chiesto nulla.
-      $$('.sg-avvii', this.conversazione).forEach(function (n) { n.remove(); });
-
-      this.bolla('cliente', domanda);
-
-      var risposta = this.bolla('assistente', '');
-      var corpo = $('.sg-msg__testo', risposta);
-      risposta.classList.add('sg-msg--attesa');
-
-      /*
-       * L'ATTESA NON PARLA. Il servizio impiega dai venti ai trentacinque
-       * secondi, e una frase ferma per mezzo minuto — "sto pensando", "ci vuole
-       * qualche secondo" — invecchia male: dopo dieci secondi sembra una bugia,
-       * dopo venti sembra un guasto. Tre pallini che si muovono dicono la
-       * stessa cosa senza promettere tempi.
-       *
-       * La frase resta per chi non vede lo schermo: e' fuori campo visivo ma
-       * dentro l'annuncio garbato del pannello, altrimenti un lettore di
-       * schermo troverebbe una bolla vuota.
-       */
-      corpo.appendChild(elemento('span', 'sg-fuori-schermo', T.sto));
-
-      var pallini = elemento('span', 'sg-punti');
-      pallini.setAttribute('aria-hidden', 'true');
-      for (var i = 0; i < 3; i++) { pallini.appendChild(document.createElement('i')); }
-      corpo.appendChild(pallini);
-
-      this.mostraFermata(true);
-
-      // La storia da mandare e' quella PRIMA di questa domanda.
-      var storia = this.storia.slice();
-      this.storia.push({ chi: 'cliente', testo: domanda });
-
-      var accumulato = '';
-
-      this.ascolta(domanda, storia, {
-        testo: function (pezzo) {
-          if (!accumulato) {
-            corpo.textContent = '';   // via i pallini
-            risposta.classList.remove('sg-msg--attesa');
-          }
-          accumulato += pezzo;
-          corpo.textContent = accumulato;
-          self.inFondo();
-        },
-
-        /*
-         * L'assistente scrive in Markdown: elenchi, grassetti, collegamenti e
-         * perfino le figure dei prodotti. Inserito con textContent quel codice
-         * si vedeva tale e quale. Il server manda la versione impaginata a
-         * risposta finita, gia' ripulita e passata da wp_kses: qui si inserisce
-         * e basta, come per le schede.
-         */
-        impaginato: function (html) {
-          corpo.innerHTML = html;
-          risposta.classList.remove('sg-msg--attesa');
-          self.inFondo();
-        },
-
-        prodotti: function (elenco) {
-          if (!elenco || !elenco.length) { return; }
-
-          var lista = elemento('div', 'sg-righe sg-righe--chat');
-
-          elenco.forEach(function (r) {
-            var nodo = daHtml(r.html);
-            if (nodo) { lista.appendChild(nodo); }
-          });
-
-          risposta.appendChild(lista);
-          self.inFondo();
-        },
-
-        errore: function (messaggio) {
-          risposta.classList.remove('sg-msg--attesa');
-          risposta.classList.add('sg-msg--male');
-          corpo.textContent = messaggio || T.assErrore;
-        },
-
-        fine: function () {
-          self.inCorso = false;
-          self.mostraFermata(false);
-          if (self.invia) { self.invia.disabled = false; }
-          risposta.classList.remove('sg-msg--attesa');
-
-          if (accumulato) {
-            self.storia.push({ chi: 'assistente', testo: accumulato });
-            self.ricorda();
-          } else if (!risposta.classList.contains('sg-msg--male')) {
-            corpo.textContent = T.assErrore;
-            risposta.classList.add('sg-msg--male');
-          }
-
-          if (self.campo) { self.campo.focus(); }
-        }
-      });
-    },
-
-    /**
-     * Legge la risposta mentre arriva.
-     *
-     * Non si usa EventSource: quello sa fare solo richieste GET e non puo'
-     * mandare il nonce in un'intestazione. Con fetch si legge il corpo a
-     * pezzi, che e' la stessa cosa con piu' controllo.
-     */
-    /** Durante l'attesa il pulsante d'invio diventa un pulsante per fermare. */
-    mostraFermata: function (attiva) {
-      var ferma = $('[data-sg-ferma]', this.foglio);
-      if (ferma) { ferma.hidden = !attiva; }
-      if (this.invia) { this.invia.hidden = attiva; }
-    },
-
-    ferma: function () {
-      if (this.annulla) { this.annulla.abort(); }
-    },
-
-    ascolta: function (domanda, storia, su) {
-      var finito = false;
-      this.annulla = new AbortController();
-
-      function finisci() {
-        if (finito) { return; }
-        finito = true;
-        su.fine();
-      }
-
-      fetch(C.ponte + '/assistente', {
-        method: 'POST',
-        credentials: 'same-origin',
-        signal: this.annulla.signal,
-        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': C.nonce },
-        body: JSON.stringify({ messaggio: domanda, storia: storia })
-      }).then(function (r) {
-        if (!r.ok || !r.body) { throw new Error(T.assErrore); }
-
-        var lettore = r.body.getReader();
-        var decoder = new TextDecoder();
-        var cuscinetto = '';
-
-        function passo() {
-          return lettore.read().then(function (pezzo) {
-            if (pezzo.done) { finisci(); return; }
-
-            cuscinetto += decoder.decode(pezzo.value, { stream: true });
-
-            /*
-             * Un evento finisce con una riga vuota. Il resto resta nel
-             * cuscinetto: un pacchetto di rete puo' tagliare un evento a
-             * meta', e leggerlo cosi' com'e' darebbe JSON incompleto.
-             */
-            var taglio;
-
-            while ((taglio = cuscinetto.indexOf('\n\n')) !== -1) {
-              var blocco = cuscinetto.slice(0, taglio);
-              cuscinetto = cuscinetto.slice(taglio + 2);
-
-              blocco.split('\n').forEach(function (riga) {
-                if (riga.indexOf('data:') !== 0) { return; }
-
-                var dati;
-                try { dati = JSON.parse(riga.slice(5).trim()); }
-                catch (e) { return; }
-
-                if (dati.testo) { su.testo(dati.testo); }
-                if (dati.html) { su.impaginato(dati.html); }
-                if (dati.prodotti) { su.prodotti(dati.prodotti); }
-                if (dati.errore) { su.errore(dati.errore); }
-                if (dati.fine) { finisci(); }
-              });
-            }
-
-            return passo();
-          });
-        }
-
-        return passo();
-      })['catch'](function (e) {
-        // Chi ha premuto "ferma" non ha bisogno che gli si dica che c'e' stato
-        // un errore: l'errore l'ha voluto lui.
-        su.errore(e && e.name === 'AbortError' ? T.fermata : ((e && e.message) || T.assErrore));
-        finisci();
-      });
-    },
-
-    ricomincia: function () {
-      this.storia = [];
-
-      if (this.conversazione) { this.conversazione.textContent = ''; }
-
-      try { window.sessionStorage.removeItem('sg_chat'); } catch (e) {}
-
-      var pulisci = $('[data-sg-pulisci-chat]', this.foglio);
-      if (pulisci) { pulisci.hidden = true; }
-
-      this.saluta();
-    },
-
-    /*
-     * La conversazione vive nella scheda del browser. Il servizio non tiene
-     * il filo del discorso — il suo indirizzo accetta un messaggio per volta,
-     * senza identificativo di sessione — quindi o lo tiene il browser o non
-     * esiste. Si usa sessionStorage e non localStorage: finita la visita,
-     * finita la conversazione.
-     */
-    ricorda: function () {
-      try { window.sessionStorage.setItem('sg_chat', JSON.stringify(this.storia.slice(-10))); }
-      catch (e) {}
-    },
-
-    ripristina: function () {
-      var salvata;
-
-      try { salvata = JSON.parse(window.sessionStorage.getItem('sg_chat') || '[]'); }
-      catch (e) { return; }
-
-      if (!Array.isArray(salvata) || !salvata.length) { return; }
-
-      var self = this;
-      this.storia = salvata;
-      salvata.forEach(function (t) { self.bolla(t.chi === 'cliente' ? 'cliente' : 'assistente', t.testo); });
-
-      var pulisci = $('[data-sg-pulisci-chat]', this.foglio);
-      if (pulisci) { pulisci.hidden = false; }
-    }
-  };
-
-  /* ================================================ fuoco nei pannelli */
-
-  function catturaFuoco(e, pannello) {
-    if (e.key !== 'Tab' || !pannello || pannello.hidden) { return; }
-
-    var dentro = $$('a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])', pannello)
+    var fuocabili = $$('a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])', dentro)
       .filter(function (n) { return n.offsetParent !== null; });
 
-    if (!dentro.length) { return; }
+    if (!fuocabili.length) { return; }
 
-    var primo = dentro[0];
-    var ultimo = dentro[dentro.length - 1];
+    var primo = fuocabili[0];
+    var ultimo = fuocabili[fuocabili.length - 1];
 
     if (e.shiftKey && document.activeElement === primo) { e.preventDefault(); ultimo.focus(); }
     else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primo.focus(); }
   }
 
-  /* =========================================================== avvio */
+  /* ============================================================= avvio */
 
   function avvia() {
+    Finestra.avvia();
+    PaginaRisultati.avvia();
+
+    document.addEventListener('click', function (e) {
+      var apre = e.target.closest('[data-sg-apri]');
+      if (apre) {
+        e.preventDefault();
+        Finestra.apri(apre.getAttribute('data-sg-modo-iniziale') || null);
+        return;
+      }
+
+      if (e.target.closest('[data-sg-chiudi]')) { e.preventDefault(); Finestra.chiudi(); }
+    });
+
     /*
      * L'INTERCETTAZIONE DELLA RICERCA DEL TEMA SI FA IN FASE DI CATTURA.
      *
      * Quando Storegentic si prende la ricerca del sito, il comando del tema
-     * deve aprire il nostro pannello e NON il suo. Con un ascoltatore normale
-     * non basta: `preventDefault()` annulla l'azione predefinita del browser,
+     * deve aprire la nostra finestra e NON la sua. Con un ascoltatore normale
+     * non basta: preventDefault() annulla l'azione predefinita del browser,
      * non gli altri ascoltatori, e un tema che ascolta anch'esso il documento
-     * apre il proprio pannello lo stesso.
-     *
-     * Succedeva davvero su questo negozio: si aprivano tutti e due i pannelli,
-     * quello del tema stava sopra per un punto di z-index, e il fuoco della
-     * tastiera finiva nel campo del nostro, nascosto sotto. Chi cercava
-     * scriveva in un campo che non vedeva.
+     * apre il proprio pannello lo stesso — visto succedere, con i due pannelli
+     * sovrapposti e il fuoco della tastiera in quello nascosto sotto.
      *
      * La fase di cattura scende dalla radice verso il bersaglio, quindi passa
-     * di qui prima di qualunque ascoltatore in fase di risalita, chiunque
-     * l'abbia registrato e in qualunque ordine siano stati caricati i file.
-     * `stopPropagation()` chiude la questione senza guerre di z-index e senza
-     * dover conoscere il markup del tema.
+     * di qui prima di chiunque altro, in qualunque ordine siano stati caricati
+     * i file.
      */
     document.addEventListener('click', function (e) {
       if (!C.sostituisci || !(C.inneschi || []).length) { return; }
-
-      // Dentro i nostri pannelli i comandi sono i nostri: non si intercetta.
-      if (e.target.closest('#sg-pannello, #sg-assistente, #sg-ricerca')) { return; }
+      if (e.target.closest('#sg-finestra, #sg-ricerca, [data-sg-apri]')) { return; }
 
       var innesco = e.target.closest(C.inneschi.join(','));
       if (!innesco) { return; }
@@ -1069,107 +1397,29 @@
       e.stopPropagation();
 
       var suo = innesco.querySelector ? innesco.querySelector('input[type="search"], input[name="s"]') : null;
-      Pannello.apri(suo ? suo.value : '');
-    }, true);
+      var scritto = suo ? suo.value.trim() : '';
 
-    /*
-     * I comandi dentro il pannello, invece, si riconoscono al clic e non
-     * all'avvio: il pannello si stampa a fine pagina, dopo questo script, e
-     * un tema o un plugin di cache possono spostare i tag. Cercarli al momento
-     * del clic toglie del tutto la dipendenza dall'ordine del documento — che
-     * in WordPress non e' una cosa su cui si possa contare.
-     */
-    document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-sg-chiudi]')) { e.preventDefault(); Pannello.chiudi(); return; }
-
-      var pulisci = e.target.closest('[data-sg-pulisci]');
-      if (pulisci) {
-        var campo = Pannello.campo();
-        if (campo) { campo.value = ''; campo.focus(); }
-        pulisci.hidden = true;
-        Pannello.ultima = '';
-        Pannello.iniziale();
-      }
-    });
-
-    document.addEventListener('input', function (e) {
-      var campo = e.target.closest('#sg-campo-pannello');
-      if (!campo) { return; }
-
-      var pulisci = $('[data-sg-pulisci]');
-      if (pulisci) { pulisci.hidden = campo.value.length === 0; }
-
-      Pannello.suggerisci(campo.value);
-    });
-
-    /*
-     * Invio nella barra porta alla pagina dei risultati. Il modulo e' un GET
-     * vero verso quella pagina: senza JavaScript fa la stessa cosa da solo, e
-     * non ci sono due percorsi da tenere allineati.
-     */
-    document.addEventListener('submit', function (e) {
-      var modulo = e.target.closest('[data-sg-barra]');
-      if (!modulo) { return; }
-
-      var campo = $('[data-sg-campo]', modulo);
-      var domanda = campo ? campo.value.trim() : '';
-
-      if (!domanda) { e.preventDefault(); return; }
-
-      Storico.aggiungi(domanda);
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (Pannello.aperto()) {
-        catturaFuoco(e, Pannello.foglio());
-        Pannello.tastiera(e);
+      /*
+       * Se il tema aveva gia' delle parole nel campo e il negozio ha la pagina
+       * dei risultati, si va dritti li': aprire una finestra per far ripremere
+       * Invio sarebbe un passaggio in piu' per niente.
+       */
+      if (C.inPagina && scritto.length >= 2) {
+        Storico.aggiungi(scritto);
+        window.location.href = indirizzoRicerca(scritto);
         return;
       }
 
-      if (Assistente.aperto()) {
-        catturaFuoco(e, Assistente.foglio);
-        if (e.key === 'Escape') { e.preventDefault(); Assistente.chiudi(); }
-      }
+      Finestra.apri('cerca', scritto);
+    }, true);
+
+    document.addEventListener('keydown', function (e) {
+      if (!Finestra.aperta()) { return; }
+
+      if (e.key === 'Escape') { e.preventDefault(); Finestra.chiudi(); return; }
+
+      catturaFuoco(e, Finestra.radice());
     });
-
-    /* --- la foto, dal pannello --- */
-
-    var pannello = $('#sg-pannello');
-
-    if (pannello) {
-      var bottone = $('[data-sg-scegli-foto]', pannello);
-      var file = $('[data-sg-file]', pannello);
-
-      if (bottone && file) {
-        bottone.addEventListener('click', function () { file.click(); });
-
-        file.addEventListener('change', function () {
-          var scelto = file.files && file.files[0];
-          if (!scelto) { return; }
-
-          cercaConFoto(scelto, {
-            quanti: 8,
-            forma: 'riga',
-            stato: function (messaggio, classe) { Pannello.stato(messaggio, classe); },
-            esito: function (dati) {
-              Pannello.mostra(dati, '');
-
-              var esiti = Pannello.esiti();
-              if (esiti) {
-                esiti.insertBefore(elemento('p', 'sg-stato sg-stato--nota', T.fotoSimili), esiti.firstChild);
-              }
-            }
-          });
-
-          // Rimettendo a zero, la stessa foto si puo' riprovare.
-          file.value = '';
-        });
-      }
-    }
-
-    PaginaRisultati.avvia();
-
-    if (C.assistente) { Assistente.avvia(); }
   }
 
   if (document.readyState === 'loading') {

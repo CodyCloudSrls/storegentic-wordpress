@@ -65,136 +65,6 @@ body.sg-bloccato { overflow: hidden; }
   outline-offset: 2px;
 }
 
-/* ---------------------------------------------------------------- barra */
-
-.sg-barra { display: flex; align-items: center; gap: .5rem; width: 100%; }
-
-.sg-barra__campo {
-  flex: 1 1 auto; min-width: 0;
-  padding: .7rem 1.1rem;
-  font: inherit; font-size: 1rem; /* sotto i 16px iOS ingrandisce da solo */
-  color: var(--sg-inchiostro);
-  background: var(--sg-carta);
-  border: 1px solid var(--sg-linea);
-  border-radius: 999px;
-  -webkit-appearance: none; appearance: none;
-}
-
-.sg-barra__campo::-webkit-search-cancel-button { display: none; }
-
-.sg-barra__invio {
-  flex: 0 0 auto;
-  min-height: 44px; padding: 0 1.2rem;
-  font: inherit; font-weight: 600;
-  color: var(--sg-testo); background: var(--sg-colore);
-  border: 0; border-radius: 999px; cursor: pointer;
-}
-
-.sg-barra__invio:hover { opacity: .9; }
-
-/* --------------------------------------------------- pannello di ricerca
- *
- * Stessa materia dell'assistente: fondo tenue, foglio con bordo sottile e
- * ombra larga, angoli della stessa scala. Sono due strumenti diversi e devono
- * sembrare due strumenti della stessa cassetta.
- */
-
-.sg-pannello { position: fixed; inset: 0; z-index: 100000; }
-.sg-pannello[hidden] { display: none; }
-
-.sg-pannello__velo {
-  position: absolute; inset: 0;
-  background: var(--sg-velo);
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-}
-
-.sg-pannello__foglio {
-  position: relative;
-  width: min(44rem, 100%);
-  max-height: min(80vh, 46rem);
-  margin: 6vh auto 0;
-  display: flex; flex-direction: column;
-  background: var(--sg-fondo);
-  border: 1px solid var(--sg-linea);
-  border-radius: var(--sg-raggio-l);
-  box-shadow: var(--sg-ombra);
-  overflow: hidden;
-}
-
-.sg-pannello__testa {
-  display: flex; align-items: center; gap: .5rem;
-  padding: .7rem .6rem .7rem .75rem;
-  background: var(--sg-carta);
-  border-bottom: 1px solid var(--sg-linea);
-}
-
-/*
- * LA PILLOLA E' IL CONTENITORE, NON IL CAMPO.
- *
- * Prima la pillola era il campo, e lente, croce e macchina fotografica ci
- * stavano sopra in posizione assoluta, tenute a distanza da tre misure scritte
- * a mano. Quelle misure erano sbagliate: i due pulsanti si sovrapponevano fra
- * loro di sedici pixel, e lo spazio riservato a destra era meno di quello che
- * occupavano davvero, cosi' il testo del campo passava sotto la croce.
- *
- * Qui il contenitore e' la pillola e tutto ci sta dentro in fila: il campo
- * prende lo spazio che avanza e i pulsanti si mettono da soli dove devono. Non
- * c'e' piu' nessun numero da tenere allineato a mano — che e' la ragione per
- * cui quel difetto era nato.
- */
-.sg-barra--pannello {
-  display: flex; align-items: center; gap: .15rem;
-  padding: .2rem .3rem .2rem .9rem;
-  background: var(--sg-fondo);
-  border: 1px solid var(--sg-linea);
-  border-radius: 999px;
-}
-
-.sg-barra--pannello:focus-within { border-color: var(--sg-colore); }
-
-.sg-barra__lente { flex: 0 0 auto; color: var(--sg-inchiostro-2); pointer-events: none; }
-
-.sg-barra--pannello .sg-barra__campo {
-  flex: 1 1 auto; min-width: 0;
-  padding: .6rem .55rem;
-  background: none; border: 0; border-radius: 0;
-}
-
-.sg-barra--pannello .sg-barra__campo:focus { outline: none; }
-
-.sg-barra__pulisci,
-.sg-barra__foto {
-  flex: 0 0 auto;
-  display: flex; align-items: center; justify-content: center;
-  width: 2.25rem; height: 2.25rem;
-  color: var(--sg-inchiostro-2); background: none;
-  border: 0; border-radius: 50%; cursor: pointer;
-}
-
-.sg-barra__pulisci { font-size: 1.35rem; line-height: 1; }
-
-.sg-barra__pulisci:hover,
-.sg-barra__foto:hover { color: var(--sg-inchiostro); background: var(--sg-carta); }
-
-.sg-pannello__chiudi {
-  flex: 0 0 auto;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 2.25rem; height: 2.25rem;
-  font-size: 1.25rem; line-height: 1;
-  color: var(--sg-inchiostro-2); background: none;
-  border: 1px solid var(--sg-linea); border-radius: 50%; cursor: pointer;
-}
-
-.sg-pannello__chiudi:hover { background: var(--sg-fondo); color: var(--sg-inchiostro); }
-
-.sg-pannello__corpo {
-  flex: 1 1 auto;
-  padding: .75rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
-
 /* --------------------------------------------------- stati e suggerimenti */
 
 .sg-stato {
@@ -398,27 +268,50 @@ body.sg-bloccato { overflow: hidden; }
 .sg-segno--fine { background: var(--sg-inchiostro-2); color: var(--sg-carta); }
 .sg-segno--saldo { background: var(--sg-colore); color: var(--sg-testo); }
 
-.sg-aggiungi {
+/*
+ * IL PULSANTE D'ACQUISTO DEVE VINCERE SUL TEMA.
+ *
+ * Porta anche le classi di WooCommerce — `button add_to_cart_button
+ * ajax_add_to_cart` — perche' e' il suo JavaScript ad animarlo, ad aggiungere
+ * senza ricaricare e a far aggiornare il contatore del carrello. Riscrivere
+ * quella catena avrebbe voluto dire riscriverla peggio.
+ *
+ * Il prezzo di quella scelta e' che ogni tema stila `.button`, e il nostro
+ * pulsante ne eredita l'aspetto: su questo negozio diventava un blocco nero
+ * in maiuscolo dentro una scheda dal disegno tutt'altro. Si scrive quindi il
+ * selettore con l'elemento e il contenitore — `.sg-scheda a.sg-aggiungi` —
+ * che pesa piu' del `.woocommerce a.button` usato dai temi. Non e' una guerra
+ * di !important: e' una specificita' sufficiente, dichiarata e spiegata.
+ */
+.sg-scheda a.sg-aggiungi,
+.sg-scheda button.sg-aggiungi {
   margin: 0 .85rem .85rem;
-  padding: .6rem .8rem; min-height: 44px;
+  padding: .6rem .8rem; min-height: 44px; width: auto;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: .875rem; font-weight: 600; text-decoration: none;
+  font-family: inherit; font-size: .875rem; font-weight: 600;
+  line-height: 1.2; letter-spacing: 0; text-transform: none; text-decoration: none;
   color: var(--sg-inchiostro); background: transparent;
   border: 1px solid var(--sg-linea); border-radius: 999px;
+  box-shadow: none;
 }
 
-.sg-aggiungi:hover { background: var(--sg-colore); color: var(--sg-testo); border-color: var(--sg-colore); }
+.sg-scheda a.sg-aggiungi:hover,
+.sg-scheda button.sg-aggiungi:hover {
+  background: var(--sg-colore); color: var(--sg-testo); border-color: var(--sg-colore);
+}
 
 /* WooCommerce aggiunge da solo "added" e "loading": si accompagnano. */
 .sg-aggiungi.loading { opacity: .6; pointer-events: none; }
 .sg-aggiungi.added { display: none; }
 
-.sg-scheda .added_to_cart {
+.sg-scheda a.added_to_cart {
   margin: 0 .85rem .85rem;
   padding: .6rem .8rem; min-height: 44px;
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: .875rem; font-weight: 600; text-decoration: none;
-  color: var(--sg-testo); background: var(--sg-colore); border-radius: 999px;
+  font-family: inherit; font-size: .875rem; font-weight: 600;
+  text-transform: none; text-decoration: none;
+  color: var(--sg-testo); background: var(--sg-colore);
+  border: 1px solid var(--sg-colore); border-radius: 999px;
 }
 
 /* ------------------------------------------------- pagina dei risultati */
@@ -623,49 +516,70 @@ body.sg-bloccato { overflow: hidden; }
 .sg-avviso { padding: 1rem 1.25rem; border-radius: var(--sg-raggio); background: var(--sg-fondo); }
 .sg-avviso--male { color: #8A2E2E; }
 
-/* ------------------------------------------------------- assistente
+/* ============================================== LA FINESTRA E IL LANCIATORE
  *
- * LE BOLLE SONO ASIMMETRICHE. L'angolo rivolto verso chi parla e' stretto,
- * gli altri tre larghi. E' un dettaglio piccolo che fa un lavoro grosso:
- * dice da che parte arriva il messaggio anche prima di leggerlo, e senza
- * bisogno di etichette, avatar o frecce.
- */
+ * Un pulsante che il plugin disegna da se', e una finestra che contiene tutto.
+ * Niente qui dipende dal tema: le classi hanno il prefisso `sg-`, i valori
+ * passano da variabili con un ripiego, e il contenitore si stacca dal flusso
+ * della pagina — perche' un contenitore del tema con `overflow: hidden` lo
+ * taglierebbe, e un tema che azzera `button` lo lascerebbe nudo.
+ * ========================================================================== */
 
-.sg-chiama {
+/* ------------------------------------------------------------ lanciatore */
+
+.sg-lancia {
   position: fixed; bottom: var(--sg-basso); z-index: 99998;
-  display: inline-flex; align-items: center; gap: .5rem;
-  min-height: 48px; padding: 0 1.15rem;
-  font: inherit; font-size: .9375rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: .55rem;
+  min-height: 52px; padding: 0 1.25rem;
+  font-family: inherit; font-size: .9375rem; font-weight: 600; line-height: 1;
   color: var(--sg-testo); background: var(--sg-colore);
   border: 0; border-radius: 999px; cursor: pointer;
-  box-shadow: 0 10px 30px -8px var(--sg-accento-tenue), 0 2px 8px rgba(0,0,0,.10);
+  box-shadow: 0 10px 30px -8px var(--sg-accento-tenue), 0 2px 10px rgba(0,0,0,.14);
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
-.sg-chiama--destra { right: 1rem; }
-.sg-chiama--sinistra { left: 1rem; }
-.sg-chiama:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -10px var(--sg-accento-tenue), 0 3px 10px rgba(0,0,0,.12); }
+.sg-lancia--destra { right: 1rem; }
+.sg-lancia--sinistra { left: 1rem; }
+.sg-lancia:hover { transform: translateY(-2px); box-shadow: 0 16px 38px -10px var(--sg-accento-tenue), 0 3px 12px rgba(0,0,0,.16); }
+.sg-lancia__segno { display: inline-flex; }
 
-.sg-bolla {
-  position: fixed; bottom: calc(var(--sg-basso) + 3.75rem); z-index: 99998;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 48px; height: 48px;
-  color: var(--sg-testo); background: var(--sg-colore);
-  border: 0; border-radius: 50%; cursor: pointer;
-  box-shadow: 0 10px 30px -8px var(--sg-accento-tenue), 0 2px 8px rgba(0,0,0,.10);
+/* Il pulsante dentro il contenuto, dallo shortcode. */
+.sg-invito {
+  display: inline-flex; align-items: center; gap: .5rem;
+  min-height: 48px; padding: 0 1.15rem;
+  font-family: inherit; font-size: .9375rem; font-weight: 600;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
 }
 
-.sg-bolla--destra { right: 1rem; }
-.sg-bolla--sinistra { left: 1rem; }
+.sg-invito:hover { border-color: var(--sg-colore); background: var(--sg-accento-tenue); }
 
-.sg-assistente { position: fixed; inset: 0; z-index: 100001; }
-.sg-assistente[hidden] { display: none; }
-.sg-assistente__velo { position: absolute; inset: 0; background: var(--sg-velo); }
+/* -------------------------------------------------------------- finestra */
 
-.sg-assistente__foglio {
-  position: absolute; right: 1rem; bottom: 1rem;
-  width: min(24.5rem, calc(100vw - 2rem));
-  height: min(38rem, calc(100vh - 2rem));
+.sg-finestra { position: fixed; inset: 0; z-index: 100000; }
+.sg-finestra[hidden] { display: none; }
+
+.sg-finestra__velo {
+  position: absolute; inset: 0;
+  background: var(--sg-velo);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+}
+
+/*
+ * Grande e al centro. Un riquadro in un angolo va bene per l'assistenza, dove
+ * si legge una riga per volta; qui dentro ci sono griglie di prodotti con le
+ * fotografie, e in un angolo se ne vedrebbero due.
+ *
+ * `dvh` e non `vh`: su iOS la barra del browser compare e scompare mentre si
+ * scorre, e con `vh` la riga di comando finisce sotto quella barra proprio
+ * mentre si scrive.
+ */
+.sg-finestra__foglio {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(68rem, calc(100vw - 3rem));
+  height: min(52rem, calc(100vh - 3rem));
+  height: min(52rem, calc(100dvh - 3rem));
   display: flex; flex-direction: column;
   background: var(--sg-fondo);
   border: 1px solid var(--sg-linea);
@@ -674,162 +588,304 @@ body.sg-bloccato { overflow: hidden; }
   overflow: hidden;
 }
 
-/* La testa e' una riga sottile: il contenuto e' la conversazione. */
-.sg-assistente__testa {
-  display: flex; align-items: center; gap: .5rem;
-  padding: .7rem .5rem .7rem 1rem;
+.sg-finestra__testa {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: 1rem;
+  padding: .7rem .7rem .7rem 1rem;
   background: var(--sg-carta);
   border-bottom: 1px solid var(--sg-linea);
 }
 
-.sg-assistente__titolo {
+.sg-finestra__titolo {
   flex: 1 1 auto;
   font-family: var(--sg-titolo-font);
-  font-size: 1rem; font-weight: 600; color: var(--sg-inchiostro);
+  font-size: 1.0625rem; font-weight: 600; color: var(--sg-inchiostro);
 }
 
-.sg-assistente__pulisci {
-  padding: .3rem .6rem;
-  font: inherit; font-size: .75rem;
-  color: var(--sg-inchiostro-2); background: none;
-  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
-}
-
-.sg-assistente__pulisci:hover { color: var(--sg-inchiostro); border-color: var(--sg-inchiostro-2); }
-.sg-assistente__pulisci[hidden] { display: none; }
-
-.sg-assistente__chiudi {
+.sg-finestra__chiudi {
+  flex: 0 0 auto; margin-left: auto;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 2rem; height: 2rem;
-  font-size: 1.25rem; line-height: 1;
+  width: 2.4rem; height: 2.4rem;
   color: var(--sg-inchiostro-2); background: none;
   border: 1px solid var(--sg-linea); border-radius: 50%; cursor: pointer;
 }
 
-.sg-assistente__chiudi:hover { color: var(--sg-inchiostro); background: var(--sg-fondo); }
+.sg-finestra__chiudi:hover { color: var(--sg-inchiostro); background: var(--sg-fondo); }
 
-.sg-assistente__corpo {
-  flex: 1 1 auto; padding: 1rem;
+/* ------------------------------------------------------ le tre linguette */
+
+/*
+ * Un interruttore segmentato, non tre pulsanti staccati: i tre modi sono
+ * alternative fra loro, e la forma lo deve dire prima delle parole.
+ */
+.sg-modi {
+  display: inline-flex; gap: .15rem;
+  padding: .2rem;
+  background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
+  border-radius: 999px;
+}
+
+.sg-modo {
+  min-height: 40px; padding: 0 1.05rem;
+  font-family: inherit; font-size: .875rem; font-weight: 500; line-height: 1;
+  color: var(--sg-inchiostro-2); background: none;
+  border: 0; border-radius: 999px; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.sg-modo:hover { color: var(--sg-inchiostro); }
+
+.sg-modo[aria-selected="true"] {
+  color: var(--sg-testo); background: var(--sg-colore);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------- i pannelli */
+
+.sg-pannello { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.sg-pannello[hidden] { display: none; }
+
+.sg-pannello__corpo {
+  flex: 1 1 auto; min-height: 0;
+  padding: 1rem;
   overflow-y: auto; overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  display: flex; flex-direction: column; gap: .6rem;
 }
 
-.sg-msg { max-width: 100%; }
+.sg-pannello--chat .sg-pannello__corpo { display: flex; flex-direction: column; gap: .6rem; }
 
-.sg-msg__testo {
-  padding: .65rem .9rem;
-  font-size: .9375rem; line-height: 1.55;
-  white-space: pre-wrap;  /* l'assistente va a capo: si rispetta */
-  overflow-wrap: anywhere;
-}
+/* Quando si trascina una foto sopra il pannello, il pannello lo dice. */
+.sg-pannello--goccia { outline: 2px dashed var(--sg-colore); outline-offset: -.6rem; }
 
-.sg-msg--cliente { align-self: flex-end; max-width: 85%; }
+/* --------------------------------------------------- la riga di comando */
 
-.sg-msg--cliente .sg-msg__testo {
-  color: var(--sg-testo); background: var(--sg-colore);
-  border-radius: var(--sg-raggio-l) var(--sg-raggio-s) var(--sg-raggio-l) var(--sg-raggio-l);
-}
-
-.sg-msg--assistente { align-self: flex-start; max-width: 92%; }
-
-.sg-msg--assistente .sg-msg__testo {
-  color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea);
-  border-radius: var(--sg-raggio-s) var(--sg-raggio-l) var(--sg-raggio-l) var(--sg-raggio-l);
-}
-
-.sg-msg--male .sg-msg__testo { color: #8A2E2E; background: #FBF0F0; border-color: #F0D8D8; }
-.sg-msg--attesa .sg-msg__testo { color: var(--sg-inchiostro-2); font-style: italic; }
-
-.sg-avvii { display: flex; flex-direction: column; gap: .35rem; margin-top: .6rem; }
-
-.sg-avvio {
-  padding: .55rem .85rem; min-height: 44px;
-  font: inherit; font-size: .875rem; text-align: left;
-  color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea); border-radius: 999px;
-  cursor: pointer;
-}
-
-.sg-avvio:hover { border-color: var(--sg-colore); background: var(--sg-accento-tenue); }
-
-/* Il composer e' una pillola: campo dentro, pulsante tondo accanto. */
-.sg-assistente__modulo {
+.sg-riga-comando {
+  flex: 0 0 auto;
   display: flex; align-items: flex-end; gap: .5rem;
-  padding: .65rem .75rem;
+  padding: .75rem;
   background: var(--sg-carta);
   border-top: 1px solid var(--sg-linea);
 }
 
-.sg-assistente__campo {
+.sg-campo {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; align-items: center; gap: .5rem;
+  padding: .2rem .3rem .2rem .9rem;
+  background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
+  border-radius: 999px;
+}
+
+.sg-campo:focus-within { border-color: var(--sg-colore); }
+.sg-campo__segno { flex: 0 0 auto; color: var(--sg-inchiostro-2); }
+
+.sg-campo input[type="search"] {
+  flex: 1 1 auto; min-width: 0;
+  padding: .6rem 0;
+  font-family: inherit; font-size: 1rem;  /* sotto i 16px iOS ingrandisce da solo */
+  color: var(--sg-inchiostro); background: none;
+  border: 0; -webkit-appearance: none; appearance: none;
+}
+
+.sg-campo input[type="search"]:focus { outline: none; }
+.sg-campo input[type="search"]::-webkit-search-cancel-button { display: none; }
+
+.sg-campo__pulisci {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem;
+  color: var(--sg-inchiostro-2); background: none;
+  border: 0; border-radius: 50%; cursor: pointer;
+}
+
+.sg-campo__pulisci:hover { color: var(--sg-inchiostro); background: var(--sg-carta); }
+.sg-campo__pulisci[hidden] { display: none; }
+
+/* Il campo dell'assistente e' un'area di testo che cresce con il contenuto. */
+.sg-campo--testo {
   flex: 1 1 auto; min-width: 0;
   max-height: 120px; padding: .65rem 1rem;
-  font: inherit; font-size: 1rem; line-height: 1.4;
+  font-family: inherit; font-size: 1rem; line-height: 1.4;
   color: var(--sg-inchiostro); background: var(--sg-fondo);
   border: 1px solid var(--sg-linea); border-radius: 999px;
   resize: none;
 }
 
-.sg-assistente__campo:focus { border-color: var(--sg-colore); outline: none; }
+.sg-campo--testo:focus { border-color: var(--sg-colore); outline: none; }
 
-.sg-assistente__invia,
-.sg-assistente__ferma {
+.sg-invia {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 46px; padding: 0 1.3rem;
+  font-family: inherit; font-size: .9375rem; font-weight: 600;
+  color: var(--sg-testo); background: var(--sg-colore);
+  border: 0; border-radius: 999px; cursor: pointer;
+}
+
+.sg-invia--largo { flex: 1 1 auto; }
+.sg-invia:hover { opacity: .92; }
+
+.sg-tondo {
   flex: 0 0 auto;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px;
+  width: 46px; height: 46px;
+  color: var(--sg-testo); background: var(--sg-colore);
   border: 0; border-radius: 50%; cursor: pointer;
 }
 
-.sg-assistente__invia { color: var(--sg-testo); background: var(--sg-colore); }
-.sg-assistente__invia:disabled { opacity: .45; cursor: default; }
-.sg-assistente__invia[hidden] { display: none; }
+.sg-tondo[hidden] { display: none; }
+.sg-tondo:disabled { opacity: .45; cursor: default; }
 
-.sg-assistente__ferma {
+.sg-tondo--fermo {
   color: var(--sg-inchiostro); background: var(--sg-fondo);
   border: 1px solid var(--sg-linea);
 }
 
-.sg-assistente__ferma[hidden] { display: none; }
-
-.sg-assistente__nota {
-  margin: 0; padding: 0 1rem .7rem;
+.sg-nota {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  margin: 0; padding: 0 1rem .75rem;
   font-size: .75rem; line-height: 1.4; color: var(--sg-inchiostro-2);
   background: var(--sg-carta);
 }
 
-/* ------------------------------------------------------------ formati */
+.sg-ricomincia {
+  padding: .25rem .7rem;
+  font-family: inherit; font-size: .75rem;
+  color: var(--sg-inchiostro-2); background: none;
+  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
+}
 
-@media (max-width: 60rem) {
-  .sg-pagina__corpo { grid-template-columns: 1fr; gap: 1.5rem; }
+.sg-ricomincia:hover { color: var(--sg-inchiostro); border-color: var(--sg-inchiostro-2); }
+.sg-ricomincia[hidden] { display: none; }
 
-  /*
-   * Su schermi stretti i filtri non stanno di lato: diventano una fascia
-   * orizzontale sopra i risultati, che si legge senza scorrere due volte.
-   */
-  .sg-filtri {
-    position: static;
-    flex-direction: row; flex-wrap: wrap; gap: 1rem 1.5rem;
-    align-items: flex-start;
-    padding-bottom: 1.25rem; border-bottom: 1px solid var(--sg-linea);
-  }
+/* ------------------------------------------------- dentro: stati e attesa */
 
-  .sg-filtri__titolo { width: 100%; }
-  .sg-filtri__voci { display: flex; flex-wrap: wrap; gap: 0 1rem; }
-  .sg-prezzo-limiti input { width: 5.5rem; }
+.sg-attesa { display: flex; flex-direction: column; align-items: center; gap: .75rem; padding: 3rem 1rem; }
+.sg-attesa__testo { margin: 0; color: var(--sg-inchiostro-2); }
+
+.sg-invito-foto { max-width: 26rem; margin: 3rem auto; text-align: center; }
+
+.sg-invito-foto__titolo {
+  margin: 0 0 .5rem;
+  font-family: var(--sg-titolo-font);
+  font-size: 1.25rem; color: var(--sg-inchiostro);
+}
+
+.sg-invito-foto__testo { margin: 0; line-height: 1.6; color: var(--sg-inchiostro-2); }
+
+.sg-con-foto {
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+  margin-bottom: 1rem; padding: .5rem .75rem;
+  background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
+}
+
+.sg-con-foto__img {
+  width: 2.6rem; height: 2.6rem; object-fit: cover;
+  border-radius: 50%; background: var(--sg-fondo);
+}
+
+.sg-con-foto__testo { flex: 1 1 auto; margin: 0; font-size: .9375rem; color: var(--sg-inchiostro); }
+
+.sg-con-foto__via {
+  padding: .35rem .8rem; min-height: 36px;
+  font-family: inherit; font-size: .8125rem;
+  color: var(--sg-inchiostro-2); background: none;
+  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
+}
+
+/* ------------------------------------------- dentro: barra dei risultati */
+
+.sg-barra-esiti {
+  display: flex; align-items: center; gap: .75rem 1rem; flex-wrap: wrap;
+  margin-bottom: 1rem; padding-bottom: .85rem;
+  border-bottom: 1px solid var(--sg-linea);
+}
+
+.sg-barra-esiti__conto { margin: 0; font-size: .9375rem; color: var(--sg-inchiostro-2); }
+.sg-barra-esiti__comandi { display: flex; align-items: center; gap: .5rem 1rem; flex-wrap: wrap; margin-left: auto; }
+.sg-filtri-veloci { display: flex; flex-wrap: wrap; gap: .35rem; }
+
+.sg-pastiglia {
+  display: inline-flex; align-items: center;
+  min-height: 2.25rem; padding: .3rem .85rem;
+  font-family: inherit; font-size: .8125rem;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
+}
+
+.sg-pastiglia:hover { border-color: var(--sg-inchiostro-2); }
+.sg-pastiglia[aria-pressed="true"] { color: var(--sg-testo); background: var(--sg-colore); border-color: var(--sg-colore); }
+
+.sg-ordina {
+  min-height: 2.25rem; padding: .3rem 2rem .3rem .9rem;
+  font-family: inherit; font-size: .8125rem;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
 }
 
 /*
- * LE RIGHE SUL TELEFONO.
- *
- * Misurato su una risposta con dieci schede: ogni riga era alta 85 pixel e
- * l'elenco occupava tre schermate, mentre il nome si troncava a meta' parola
- * perche' il cartellino del prezzo si prendeva un terzo della larghezza.
- * Qui la foto si stringe, il testo cala di un gradino e sotto la risposta
- * dell'assistente sparisce la categoria — che li' e' gia' detta dal testo
- * sopra. La riga scende a poco piu' di 50 pixel, e dieci schede stanno in
- * una schermata e mezza invece che in tre.
+ * Il collegamento alla pagina dei risultati sta IN FONDO, dopo le schede: e'
+ * un "e se non basta", non un comando. In cima si prendeva una riga intera
+ * sopra i prodotti, cioe' il posto migliore per la cosa meno importante.
  */
+.sg-tutti {
+  display: block;
+  margin: 1.25rem auto 0; padding: .6rem 1.4rem;
+  font-size: .875rem; font-weight: 600; text-align: center; text-decoration: none;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
+  width: fit-content;
+}
+
+.sg-tutti:hover { background: var(--sg-colore); color: var(--sg-testo); border-color: var(--sg-colore); }
+
+.sg-vai {
+  display: flex; align-items: center; gap: .65rem; width: 100%;
+  min-height: 48px; padding: .6rem .85rem; margin-bottom: .5rem;
+  font-family: inherit; font-size: 1rem; text-align: left;
+  color: var(--sg-inchiostro); background: var(--sg-accento-tenue);
+  border: 1px solid transparent; border-radius: var(--sg-raggio); cursor: pointer;
+}
+
+.sg-vai:hover { background: var(--sg-colore); color: var(--sg-testo); }
+a.sg-vai { text-decoration: none; }
+.sg-vai__segno { font-size: 1.15rem; line-height: 1; opacity: .65; }
+.sg-vai__testo { font-weight: 500; }
+
+/* ------------------------------------------------------------ formati */
+
+/*
+ * SUL TELEFONO LA FINESTRA E' LO SCHERMO. Un riquadro con i margini, su 390
+ * pixel, lascerebbe due colonne di schede larghe centosessanta pixel e un
+ * bordo che non serve a niente.
+ */
+@media (max-width: 48rem) {
+  .sg-finestra__foglio {
+    top: 0; left: 0; transform: none;
+    width: 100%; height: 100%; height: 100dvh;
+    border: 0; border-radius: 0;
+  }
+
+  .sg-finestra__testa { padding: .6rem .6rem .6rem .8rem; gap: .5rem; }
+  .sg-modi { flex: 1 1 auto; justify-content: space-between; }
+  .sg-modo { flex: 1 1 0; padding: 0 .5rem; }
+  .sg-pannello__corpo { padding: .85rem; }
+  .sg-riga-comando { padding: .6rem; }
+  .sg-nota { padding: 0 .8rem .6rem; font-size: .6875rem; }
+
+  .sg-lancia {
+    bottom: calc(var(--sg-basso) + env(safe-area-inset-bottom, 0px));
+    width: 54px; height: 54px; min-height: 54px; padding: 0;
+    justify-content: center;
+  }
+
+  .sg-lancia__testo { display: none; }
+}
+
+/* Su schermi molto stretti anche le griglie si stringono. */
 @media (max-width: 30rem) {
   .sg-riga { gap: .55rem; padding: .4rem; }
   .sg-riga__foto { width: 2.9rem; height: 2.9rem; }
@@ -839,57 +895,53 @@ body.sg-bloccato { overflow: hidden; }
 
   /*
    * Il cartellino si stringe. Ogni pixel che prende e' un pixel in meno per il
-   * nome, e su questo catalogo la scritta piu' lunga non e' nemmeno un prezzo
-   * ma "Su richiesta", che compare sui prodotti a cui manca il prezzo.
+   * nome, e la scritta piu' lunga non e' nemmeno un prezzo ma "Su richiesta".
    */
   .sg-cartellino { padding: .2rem .5rem; font-size: .6875rem; }
+
+  .sg-griglia { grid-template-columns: repeat(2, 1fr); gap: 1.1rem .7rem; }
+  .sg-scheda__nome { font-size: .9375rem; }
 }
 
-@media (max-width: 48rem) {
-  .sg-pannello__foglio {
-    width: 100%; max-height: 100%; height: 100%;
-    margin: 0; border-radius: 0;
+@media (max-width: 60rem) {
+  .sg-pagina__corpo { grid-template-columns: 1fr; gap: 1.5rem; }
+
+  /*
+   * Su schermi stretti i filtri della pagina non stanno di lato: diventano una
+   * fascia orizzontale sopra i risultati, che si legge senza scorrere due volte.
+   */
+  .sg-filtri {
+    position: static;
+    flex-direction: row; flex-wrap: wrap; gap: 1rem 1.5rem;
+    align-items: flex-start;
+    max-height: none;
+    padding-bottom: 1.25rem; border-bottom: 1px solid var(--sg-linea);
   }
 
-  .sg-griglia { grid-template-columns: repeat(2, 1fr); gap: 1.5rem .9rem; }
+  .sg-filtri__titolo { width: 100%; }
+  .sg-filtri__voci { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+  .sg-prezzo-limiti input { width: 5.5rem; }
 
   .sg-cerca__riga { flex-wrap: wrap; }
   .sg-cerca__campo { flex: 1 1 100%; }
   .sg-cerca__foto, .sg-cerca__invio { flex: 1 1 0; justify-content: center; }
-
   .sg-esiti__barra { flex-wrap: wrap; gap: .5rem; }
-
-  /*
-   * L'altezza si misura in dvh e non in percentuale: su iOS la barra del
-   * browser compare e scompare mentre si scorre, e con le percentuali il
-   * campo di scrittura finisce sotto quella barra proprio mentre si scrive.
-   */
-  .sg-assistente__foglio {
-    right: 0; bottom: 0; left: 0;
-    width: 100%; height: 92%; height: 92dvh;
-    border-radius: var(--sg-raggio-l) var(--sg-raggio-l) 0 0;
-  }
-
-  .sg-assistente__corpo { padding: .85rem; }
-  .sg-assistente__nota { padding: 0 .85rem .6rem; font-size: .6875rem; }
-
-  /* Il pulsante non deve stare sopra le barre fisse dei temi. */
-  .sg-chiama { bottom: calc(var(--sg-basso) + env(safe-area-inset-bottom, 0px)); }
-  .sg-chiama__testo { display: none; }
-  .sg-chiama { width: 52px; height: 52px; padding: 0; justify-content: center; }
 }
 
 /* Dove si tocca con il dito, i bersagli piccoli diventano grandi. */
 @media (pointer: coarse) {
-  .sg-barra__pulisci, .sg-barra__foto { width: 44px; height: 44px; }
-  .sg-pannello__chiudi, .sg-assistente__chiudi { width: 44px; height: 44px; }
-  .sg-pastiglia { min-height: 44px; }
+  .sg-finestra__chiudi,
+  .sg-campo__pulisci { width: 44px; height: 44px; }
+  .sg-modo { min-height: 44px; }
+  .sg-pastiglia, .sg-ordina, .sg-con-foto__via, .sg-ricomincia { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sg-scheda__foto img,
-  .sg-chiama { transition: none; transform: none; }
-  .sg-scheda__link:hover .sg-scheda__foto img { transform: none; }
+  .sg-lancia,
+  .sg-modo { transition: none; }
+  .sg-lancia:hover { transform: none; }
+  .sg-scheda:hover .sg-scheda__foto img { transform: none; }
 }
 
 /* ------------------------------------------- suggerimenti mentre si scrive */
@@ -1030,3 +1082,25 @@ body.sg-bloccato { overflow: hidden; }
 .sg-msg__testo:has(p),
 .sg-msg__testo:has(ul),
 .sg-msg__testo:has(ol) { white-space: normal; }
+
+/* ------------------------------------------ le categorie, in apertura */
+
+/*
+ * Sono la mappa del negozio: dicono in un colpo d'occhio che cosa si vende, e
+ * danno un punto di partenza a chi apre la finestra senza una parola in mente.
+ */
+.sg-categorie { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+.sg-categoria {
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  min-height: 44px; padding: .5rem .9rem;
+  font-size: .9375rem; text-decoration: none;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
+}
+
+.sg-categoria:hover { border-color: var(--sg-colore); background: var(--sg-accento-tenue); }
+.sg-categoria__conto { font-size: .75rem; color: var(--sg-inchiostro-2); }
+
+/* Il lanciatore non serve mentre la finestra e' aperta: la copre e basta. */
+body.sg-finestra-aperta .sg-lancia { display: none; }

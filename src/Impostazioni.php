@@ -41,7 +41,6 @@ final class Impostazioni {
 			'attivo'              => false,
 
 			// Presentazione
-			'modalita'            => 'barra',   // barra | fluttuante | finestra
 			'posizione'           => 'destra',  // destra | sinistra
 			/*
 			 * La combinazione di colori. `tema` non scrive nulla e lascia
@@ -50,12 +49,39 @@ final class Impostazioni {
 			'palette'             => 'tema',
 			'colori'              => array(),
 			'raggio'              => 10,
+
+			/*
+			 * Quali modalita' offre la finestra. Sono tre bisogni diversi:
+			 * "trova questo" (cerca), "trova qualcosa che somigli a questo"
+			 * (foto), "aiutami a scegliere" (assistente). Un negozio puo'
+			 * accenderne una sola.
+			 *
+			 * Cio' che il servizio non dichiara non compare comunque, anche se
+			 * qui e' acceso: le impostazioni dicono cosa si vuole, il contratto
+			 * dice cosa si puo'.
+			 */
+			'modi'                => array( 'cerca', 'foto', 'chat' ),
+			'etichetta_avvio'     => '',
+
+			/*
+			 * Dove finiscono i risultati della ricerca a parole.
+			 *
+			 *   pagina    si va alla pagina dei risultati, che e' un indirizzo
+			 *             vero: si condivide, il tasto Indietro funziona, e c'e'
+			 *             spazio per i filtri.
+			 *   finestra  restano dentro il widget. Serve a chi non vuole una
+			 *             pagina in piu' nel sito, o non la mette nel menu.
+			 *
+			 * La foto e l'assistente restano SEMPRE nella finestra: una foto non
+			 * si puo' mettere in un indirizzo, e una conversazione non e' una
+			 * pagina.
+			 */
+			'risultati'           => 'pagina',
 			'etichetta'           => '',
 			'segnaposto'          => '',
 			'saluto'              => '',
 			'solo_su'             => array(),   // vuoto = ovunque
 			'sostituisci_ricerca' => false,
-			'assistente'          => true,
 
 			// Catalogo
 			'sincro_automatica'   => true,
@@ -121,12 +147,10 @@ final class Impostazioni {
 			case 'chiave':
 			case 'workspace':
 			case 'etichetta':
+			case 'etichetta_avvio':
 			case 'segnaposto':
 			case 'saluto':
 				return sanitize_text_field( (string) $valore );
-
-			case 'modalita':
-				return in_array( $valore, array( 'barra', 'fluttuante', 'finestra' ), true ) ? (string) $valore : 'barra';
 
 			case 'posizione':
 				return 'sinistra' === $valore ? 'sinistra' : 'destra';
@@ -163,6 +187,21 @@ final class Impostazioni {
 			case 'solo_su':
 				$valore = is_array( $valore ) ? $valore : array();
 				return array_values( array_filter( array_map( 'sanitize_key', $valore ) ) );
+
+			case 'risultati':
+				return 'finestra' === $valore ? 'finestra' : 'pagina';
+
+			case 'modi':
+				$ammessi = array( 'cerca', 'foto', 'chat' );
+				$scelti  = array_values( array_intersect( $ammessi, array_map( 'sanitize_key', (array) $valore ) ) );
+
+				/*
+				 * Spegnere tutte le modalita' equivale a spegnere il plugin, ma
+				 * in un modo che non si capisce: il pulsante sparisce e le
+				 * impostazioni continuano a dire "attivo". Se non ne resta
+				 * nessuna si torna alla ricerca, che e' la funzione di base.
+				 */
+				return empty( $scelti ) ? array( 'cerca' ) : $scelti;
 
 			default:
 				return (bool) $valore;

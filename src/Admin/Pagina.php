@@ -139,7 +139,6 @@ final class Pagina {
 
 		if ( in_array( 'aspetto', $gruppi, true ) ) {
 			$nuove += array(
-				'modalita'   => $inviate['modalita'] ?? 'barra',
 				'posizione'  => $inviate['posizione'] ?? 'destra',
 				'palette'    => $inviate['palette'] ?? 'tema',
 				'colori'     => (array) ( $inviate['colori'] ?? array() ),
@@ -149,7 +148,9 @@ final class Pagina {
 				'saluto'     => $inviate['saluto'] ?? '',
 				'solo_su'    => $inviate['solo_su'] ?? array(),
 				'sostituisci_ricerca' => isset( $inviate['sostituisci_ricerca'] ),
-				'assistente'          => isset( $inviate['assistente'] ),
+				'modi'                => (array) ( $inviate['modi'] ?? array() ),
+				'risultati'           => $inviate['risultati'] ?? 'pagina',
+				'etichetta_avvio'     => $inviate['etichetta_avvio'] ?? '',
 			);
 		}
 

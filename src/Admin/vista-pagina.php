@@ -90,27 +90,6 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 			<h2 class="title"><?php esc_html_e( 'Aspetto', 'storegentic' ); ?></h2>
 			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Come compare', 'storegentic' ); ?></th>
-					<td>
-						<fieldset>
-							<?php
-							$modi = array(
-								'barra'      => __( 'Barra di ricerca — la inserisci dove vuoi con lo shortcode [storegentic]', 'storegentic' ),
-								'fluttuante' => __( 'Pulsante fluttuante — sempre presente in un angolo', 'storegentic' ),
-								'finestra'   => __( 'Solo finestra — si apre da un tuo elemento con attributo data-storegentic', 'storegentic' ),
-							);
-							foreach ( $modi as $valore => $etichetta ) :
-								?>
-								<label style="display:block;margin-block-end:.4rem">
-									<input type="radio" name="modalita" value="<?php echo esc_attr( $valore ); ?>"
-									       <?php checked( (string) $i['modalita'], $valore ); ?>>
-									<?php echo esc_html( $etichetta ); ?>
-								</label>
-							<?php endforeach; ?>
-						</fieldset>
-					</td>
-				</tr>
-				<tr>
 					<th scope="row"><label for="sg-posizione"><?php esc_html_e( 'Angolo del pulsante', 'storegentic' ); ?></label></th>
 					<td>
 						<select id="sg-posizione" name="posizione">
@@ -200,11 +179,58 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Assistente', 'storegentic' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Che cosa offre la finestra', 'storegentic' ); ?></th>
 					<td>
-						<label><input type="checkbox" name="assistente" <?php checked( (bool) $i['assistente'] ); ?>>
-							<?php esc_html_e( 'Mostra il pulsante dell’assistente sul sito', 'storegentic' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Compare solo se il servizio dichiara la conversazione fra le funzioni attive.', 'storegentic' ); ?></p>
+						<fieldset>
+							<?php
+							$sg_modi = array(
+								'cerca' => array( __( 'Ricerca a parole', 'storegentic' ), __( 'Chi sa che cosa vuole lo descrive e lo trova.', 'storegentic' ) ),
+								'foto'  => array( __( 'Ricerca con una foto', 'storegentic' ), __( 'Si carica una foto e si trovano i prodotti che le somigliano.', 'storegentic' ) ),
+								'chat'  => array( __( 'Assistente', 'storegentic' ), __( 'Chi non sa che cosa vuole lo chiede a parole sue.', 'storegentic' ) ),
+							);
+							$sg_accesi     = (array) $i['modi'];
+							$sg_disponibili = array_keys( \Storegentic\Frontend\Finestra::modi() );
+							foreach ( $sg_modi as $sg_nome => $sg_voce ) :
+								?>
+								<label style="display:block;margin-block-end:.5rem">
+									<input type="checkbox" name="modi[]" value="<?php echo esc_attr( $sg_nome ); ?>"
+									       <?php checked( in_array( $sg_nome, $sg_accesi, true ) ); ?>>
+									<strong><?php echo esc_html( $sg_voce[0] ); ?></strong>
+									<span class="description"> — <?php echo esc_html( $sg_voce[1] ); ?></span>
+									<?php if ( in_array( $sg_nome, $sg_accesi, true ) && ! in_array( $sg_nome, $sg_disponibili, true ) ) : ?>
+										<em style="color:#b32d2e"><?php esc_html_e( '(il servizio non la dichiara: non compare)', 'storegentic' ); ?></em>
+									<?php endif; ?>
+								</label>
+							<?php endforeach; ?>
+						</fieldset>
+						<p class="description"><?php esc_html_e( 'Una modalità compare solo se la vuoi tu e se il servizio la dichiara. Un comando che risponde «non disponibile» è peggio di un comando assente.', 'storegentic' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Dove vanno i risultati', 'storegentic' ); ?></th>
+					<td>
+						<fieldset>
+							<label style="display:block;margin-block-end:.4rem">
+								<input type="radio" name="risultati" value="pagina" <?php checked( (string) $i['risultati'], 'pagina' ); ?>>
+								<strong><?php esc_html_e( 'Nella pagina dei risultati', 'storegentic' ); ?></strong>
+								<span class="description"> — <?php echo esc_html( sprintf( __( 'un indirizzo vero (%s): si condivide, il tasto Indietro funziona, c’è spazio per i filtri.', 'storegentic' ), wp_parse_url( \Storegentic\Frontend\Pagina::indirizzo(), PHP_URL_PATH ) ) ); ?></span>
+							</label>
+							<label style="display:block">
+								<input type="radio" name="risultati" value="finestra" <?php checked( (string) $i['risultati'], 'finestra' ); ?>>
+								<strong><?php esc_html_e( 'Dentro la finestra', 'storegentic' ); ?></strong>
+								<span class="description"> — <?php esc_html_e( 'niente pagine in più nel sito: il widget basta a sé stesso.', 'storegentic' ); ?></span>
+							</label>
+						</fieldset>
+						<p class="description"><?php esc_html_e( 'La ricerca con la foto e l’assistente restano sempre nella finestra: una foto non si può mettere in un indirizzo, e una conversazione non è una pagina.', 'storegentic' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="sg-etichetta-avvio"><?php esc_html_e( 'Testo del pulsante', 'storegentic' ); ?></label></th>
+					<td>
+						<input type="text" id="sg-etichetta-avvio" name="etichetta_avvio" class="regular-text"
+						       value="<?php echo esc_attr( (string) $i['etichetta_avvio'] ); ?>"
+						       placeholder="<?php echo esc_attr( \Storegentic\Frontend\Finestra::etichetta() ); ?>">
+						<p class="description"><?php esc_html_e( 'Lasciandolo vuoto il testo si adatta alle modalità accese.', 'storegentic' ); ?></p>
 					</td>
 				</tr>
 				<tr>
