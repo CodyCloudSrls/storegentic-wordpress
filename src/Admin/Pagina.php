@@ -187,6 +187,27 @@ final class Pagina {
 			$nuove['chiave'] = $chiave;
 		}
 
+		/*
+		 * UN INDIRIZZO NUOVO SI PROVA PRIMA DI SALVARLO.
+		 *
+		 * Quel campo e' l'unico che possa scollegare il negozio: sbagliarlo
+		 * spegne ricerca, ricerca per foto e assistente su tutte le pagine, e
+		 * lo si scopre guardando il sito, non il pannello. Se non risponde si
+		 * tiene quello di prima e si salva tutto il resto: chi stava cambiando
+		 * altre impostazioni non le perde per colpa di un indirizzo sbagliato.
+		 */
+		$avviso = '';
+		$nuovo  = untrailingslashit( trim( (string) ( $nuove['base'] ?? '' ) ) );
+
+		if ( '' !== $nuovo && $nuovo !== untrailingslashit( (string) Impostazioni::leggi( 'base' ) ) ) {
+			$esito = Impostazioni::base_risponde( $nuovo );
+
+			if ( true !== $esito ) {
+				unset( $nuove['base'] );
+				$avviso = (string) $esito;
+			}
+		}
+
 		Impostazioni::salva( $nuove );
 
 		/*
@@ -203,7 +224,13 @@ final class Pagina {
 			Pianificatore::spegni_periodica();
 		}
 
-		wp_safe_redirect( self::url( array( 'salvato' => 1 ) ) );
+		wp_safe_redirect(
+			self::url(
+				'' === $avviso
+					? array( 'salvato' => 1 )
+					: array( 'salvato' => 1, 'errore' => rawurlencode( $avviso ) )
+			)
+		);
 		exit;
 	}
 

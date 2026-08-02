@@ -26,6 +26,27 @@ final class Impostazioni {
 	public const CHIAVE = PREFISSO_OPZIONI . 'impostazioni';
 
 	/**
+	 * Gli indirizzi ufficiali del servizio.
+	 *
+	 * E' l'UNICA cosa che il plugin sappia degli indirizzi di Storegentic:
+	 * dove chiedere il contratto. Tutto il resto — quali funzioni esistono,
+	 * quali indirizzi usare, quali limiti valgono — lo dichiara il contratto
+	 * stesso a ogni installazione. Vedi Api\Contratto.
+	 *
+	 * Stanno in un elenco e non in una stringa libera perche' sbagliare a
+	 * digitare un indirizzo qui scollega il negozio, e perche' quando il
+	 * servizio ne aggiunge uno basta aggiornare il plugin invece di scrivere a
+	 * ogni cliente.
+	 *
+	 * @var array<string,string>
+	 */
+	public const INDIRIZZI = array(
+		'https://api.storegentic.eu'   => 'Produzione',
+		'https://app.storegentic.eu'   => 'Produzione (app)',
+		'https://embed.storegentic.eu' => 'Produzione (embed)',
+	);
+
+	/**
 	 * Valori predefiniti.
 	 *
 	 * `base` e' l'unico indirizzo scritto nel plugin, e serve solo a chiedere
@@ -35,7 +56,7 @@ final class Impostazioni {
 	 */
 	public static function predefinite(): array {
 		return array(
-			'base'                => 'https://adam.storegentic.eu',
+			'base'                => 'https://api.storegentic.eu',
 			'chiave'              => '',
 			'workspace'           => '',
 			'attivo'              => false,
@@ -262,6 +283,65 @@ final class Impostazioni {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * L'indirizzo risponde davvero?
+	 *
+	 * Si chiede il contratto e si guarda se torna qualcosa di sensato. Serve a
+	 * non salvare un indirizzo che non risponde: cambiare quel campo su un
+	 * negozio in funzione ne spegne ricerca, ricerca per foto e assistente, e
+	 * lo si scopre guardando il sito, non il pannello.
+	 *
+	 * Non giudica la chiave: una chiave rifiutata (401, 403) dimostra che
+	 * dall'altra parte c'e' il servizio, che e' quello che si sta verificando.
+	 *
+	 * @return true|string true, oppure il motivo per cui non va.
+	 */
+	public static function base_risponde( string $url ) {
+		$risposta = wp_remote_post(
+			untrailingslashit( $url ) . '/v1/commerce/plugin/handshake',
+			array(
+				'timeout' => 15,
+				'headers' => array(
+					'Authorization' => 'Bearer ' . (string) self::leggi( 'chiave' ),
+					'Content-Type'  => 'application/json',
+				),
+				'body'    => (string) wp_json_encode( array( 'platform' => 'woocommerce', 'pluginVersion' => \Storegentic\VERSIONE ) ),
+			)
+		);
+
+		if ( is_wp_error( $risposta ) ) {
+			return $risposta->get_error_message();
+		}
+
+		$codice = (int) wp_remote_retrieve_response_code( $risposta );
+
+		/*
+		 * IL 403 NON CONTA COME "RISPONDE".
+		 *
+		 * Verificato sul campo: mentre gli indirizzi di produzione erano ancora
+		 * in configurazione, Cloudflare rispondeva 403 con il codice 1010 —
+		 * cioe' bloccava la richiesta prima ancora di passarla al servizio.
+		 * Accettando il 403 questa funzione dava per buono un indirizzo che
+		 * avrebbe spento ricerca e assistente sul negozio.
+		 *
+		 * Un 401 invece si accetta: quello lo risponde il servizio, e dice
+		 * "ci sono, ma questa chiave non va" — che e' esattamente cio' che si
+		 * sta verificando, visto che qui si prova l'INDIRIZZO e non la chiave.
+		 */
+		if ( in_array( $codice, array( 200, 201, 401 ), true ) ) {
+			$corpo = json_decode( (string) wp_remote_retrieve_body( $risposta ), true );
+
+			if ( is_array( $corpo ) ) {
+				return true;
+			}
+
+			return __( 'L’indirizzo risponde, ma non con una risposta del servizio: probabilmente c’è un filtro davanti.', 'storegentic' );
+		}
+
+		/* translators: %d: codice di stato HTTP. */
+		return sprintf( __( 'L’indirizzo risponde con un errore (%d): il servizio non è raggiungibile lì.', 'storegentic' ), $codice );
 	}
 
 	/** Il plugin puo' parlare col servizio? */

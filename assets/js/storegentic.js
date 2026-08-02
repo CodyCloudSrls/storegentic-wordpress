@@ -198,7 +198,8 @@
         });
       })
       .then(function (dati) {
-        segnala('image_search', { results: (dati.risultati || []).length });
+        segnala('image_search', {});
+        segnala('image_results', { results: (dati.risultati || []).length });
         opzioni.esito(dati);
       })
       ['catch'](function (e) {
@@ -281,7 +282,6 @@
       }
 
       window.requestAnimationFrame(function () { self.fuocoIniziale(); });
-      segnala('widget_open', { mode: this.modo });
     },
 
     chiudi: function () {
@@ -596,7 +596,8 @@
         .then(function (dati) {
           self.annulla = null;
           self.risultati('cerca', dati, domanda);
-          segnala('search_query', { query: domanda, results: (dati.risultati || []).length });
+          segnala('search_query', { query: domanda });
+          segnala('search_results', { query: domanda, results: (dati.risultati || []).length });
         })
         ['catch'](function (e) {
           if (e && e.name === 'AbortError') { return; }

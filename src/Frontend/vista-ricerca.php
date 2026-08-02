@@ -42,15 +42,10 @@ if ( ! Pagina::disponibile() ) {
 		 * pagina si apre da un link condiviso.
 		 */
 		if ( empty( $sg_esito['daCache'] ) ) {
+			\Storegentic\Analitica\Registratore::accoda( 'search_query', array( 'data' => array( 'query' => $sg_domanda ) ) );
 			\Storegentic\Analitica\Registratore::accoda(
-				'search_query',
-				array(
-					'mode' => 'pagina',
-					'data' => array(
-						'query'   => $sg_domanda,
-						'results' => count( (array) $sg_esito['risultati'] ),
-					),
-				)
+				'search_results',
+				array( 'data' => array( 'query' => $sg_domanda, 'results' => count( (array) $sg_esito['risultati'] ) ) )
 			);
 		}
 	}

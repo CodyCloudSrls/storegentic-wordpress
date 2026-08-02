@@ -37,6 +37,37 @@ final class Registratore {
 	/** Tetto di guardia: se il servizio e' irraggiungibile la coda non cresce all'infinito. */
 	private const TETTO = 500;
 
+	/**
+	 * Come si chiamano, al servizio, le cose che succedono qui.
+	 *
+	 * PERCHE' UNA TRADUZIONE E NON I NOMI GIUSTI OVUNQUE. Il resto del plugin
+	 * parla di quello che fa — "l'utente ha aperto il widget", "ha toccato un
+	 * risultato" — e questo file solo sa come il servizio chiama quelle cose.
+	 * E' lo stesso principio degli indirizzi: il vocabolario lo detta il
+	 * server, e il plugin lo traduce in un punto unico invece di spargerlo.
+	 *
+	 * PERCHE' SERVIVA. Il servizio accetta sei tipi soli — query_sent,
+	 * results_returned, result_clicked, add_to_cart, checkout_started,
+	 * purchase_completed — e rifiuta tutti gli altri con "Unsupported
+	 * eventType". Il plugin ne mandava di inventati: le analisi venivano
+	 * scartate in silenzio, e nel pannello di Storegentic non compariva nulla.
+	 *
+	 * `mode` dice da dove viene la domanda, e anche quello e' un elenco chiuso:
+	 * agent_chat, agent_search, image_search.
+	 *
+	 * @var array<string,array{0:string,1:string|null}>
+	 */
+	private const VOCABOLARIO = array(
+		'search_query'        => array( 'query_sent', 'agent_search' ),
+		'search_results'      => array( 'results_returned', 'agent_search' ),
+		'search_result_click' => array( 'result_clicked', 'agent_search' ),
+		'image_search'        => array( 'query_sent', 'image_search' ),
+		'image_results'       => array( 'results_returned', 'image_search' ),
+		'agent_chat'          => array( 'query_sent', 'agent_chat' ),
+		'agent_results'       => array( 'results_returned', 'agent_chat' ),
+		'add_to_cart'         => array( 'add_to_cart', null ),
+	);
+
 	public static function avvia(): void {
 		add_action( self::AGGANCIO, array( self::class, 'spedisci' ) );
 
@@ -58,15 +89,26 @@ final class Registratore {
 			return;
 		}
 
+		$tradotto = self::VOCABOLARIO[ $tipo ] ?? null;
+
+		/*
+		 * Un evento che il servizio non conosce non si accoda nemmeno: la coda
+		 * sta in un'opzione del database, e riempirla di cose che verranno
+		 * rifiutate e' lavoro sprecato due volte.
+		 */
+		if ( null === $tradotto ) {
+			return;
+		}
+
 		$coda[] = array_filter(
 			array(
-				'eventType'  => $tipo,
+				'eventType'  => $tradotto[0],
 				// Identificativo unico: rende innocuo un rinvio.
 				'eventId'    => 'evt_' . wp_generate_password( 20, false, false ),
 				'occurredAt' => gmdate( 'Y-m-d\TH:i:s.v\Z' ),
 				'sessionId'  => $dettagli['sessionId'] ?? null,
 				'channel'    => 'woocommerce-plugin',
-				'mode'       => $dettagli['mode'] ?? null,
+				'mode'       => $tradotto[1],
 				'data'       => $dettagli['data'] ?? array(),
 			),
 			static fn( $v ) => null !== $v && '' !== $v

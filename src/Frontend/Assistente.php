@@ -160,15 +160,10 @@ final class Assistente {
 			self::manda( array( 'prodotti' => $citati ) );
 		}
 
+		Registratore::accoda( 'agent_chat', array( 'data' => array( 'query' => mb_substr( $domanda, 0, 200 ) ) ) );
 		Registratore::accoda(
-			'agent_chat',
-			array(
-				'mode' => 'assistente',
-				'data' => array(
-					'query'      => mb_substr( $domanda, 0, 200 ),
-					'characters' => $testo_totale,
-				),
-			)
+			'agent_results',
+			array( 'data' => array( 'characters' => $testo_totale, 'products' => count( $citati ) ) )
 		);
 
 		self::manda( array( 'fine' => true ) );

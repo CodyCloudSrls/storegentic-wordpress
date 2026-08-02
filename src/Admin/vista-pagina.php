@@ -62,8 +62,14 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 				<th scope="row"><label for="sg-base"><?php esc_html_e( 'Indirizzo del servizio', 'storegentic' ); ?></label></th>
 				<td>
 					<input type="url" id="sg-base" name="base" class="regular-text code"
-					       value="<?php echo esc_attr( (string) $i['base'] ); ?>">
-					<p class="description"><?php esc_html_e( 'Cambialo solo se Storegentic ti ha dato un indirizzo diverso. Tutti gli altri indirizzi li dichiara il servizio.', 'storegentic' ); ?></p>
+					       list="sg-indirizzi" value="<?php echo esc_attr( (string) $i['base'] ); ?>">
+					<datalist id="sg-indirizzi">
+						<?php foreach ( \Storegentic\Impostazioni::INDIRIZZI as $sg_url => $sg_nome ) : ?>
+							<option value="<?php echo esc_attr( $sg_url ); ?>"><?php echo esc_html( $sg_nome ); ?></option>
+						<?php endforeach; ?>
+					</datalist>
+					<p class="description"><?php esc_html_e( 'Gli indirizzi ufficiali sono già nell’elenco. Cambialo solo se Storegentic te ne ha dato un altro: tutti gli altri indirizzi li dichiara il servizio.', 'storegentic' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Prima di salvarlo viene provato: se non risponde, resta quello di prima e te lo diciamo, invece di spegnere la ricerca sul negozio.', 'storegentic' ); ?></p>
 				</td>
 			</tr>
 			<tr>
