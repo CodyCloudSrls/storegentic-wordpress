@@ -240,14 +240,7 @@ final class Interfaccia {
 
 	/** I colori scelti nell'amministrazione diventano variabili CSS. */
 	private static function variabili(): string {
-		$i = Impostazioni::tutte();
-
-		return sprintf(
-			':root{--sg-colore:%s;--sg-testo:%s;--sg-raggio:%dpx}',
-			esc_attr( (string) $i['colore'] ),
-			esc_attr( (string) $i['colore_testo'] ),
-			(int) $i['raggio']
-		);
+		return Palette::css();
 	}
 
 	/**

@@ -43,9 +43,13 @@ final class Impostazioni {
 			// Presentazione
 			'modalita'            => 'barra',   // barra | fluttuante | finestra
 			'posizione'           => 'destra',  // destra | sinistra
-			'colore'              => '#1A1815',
-			'colore_testo'        => '#FFFFFF',
-			'raggio'              => 8,
+			/*
+			 * La combinazione di colori. `tema` non scrive nulla e lascia
+			 * decidere al tema; vedi Frontend\Palette.
+			 */
+			'palette'             => 'tema',
+			'colori'              => array(),
+			'raggio'              => 10,
 			'etichetta'           => '',
 			'segnaposto'          => '',
 			'saluto'              => '',
@@ -127,13 +131,26 @@ final class Impostazioni {
 			case 'posizione':
 				return 'sinistra' === $valore ? 'sinistra' : 'destra';
 
-			case 'colore':
-			case 'colore_testo':
-				$colore = sanitize_hex_color( (string) $valore );
-				return $colore ?: ( 'colore' === $nome ? '#1A1815' : '#FFFFFF' );
+			case 'palette':
+				$ammesse = array_keys( \Storegentic\Frontend\Palette::preparate() );
+				return in_array( $valore, $ammesse, true ) ? (string) $valore : 'tema';
+
+			case 'colori':
+				$puliti = array();
+				foreach ( \Storegentic\Frontend\Palette::VOCI as $voce ) {
+					$colore = isset( $valore[ $voce ] ) ? sanitize_hex_color( (string) $valore[ $voce ] ) : null;
+					if ( $colore ) {
+						$puliti[ $voce ] = $colore;
+					}
+				}
+				return $puliti;
 
 			case 'raggio':
-				return max( 0, min( 40, (int) $valore ) );
+				/*
+				 * Oltre i venti pixel gli angoli si mangiano il contenuto dei
+				 * comandi piccoli, e sotto i due non si distinguono da zero.
+				 */
+				return max( 0, min( 24, (int) $valore ) );
 
 			case 'lotto':
 				// Il server divide comunque in lotti da 1000: oltre non serve.

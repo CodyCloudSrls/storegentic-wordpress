@@ -1,0 +1,120 @@
+/* =============================================================================
+   La scelta dei colori, nell'amministrazione.
+
+   Serve a una cosa sola: far vedere il risultato mentre lo si sceglie. Sette
+   colori scritti come numeri non dicono niente finche' non stanno uno accanto
+   all'altro — e' guardando la bolla sopra la carta che ci si accorge che il
+   testo non si legge.
+   ========================================================================== */
+
+.sg-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: .5rem;
+  max-width: 52rem;
+  margin-block-end: 1rem;
+}
+
+.sg-palette__scelta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'radio campioni' 'radio nome' 'radio spiega';
+  align-items: center;
+  gap: 0 .6rem;
+  padding: .7rem .8rem;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sg-palette__scelta:hover { border-color: #8c8f94; }
+.sg-palette__scelta:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; }
+.sg-palette__scelta input { grid-area: radio; margin: 0; }
+
+.sg-palette__campioni { grid-area: campioni; display: flex; gap: 3px; margin-block-end: .35rem; }
+.sg-palette__campioni i {
+  width: 1.15rem; height: 1.15rem;
+  border: 1px solid rgba(0,0,0,.12); border-radius: 3px;
+}
+
+.sg-palette__nome { grid-area: nome; font-weight: 600; }
+.sg-palette__spiega { grid-area: spiega; color: #646970; font-size: 12px; line-height: 1.4; }
+
+.sg-propria {
+  display: flex; flex-wrap: wrap; gap: .75rem 1.25rem;
+  max-width: 52rem; margin-block-end: 1rem;
+  padding: .9rem 1rem;
+  background: #f6f7f7; border-radius: 6px;
+}
+
+.sg-propria[hidden] { display: none; }
+.sg-propria__voce { display: flex; align-items: center; gap: .4rem; font-size: 12px; }
+.sg-propria__voce input { inline-size: 2.4rem; block-size: 1.8rem; padding: 0; border: 1px solid #dcdcde; }
+
+.sg-angoli { margin: 0 0 1rem; }
+
+/* --- anteprima --- */
+
+.sg-anteprima { max-width: 26rem; margin-block-end: .75rem; }
+
+.sg-anteprima__titolo {
+  margin: 0 0 .35rem;
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #646970;
+}
+
+.sg-anteprima__foglio {
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: 1rem;
+  background: var(--ap-sfondo, #F7F5F2);
+  border: 1px solid var(--ap-bordo, #E3E0DC);
+  border-radius: var(--ap-raggio-l, 16px);
+}
+
+.sg-anteprima__msg {
+  max-width: 82%;
+  padding: .55rem .8rem;
+  font-size: 13px; line-height: 1.5;
+}
+
+.sg-anteprima__msg--assistente {
+  align-self: flex-start;
+  color: var(--ap-testo, #1A1815);
+  background: var(--ap-superficie, #fff);
+  border: 1px solid var(--ap-bordo, #E3E0DC);
+  border-radius: var(--ap-raggio-s, 6px) var(--ap-raggio-l, 16px) var(--ap-raggio-l, 16px) var(--ap-raggio-l, 16px);
+}
+
+.sg-anteprima__msg--cliente {
+  align-self: flex-end;
+  color: var(--ap-su-accento, #fff);
+  background: var(--ap-accento, #1A1815);
+  border-radius: var(--ap-raggio-l, 16px) var(--ap-raggio-s, 6px) var(--ap-raggio-l, 16px) var(--ap-raggio-l, 16px);
+}
+
+.sg-anteprima__scheda {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .5rem;
+  background: var(--ap-superficie, #fff);
+  border: 1px solid var(--ap-bordo, #E3E0DC);
+  border-radius: var(--ap-raggio, 10px);
+}
+
+.sg-anteprima__foto {
+  inline-size: 2.6rem; block-size: 2.6rem; flex: 0 0 auto;
+  background: var(--ap-sfondo, #F7F5F2);
+  border-radius: var(--ap-raggio-s, 6px);
+}
+
+.sg-anteprima__corpo { display: flex; flex-direction: column; flex: 1 1 auto; min-inline-size: 0; }
+.sg-anteprima__corpo b { font-size: 13px; color: var(--ap-testo, #1A1815); }
+.sg-anteprima__corpo em { font-size: 11px; font-style: normal; color: var(--ap-testo-tenue, #6A635B); }
+
+.sg-anteprima__prezzo {
+  flex: 0 0 auto;
+  padding: .2rem .6rem;
+  font-size: 12px; font-weight: 600;
+  color: var(--ap-su-accento, #fff);
+  background: var(--ap-accento, #1A1815);
+  border-radius: 999px;
+}

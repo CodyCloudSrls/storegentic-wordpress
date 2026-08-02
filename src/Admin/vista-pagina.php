@@ -122,16 +122,89 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Colori', 'storegentic' ); ?></th>
 					<td>
-						<label><?php esc_html_e( 'Sfondo', 'storegentic' ); ?>
-							<input type="color" name="colore" value="<?php echo esc_attr( (string) $i['colore'] ); ?>"></label>
-						&nbsp;
-						<label><?php esc_html_e( 'Testo', 'storegentic' ); ?>
-							<input type="color" name="colore_testo" value="<?php echo esc_attr( (string) $i['colore_testo'] ); ?>"></label>
-						&nbsp;
-						<label><?php esc_html_e( 'Angoli', 'storegentic' ); ?>
-							<input type="number" name="raggio" min="0" max="40" style="width:5rem"
-							       value="<?php echo esc_attr( (string) $i['raggio'] ); ?>"> px</label>
-						<p class="description"><?php esc_html_e( 'Scegli un contrasto sufficiente fra sfondo e testo: sotto 4,5:1 il pulsante non è leggibile da tutti.', 'storegentic' ); ?></p>
+						<?php
+						$sg_preparate = \Storegentic\Frontend\Palette::preparate();
+						$sg_scelta    = (string) $i['palette'];
+						$sg_proprie   = (array) $i['colori'];
+						?>
+						<fieldset class="sg-palette">
+							<?php foreach ( $sg_preparate as $sg_nome => $sg_p ) : ?>
+								<label class="sg-palette__scelta">
+									<input type="radio" name="palette" value="<?php echo esc_attr( $sg_nome ); ?>"
+									       <?php checked( $sg_scelta, $sg_nome ); ?>>
+									<span class="sg-palette__campioni" aria-hidden="true">
+										<?php foreach ( array( 'sfondo', 'superficie', 'bordo', 'testo', 'accento' ) as $sg_v ) : ?>
+											<i style="background:<?php echo esc_attr( (string) $sg_p['colori'][ $sg_v ] ); ?>"></i>
+										<?php endforeach; ?>
+									</span>
+									<span class="sg-palette__nome"><?php echo esc_html( (string) $sg_p['nome'] ); ?></span>
+									<span class="sg-palette__spiega"><?php echo esc_html( (string) $sg_p['spiega'] ); ?></span>
+								</label>
+							<?php endforeach; ?>
+						</fieldset>
+
+						<div class="sg-propria" data-sg-propria <?php echo 'propria' === $sg_scelta ? '' : 'hidden'; ?>>
+							<?php
+							$sg_etichette = array(
+								'sfondo'      => __( 'Sfondo', 'storegentic' ),
+								'superficie'  => __( 'Superficie', 'storegentic' ),
+								'testo'       => __( 'Testo', 'storegentic' ),
+								'testo_tenue' => __( 'Testo tenue', 'storegentic' ),
+								'bordo'       => __( 'Bordo', 'storegentic' ),
+								'accento'     => __( 'Accento', 'storegentic' ),
+								'su_accento'  => __( 'Sopra l’accento', 'storegentic' ),
+							);
+							$sg_base = $sg_preparate['neutro']['colori'];
+							foreach ( \Storegentic\Frontend\Palette::VOCI as $sg_v ) :
+								$sg_val = (string) ( $sg_proprie[ $sg_v ] ?? $sg_base[ $sg_v ] );
+								?>
+								<label class="sg-propria__voce">
+									<span><?php echo esc_html( $sg_etichette[ $sg_v ] ); ?></span>
+									<input type="color" name="colori[<?php echo esc_attr( $sg_v ); ?>]"
+									       value="<?php echo esc_attr( $sg_val ); ?>" data-sg-colore="<?php echo esc_attr( $sg_v ); ?>">
+								</label>
+							<?php endforeach; ?>
+						</div>
+
+						<p class="sg-angoli">
+							<label><?php esc_html_e( 'Angoli', 'storegentic' ); ?>
+								<input type="number" name="raggio" min="0" max="24" style="width:5rem"
+								       value="<?php echo esc_attr( (string) $i['raggio'] ); ?>" data-sg-raggio> px</label>
+						</p>
+
+						<?php
+						/*
+						 * L'anteprima non e' un vezzo. Sette colori scelti a numeri
+						 * non dicono niente finche' non si vedono uno accanto
+						 * all'altro: e' guardando la bolla scura sopra la carta
+						 * chiara che ci si accorge che il testo non si legge.
+						 */
+						?>
+						<div class="sg-anteprima" data-sg-anteprima>
+							<p class="sg-anteprima__titolo"><?php esc_html_e( 'Anteprima', 'storegentic' ); ?></p>
+							<div class="sg-anteprima__foglio">
+								<div class="sg-anteprima__msg sg-anteprima__msg--assistente"><?php esc_html_e( 'Dimmi che cosa cerchi: ti propongo qualcosa.', 'storegentic' ); ?></div>
+								<div class="sg-anteprima__msg sg-anteprima__msg--cliente"><?php esc_html_e( 'Un regalo sotto i 60 €', 'storegentic' ); ?></div>
+								<div class="sg-anteprima__scheda">
+									<span class="sg-anteprima__foto"></span>
+									<span class="sg-anteprima__corpo">
+										<b><?php esc_html_e( 'Nome del prodotto', 'storegentic' ); ?></b>
+										<em><?php esc_html_e( 'Categoria', 'storegentic' ); ?></em>
+									</span>
+									<span class="sg-anteprima__prezzo">49,00 €</span>
+								</div>
+							</div>
+						</div>
+
+						<p class="description"><?php esc_html_e( 'Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. L’anteprima mostra le combinazioni che contano.', 'storegentic' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Assistente', 'storegentic' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="assistente" <?php checked( (bool) $i['assistente'] ); ?>>
+							<?php esc_html_e( 'Mostra il pulsante dell’assistente sul sito', 'storegentic' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Compare solo se il servizio dichiara la conversazione fra le funzioni attive.', 'storegentic' ); ?></p>
 					</td>
 				</tr>
 				<tr>

@@ -66,25 +66,52 @@ final class Scheda {
 	}
 
 	/**
+	 * La forma compatta: foto, nome, e il prezzo in fondo.
+	 *
+	 * Il prezzo sta in una pastiglia a destra e non sotto il nome. In una
+	 * colonna stretta i prezzi incolonnati si confrontano con un colpo
+	 * d'occhio, mentre annegati nel testo vanno cercati riga per riga — ed e'
+	 * il dato che si guarda per primo.
+	 *
 	 * @param array<string,mixed> $s
 	 */
 	private static function riga( array $s ): string {
 		ob_start();
 		?>
 		<a class="sg-riga" href="<?php echo esc_url( (string) $s['url'] ); ?>">
-			<span class="sg-riga__foto"><?php echo self::foto( $s, 72, 96 ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+			<span class="sg-riga__foto"><?php echo self::foto( $s, 72, 72 ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 			<span class="sg-riga__corpo">
 				<span class="sg-riga__nome"><?php echo esc_html( (string) $s['nome'] ); ?></span>
-				<span class="sg-riga__sotto">
-					<?php echo self::prezzo( $s ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					<?php if ( ! empty( $s['categoria'] ) ) : ?>
-						<span class="sg-riga__categoria"><?php echo esc_html( (string) $s['categoria'] ); ?></span>
-					<?php endif; ?>
-				</span>
+				<?php if ( ! empty( $s['categoria'] ) ) : ?>
+					<span class="sg-riga__categoria"><?php echo esc_html( (string) $s['categoria'] ); ?></span>
+				<?php endif; ?>
 			</span>
+			<?php echo self::pastiglia( $s ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		</a>
 		<?php
 		return trim( (string) ob_get_clean() );
+	}
+
+	/**
+	 * Il prezzo come pastiglia.
+	 *
+	 * Esaurito e senza prezzo non sono prezzi: prendono la forma tenue, cosi'
+	 * l'accento resta il segnale di "questo si compra".
+	 *
+	 * @param array<string,mixed> $s
+	 */
+	private static function pastiglia( array $s ): string {
+		if ( empty( $s['disponibile'] ) ) {
+			return '<span class="sg-cartellino sg-cartellino--tenue">' . esc_html__( 'Esaurito', 'storegentic' ) . '</span>';
+		}
+
+		$prezzo = (string) ( $s['prezzo'] ?? '' );
+
+		if ( '' === $prezzo ) {
+			return '<span class="sg-cartellino sg-cartellino--tenue">' . esc_html__( 'Su richiesta', 'storegentic' ) . '</span>';
+		}
+
+		return '<span class="sg-cartellino">' . esc_html( $prezzo ) . '</span>';
 	}
 
 	/**

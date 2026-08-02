@@ -35,9 +35,48 @@ final class Pagina {
 
 	public static function avvia(): void {
 		add_action( 'admin_menu', array( self::class, 'menu' ) );
+		add_action( 'admin_enqueue_scripts', array( self::class, 'risorse' ) );
 		add_action( 'admin_post_storegentic_salva', array( self::class, 'salva' ) );
 		add_action( 'admin_post_storegentic_azione', array( self::class, 'azione' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( \Storegentic\FILE_PRINCIPALE ), array( self::class, 'collegamento' ) );
+	}
+
+	/**
+	 * Il foglio di stile e lo script della nostra pagina, e di nessun'altra.
+	 *
+	 * Un plugin che carica le proprie risorse su tutta l'amministrazione
+	 * rallenta il lavoro di chi non lo sta usando, e prima o poi ne rompe una.
+	 */
+	public static function risorse( string $schermata ): void {
+		if ( ! str_contains( $schermata, self::SLUG ) ) {
+			return;
+		}
+
+		$base = plugin_dir_url( \Storegentic\FILE_PRINCIPALE );
+
+		foreach ( array( 'css' => 'style', 'js' => 'script' ) as $tipo => $_ ) {
+			$relativo = 'assets/' . $tipo . '/amministrazione.' . $tipo;
+			$percorso = \Storegentic\PERCORSO . '/' . $relativo;
+			$versione = is_readable( $percorso ) ? (string) filemtime( $percorso ) : \Storegentic\VERSIONE;
+
+			if ( 'css' === $tipo ) {
+				wp_enqueue_style( 'storegentic-admin', $base . $relativo, array(), $versione );
+			} else {
+				wp_enqueue_script( 'storegentic-admin', $base . $relativo, array(), $versione, true );
+			}
+		}
+
+		/*
+		 * L'anteprima deve poter mostrare una combinazione senza ricaricare la
+		 * pagina, quindi i colori dei preparati devono essere gia' qui.
+		 */
+		$colori = array();
+
+		foreach ( \Storegentic\Frontend\Palette::preparate() as $nome => $p ) {
+			$colori[ $nome ] = $p['colori'];
+		}
+
+		wp_localize_script( 'storegentic-admin', 'storegenticAdmin', array( 'preparate' => $colori ) );
 	}
 
 	/**
@@ -100,16 +139,17 @@ final class Pagina {
 
 		if ( in_array( 'aspetto', $gruppi, true ) ) {
 			$nuove += array(
-				'modalita'     => $inviate['modalita'] ?? 'barra',
-				'posizione'    => $inviate['posizione'] ?? 'destra',
-				'colore'       => $inviate['colore'] ?? '#1A1815',
-				'colore_testo' => $inviate['colore_testo'] ?? '#FFFFFF',
-				'raggio'       => $inviate['raggio'] ?? 8,
-				'etichetta'    => $inviate['etichetta'] ?? '',
-				'segnaposto'   => $inviate['segnaposto'] ?? '',
-				'saluto'       => $inviate['saluto'] ?? '',
-				'solo_su'      => $inviate['solo_su'] ?? array(),
+				'modalita'   => $inviate['modalita'] ?? 'barra',
+				'posizione'  => $inviate['posizione'] ?? 'destra',
+				'palette'    => $inviate['palette'] ?? 'tema',
+				'colori'     => (array) ( $inviate['colori'] ?? array() ),
+				'raggio'     => $inviate['raggio'] ?? 10,
+				'etichetta'  => $inviate['etichetta'] ?? '',
+				'segnaposto' => $inviate['segnaposto'] ?? '',
+				'saluto'     => $inviate['saluto'] ?? '',
+				'solo_su'    => $inviate['solo_su'] ?? array(),
 				'sostituisci_ricerca' => isset( $inviate['sostituisci_ricerca'] ),
+				'assistente'          => isset( $inviate['assistente'] ),
 			);
 		}
 

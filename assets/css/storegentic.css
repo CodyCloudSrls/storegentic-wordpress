@@ -23,6 +23,10 @@
   --sg-testo: #FFFFFF;
   --sg-raggio: 8px;
 
+  --sg-raggio-s: 6px;
+  --sg-raggio-l: 16px;
+  --sg-accento-tenue: rgba(26, 24, 21, .08);
+
   /* Ridefinibili dal tema. */
   --sg-carta: #FFFFFF;
   --sg-fondo: #F7F5F2;
@@ -67,12 +71,12 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-barra__campo {
   flex: 1 1 auto; min-width: 0;
-  padding: .7rem .9rem;
+  padding: .7rem 1.1rem;
   font: inherit; font-size: 1rem; /* sotto i 16px iOS ingrandisce da solo */
   color: var(--sg-inchiostro);
   background: var(--sg-carta);
   border: 1px solid var(--sg-linea);
-  border-radius: var(--sg-raggio);
+  border-radius: 999px;
   -webkit-appearance: none; appearance: none;
 }
 
@@ -80,15 +84,20 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-barra__invio {
   flex: 0 0 auto;
-  min-height: 44px; padding: 0 1.1rem;
+  min-height: 44px; padding: 0 1.2rem;
   font: inherit; font-weight: 600;
   color: var(--sg-testo); background: var(--sg-colore);
-  border: 0; border-radius: var(--sg-raggio); cursor: pointer;
+  border: 0; border-radius: 999px; cursor: pointer;
 }
 
 .sg-barra__invio:hover { opacity: .9; }
 
-/* --------------------------------------------------- pannello di ricerca */
+/* --------------------------------------------------- pannello di ricerca
+ *
+ * Stessa materia dell'assistente: fondo tenue, foglio con bordo sottile e
+ * ombra larga, angoli della stessa scala. Sono due strumenti diversi e devono
+ * sembrare due strumenti della stessa cassetta.
+ */
 
 .sg-pannello { position: fixed; inset: 0; z-index: 100000; }
 .sg-pannello[hidden] { display: none; }
@@ -96,35 +105,44 @@ body.sg-bloccato { overflow: hidden; }
 .sg-pannello__velo {
   position: absolute; inset: 0;
   background: var(--sg-velo);
-  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
 }
 
 .sg-pannello__foglio {
   position: relative;
-  width: min(46rem, 100%);
+  width: min(44rem, 100%);
   max-height: min(80vh, 46rem);
   margin: 6vh auto 0;
   display: flex; flex-direction: column;
-  background: var(--sg-carta);
-  border-radius: calc(var(--sg-raggio) * 1.5);
+  background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
+  border-radius: var(--sg-raggio-l);
   box-shadow: var(--sg-ombra);
   overflow: hidden;
 }
 
 .sg-pannello__testa {
   display: flex; align-items: center; gap: .5rem;
-  padding: .75rem;
+  padding: .7rem .6rem .7rem .75rem;
+  background: var(--sg-carta);
   border-bottom: 1px solid var(--sg-linea);
 }
 
 .sg-barra--pannello { position: relative; }
 
 .sg-barra__lente {
-  position: absolute; left: .8rem; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
   color: var(--sg-inchiostro-2); pointer-events: none;
 }
 
-.sg-barra--pannello .sg-barra__campo { padding-left: 2.5rem; padding-right: 5rem; }
+/* Il campo e' una pillola, come quello dell'assistente. */
+.sg-barra--pannello .sg-barra__campo {
+  padding: .7rem 5rem .7rem 2.7rem;
+  background: var(--sg-fondo);
+  border-radius: 999px;
+}
+
+.sg-barra--pannello .sg-barra__campo:focus { border-color: var(--sg-colore); outline: none; }
 
 .sg-barra__pulisci,
 .sg-barra__foto {
@@ -136,16 +154,18 @@ body.sg-bloccato { overflow: hidden; }
 }
 
 .sg-barra__pulisci { right: 4.6rem; font-size: 1.35rem; line-height: 1; }
-.sg-barra__foto { right: 3.5rem; }
+.sg-barra__foto { right: 3.4rem; }
+
 .sg-barra__pulisci:hover,
-.sg-barra__foto:hover { color: var(--sg-inchiostro); background: var(--sg-fondo); }
+.sg-barra__foto:hover { color: var(--sg-inchiostro); background: var(--sg-carta); }
 
 .sg-pannello__chiudi {
   flex: 0 0 auto;
-  width: 2.75rem; height: 2.75rem;
-  font-size: 1.6rem; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem;
+  font-size: 1.25rem; line-height: 1;
   color: var(--sg-inchiostro-2); background: none;
-  border: 0; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--sg-linea); border-radius: 50%; cursor: pointer;
 }
 
 .sg-pannello__chiudi:hover { background: var(--sg-fondo); color: var(--sg-inchiostro); }
@@ -201,69 +221,115 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-pastiglia {
   display: inline-flex; align-items: center;
-  min-height: 2rem; padding: .3rem .8rem;
+  min-height: 2.25rem; padding: .35rem .9rem;
   font-size: .875rem; text-decoration: none;
-  color: var(--sg-inchiostro); background: var(--sg-fondo);
+  color: var(--sg-inchiostro); background: var(--sg-carta);
   border: 1px solid var(--sg-linea); border-radius: 999px;
 }
 
 .sg-pastiglia:hover { background: var(--sg-carta); border-color: var(--sg-inchiostro); }
 
 .sg-tutti {
-  display: block; margin-top: .5rem; padding: .8rem;
+  display: block; margin-top: .6rem; padding: .85rem;
   font-weight: 600; text-align: center; text-decoration: none;
-  color: var(--sg-inchiostro); background: var(--sg-fondo);
-  border-radius: var(--sg-raggio);
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
 }
 
 .sg-tutti:hover { background: var(--sg-colore); color: var(--sg-testo); }
 
-/* ------------------------------------------------------ risultato: riga */
+/* ------------------------------------------------------ risultato: riga
+ *
+ * La stessa riga compare in tre posti — sotto una risposta dell'assistente,
+ * nel pannello di ricerca e nei suggerimenti — e in tutti e tre ha la stessa
+ * anatomia: foto quadrata, nome, categoria sotto, prezzo in fondo. La
+ * coerenza non e' un vezzo: chi ha imparato a leggerla una volta la legge
+ * ovunque senza rifare la fatica.
+ */
 
-.sg-righe { display: flex; flex-direction: column; }
+.sg-righe { display: flex; flex-direction: column; gap: .25rem; }
 
 .sg-riga {
-  display: flex; align-items: center; gap: .85rem;
-  padding: .5rem; text-decoration: none;
-  color: inherit; border-radius: var(--sg-raggio);
+  display: flex; align-items: center; gap: .75rem;
+  padding: .5rem;
+  text-decoration: none; color: inherit;
+  background: var(--sg-carta);
+  border: 1px solid transparent;
+  border-radius: var(--sg-raggio);
+  transition: border-color .15s ease, background-color .15s ease;
 }
 
-.sg-riga:hover { background: var(--sg-fondo); }
+.sg-riga:hover { background: var(--sg-fondo); border-color: var(--sg-linea); }
 
 .sg-riga__foto {
-  flex: 0 0 auto; width: 3.5rem; height: 4.5rem;
-  overflow: hidden; border-radius: calc(var(--sg-raggio) / 2);
+  flex: 0 0 auto; width: 3.25rem; height: 3.25rem;
+  overflow: hidden; border-radius: var(--sg-raggio-s);
   background: var(--sg-fondo);
 }
 
 .sg-riga__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.sg-riga__corpo { min-width: 0; }
+.sg-riga__corpo { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
 
 .sg-riga__nome {
-  display: block;
-  font-weight: 500; line-height: 1.35;
+  font-size: .9375rem; font-weight: 500; line-height: 1.3;
   color: var(--sg-inchiostro);
   /* Due righe e poi si taglia: i nomi lunghi non devono far ballare la lista. */
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.sg-riga__sotto {
-  display: flex; align-items: baseline; gap: .5rem;
-  margin-top: .2rem; font-size: .875rem;
+.sg-riga__categoria {
+  font-size: .6875rem; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--sg-inchiostro-2);
 }
 
-.sg-riga__categoria { color: var(--sg-inchiostro-2); }
+/*
+ * Il cartellino del prezzo. E' l'unico posto in cui l'accento compare in un
+ * elenco: serve a farsi trovare, non a decorare, quindi non lo si usa anche
+ * per i bordi o per i titoli.
+ */
+.sg-cartellino {
+  flex: 0 0 auto;
+  padding: .28rem .65rem;
+  font-size: .8125rem; font-weight: 600; white-space: nowrap;
+  color: var(--sg-testo); background: var(--sg-colore);
+  border-radius: 999px;
+}
 
-.sg-righe--chat { margin-top: .6rem; border-top: 1px solid var(--sg-linea); padding-top: .4rem; }
+.sg-cartellino--tenue {
+  font-weight: 500;
+  color: var(--sg-inchiostro-2); background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
+}
 
-/* --------------------------------------------------- risultato: scheda */
+.sg-righe--chat { margin-top: .7rem; }
 
-.sg-scheda { position: relative; display: flex; flex-direction: column; height: 100%; }
+/* --------------------------------------------------- risultato: scheda
+ *
+ * La versione grande della riga: stessa materia, stessa scala di angoli,
+ * stesso cartellino del prezzo. Cambia la proporzione della foto, perche' in
+ * una vetrina la foto e' l'argomento e in un elenco e' un promemoria.
+ */
+
+.sg-scheda {
+  position: relative;
+  display: flex; flex-direction: column; height: 100%;
+  background: var(--sg-carta);
+  border: 1px solid var(--sg-linea);
+  border-radius: var(--sg-raggio-l);
+  overflow: hidden;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.sg-scheda:hover {
+  border-color: var(--sg-inchiostro-2);
+  box-shadow: 0 14px 34px -18px var(--sg-velo);
+  transform: translateY(-2px);
+}
 
 .sg-scheda__link {
-  display: flex; flex-direction: column; height: 100%;
+  display: flex; flex-direction: column; flex: 1 1 auto;
   text-decoration: none; color: inherit;
 }
 
@@ -271,7 +337,6 @@ body.sg-bloccato { overflow: hidden; }
   position: relative; display: block;
   aspect-ratio: 3 / 4; overflow: hidden;
   background: var(--sg-fondo);
-  border-radius: var(--sg-raggio);
 }
 
 .sg-scheda__foto img {
@@ -279,11 +344,14 @@ body.sg-bloccato { overflow: hidden; }
   transition: transform .5s ease;
 }
 
-.sg-scheda__link:hover .sg-scheda__foto img { transform: scale(1.04); }
-
+.sg-scheda:hover .sg-scheda__foto img { transform: scale(1.04); }
 .sg-scheda__vuota { display: block; width: 100%; height: 100%; }
 
-.sg-scheda__corpo { display: flex; flex-direction: column; gap: .2rem; padding: .7rem .1rem 0; }
+.sg-scheda__corpo {
+  display: flex; flex-direction: column; gap: .25rem;
+  flex: 1 1 auto;
+  padding: .8rem .85rem .6rem;
+}
 
 .sg-scheda__categoria {
   font-size: .6875rem; letter-spacing: .08em; text-transform: uppercase;
@@ -292,33 +360,34 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-scheda__nome {
   font-family: var(--sg-titolo-font);
-  font-size: 1rem; line-height: 1.3; color: var(--sg-inchiostro);
+  font-size: 1.0625rem; line-height: 1.25; color: var(--sg-inchiostro);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.sg-prezzo { font-weight: 600; color: var(--sg-inchiostro); }
+.sg-prezzo { margin-top: auto; padding-top: .35rem; font-weight: 600; color: var(--sg-inchiostro); }
 .sg-prezzo--assente { font-weight: 400; font-size: .875rem; color: var(--sg-inchiostro-2); }
 .sg-prezzo__pieno { margin-right: .35rem; font-weight: 400; color: var(--sg-inchiostro-2); }
 
 .sg-segno {
-  position: absolute; top: .5rem; left: .5rem;
-  padding: .2rem .5rem;
-  font-size: .6875rem; letter-spacing: .04em; text-transform: uppercase;
+  position: absolute; top: .6rem; left: .6rem; z-index: 1;
+  padding: .22rem .6rem;
+  font-size: .6875rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
   background: var(--sg-carta); color: var(--sg-inchiostro);
   border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.10);
 }
 
 .sg-segno--fine { background: var(--sg-inchiostro-2); color: var(--sg-carta); }
 .sg-segno--saldo { background: var(--sg-colore); color: var(--sg-testo); }
 
 .sg-aggiungi {
-  margin-top: .55rem;
-  padding: .55rem .8rem; min-height: 44px;
+  margin: 0 .85rem .85rem;
+  padding: .6rem .8rem; min-height: 44px;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: .875rem; font-weight: 600; text-decoration: none;
   color: var(--sg-inchiostro); background: transparent;
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
 }
 
 .sg-aggiungi:hover { background: var(--sg-colore); color: var(--sg-testo); border-color: var(--sg-colore); }
@@ -326,11 +395,13 @@ body.sg-bloccato { overflow: hidden; }
 /* WooCommerce aggiunge da solo "added" e "loading": si accompagnano. */
 .sg-aggiungi.loading { opacity: .6; pointer-events: none; }
 .sg-aggiungi.added { display: none; }
+
 .sg-scheda .added_to_cart {
-  margin-top: .55rem; padding: .55rem .8rem;
+  margin: 0 .85rem .85rem;
+  padding: .6rem .8rem; min-height: 44px;
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 44px; font-size: .875rem; font-weight: 600; text-decoration: none;
-  color: var(--sg-testo); background: var(--sg-colore); border-radius: var(--sg-raggio);
+  font-size: .875rem; font-weight: 600; text-decoration: none;
+  color: var(--sg-testo); background: var(--sg-colore); border-radius: 999px;
 }
 
 /* ------------------------------------------------- pagina dei risultati */
@@ -354,19 +425,21 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-cerca__campo {
   flex: 1 1 auto; min-width: 0;
-  padding: .8rem 1rem; font: inherit; font-size: 1rem;
+  padding: .8rem 1.1rem; font: inherit; font-size: 1rem;
   color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
   -webkit-appearance: none; appearance: none;
 }
+
+.sg-cerca__campo:focus { border-color: var(--sg-colore); outline: none; }
 
 .sg-cerca__foto,
 .sg-cerca__invio {
   flex: 0 0 auto;
-  display: inline-flex; align-items: center; gap: .4rem;
-  min-height: 44px; padding: 0 1rem;
+  display: inline-flex; align-items: center; gap: .45rem;
+  min-height: 46px; padding: 0 1.15rem;
   font: inherit; font-weight: 600; cursor: pointer;
-  border-radius: var(--sg-raggio);
+  border-radius: 999px;
 }
 
 .sg-cerca__foto {
@@ -435,23 +508,26 @@ body.sg-bloccato { overflow: hidden; }
 }
 
 .sg-spunta input { width: 1.1rem; height: 1.1rem; accent-color: var(--sg-colore); }
+.sg-spunta:hover { color: var(--sg-colore); }
 .sg-spunta__conto { margin-left: auto; font-size: .8125rem; color: var(--sg-inchiostro-2); }
 
 .sg-prezzo-limiti { display: flex; align-items: center; gap: .5rem; }
 
 .sg-prezzo-limiti input {
   width: 100%; min-width: 0;
-  padding: .5rem .6rem; font: inherit; font-size: 1rem;
+  padding: .5rem .9rem; font: inherit; font-size: 1rem;
   color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
 }
 
 .sg-filtri__azzera {
-  padding: .6rem; min-height: 44px;
+  padding: .6rem 1rem; min-height: 44px;
   font: inherit; font-size: .875rem;
-  color: var(--sg-inchiostro); background: var(--sg-fondo);
-  border: 0; border-radius: var(--sg-raggio); cursor: pointer;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
 }
+
+.sg-filtri__azzera:hover { border-color: var(--sg-inchiostro-2); }
 
 .sg-filtri__azzera[hidden] { display: none; }
 
@@ -468,11 +544,17 @@ body.sg-bloccato { overflow: hidden; }
 .sg-ordina { display: flex; align-items: center; gap: .5rem; font-size: .9375rem; }
 .sg-ordina__etichetta { color: var(--sg-inchiostro-2); }
 
+/*
+ * UNA REGOLA SOLA PER GLI ANGOLI DEI COMANDI: tutto cio' che si preme o si
+ * compila su una riga e' una pillola. Mescolare pillole e rettangoli
+ * arrotondati nella stessa schermata e' la differenza fra un'interfaccia
+ * disegnata e una assemblata.
+ */
 .sg-ordina select {
-  min-height: 44px; padding: .4rem 2rem .4rem .6rem;
+  min-height: 44px; padding: .4rem 2rem .4rem .9rem;
   font: inherit; font-size: .9375rem;
   color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
 }
 
 .sg-griglia {
@@ -501,21 +583,28 @@ body.sg-bloccato { overflow: hidden; }
 .sg-avviso { padding: 1rem 1.25rem; border-radius: var(--sg-raggio); background: var(--sg-fondo); }
 .sg-avviso--male { color: #8A2E2E; }
 
-/* ------------------------------------------------------- assistente */
+/* ------------------------------------------------------- assistente
+ *
+ * LE BOLLE SONO ASIMMETRICHE. L'angolo rivolto verso chi parla e' stretto,
+ * gli altri tre larghi. E' un dettaglio piccolo che fa un lavoro grosso:
+ * dice da che parte arriva il messaggio anche prima di leggerlo, e senza
+ * bisogno di etichette, avatar o frecce.
+ */
 
 .sg-chiama {
   position: fixed; bottom: var(--sg-basso); z-index: 99998;
   display: inline-flex; align-items: center; gap: .5rem;
-  min-height: 48px; padding: 0 1.1rem;
+  min-height: 48px; padding: 0 1.15rem;
   font: inherit; font-size: .9375rem; font-weight: 600;
   color: var(--sg-testo); background: var(--sg-colore);
   border: 0; border-radius: 999px; cursor: pointer;
-  box-shadow: 0 8px 24px rgba(20, 18, 16, .25);
+  box-shadow: 0 10px 30px -8px var(--sg-accento-tenue), 0 2px 8px rgba(0,0,0,.10);
+  transition: transform .18s ease, box-shadow .18s ease;
 }
 
 .sg-chiama--destra { right: 1rem; }
 .sg-chiama--sinistra { left: 1rem; }
-.sg-chiama:hover { transform: translateY(-1px); }
+.sg-chiama:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -10px var(--sg-accento-tenue), 0 3px 10px rgba(0,0,0,.12); }
 
 .sg-bolla {
   position: fixed; bottom: calc(var(--sg-basso) + 3.75rem); z-index: 99998;
@@ -523,7 +612,7 @@ body.sg-bloccato { overflow: hidden; }
   width: 48px; height: 48px;
   color: var(--sg-testo); background: var(--sg-colore);
   border: 0; border-radius: 50%; cursor: pointer;
-  box-shadow: 0 8px 24px rgba(20, 18, 16, .25);
+  box-shadow: 0 10px 30px -8px var(--sg-accento-tenue), 0 2px 8px rgba(0,0,0,.10);
 }
 
 .sg-bolla--destra { right: 1rem; }
@@ -531,23 +620,25 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-assistente { position: fixed; inset: 0; z-index: 100001; }
 .sg-assistente[hidden] { display: none; }
-
 .sg-assistente__velo { position: absolute; inset: 0; background: var(--sg-velo); }
 
 .sg-assistente__foglio {
   position: absolute; right: 1rem; bottom: 1rem;
-  width: min(24rem, calc(100vw - 2rem));
-  height: min(36rem, calc(100vh - 2rem));
+  width: min(24.5rem, calc(100vw - 2rem));
+  height: min(38rem, calc(100vh - 2rem));
   display: flex; flex-direction: column;
-  background: var(--sg-carta);
-  border-radius: calc(var(--sg-raggio) * 1.5);
+  background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
+  border-radius: var(--sg-raggio-l);
   box-shadow: var(--sg-ombra);
   overflow: hidden;
 }
 
+/* La testa e' una riga sottile: il contenuto e' la conversazione. */
 .sg-assistente__testa {
   display: flex; align-items: center; gap: .5rem;
-  padding: .75rem 1rem;
+  padding: .7rem .5rem .7rem 1rem;
+  background: var(--sg-carta);
   border-bottom: 1px solid var(--sg-linea);
 }
 
@@ -558,84 +649,113 @@ body.sg-bloccato { overflow: hidden; }
 }
 
 .sg-assistente__pulisci {
-  padding: .35rem .6rem; font: inherit; font-size: .8125rem;
+  padding: .3rem .6rem;
+  font: inherit; font-size: .75rem;
   color: var(--sg-inchiostro-2); background: none;
-  border: 0; cursor: pointer; text-decoration: underline;
+  border: 1px solid var(--sg-linea); border-radius: 999px; cursor: pointer;
 }
 
+.sg-assistente__pulisci:hover { color: var(--sg-inchiostro); border-color: var(--sg-inchiostro-2); }
 .sg-assistente__pulisci[hidden] { display: none; }
 
 .sg-assistente__chiudi {
-  width: 2.25rem; height: 2.25rem;
-  font-size: 1.5rem; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem;
+  font-size: 1.25rem; line-height: 1;
   color: var(--sg-inchiostro-2); background: none;
-  border: 0; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--sg-linea); border-radius: 50%; cursor: pointer;
 }
 
-.sg-assistente__chiudi:hover { background: var(--sg-fondo); color: var(--sg-inchiostro); }
+.sg-assistente__chiudi:hover { color: var(--sg-inchiostro); background: var(--sg-fondo); }
 
 .sg-assistente__corpo {
   flex: 1 1 auto; padding: 1rem;
   overflow-y: auto; overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  display: flex; flex-direction: column; gap: .75rem;
+  display: flex; flex-direction: column; gap: .6rem;
 }
 
 .sg-msg { max-width: 100%; }
 
 .sg-msg__testo {
-  padding: .65rem .85rem;
+  padding: .65rem .9rem;
   font-size: .9375rem; line-height: 1.55;
-  border-radius: var(--sg-raggio);
-  white-space: pre-wrap; /* l'assistente va a capo: si rispetta */
+  white-space: pre-wrap;  /* l'assistente va a capo: si rispetta */
   overflow-wrap: anywhere;
 }
 
 .sg-msg--cliente { align-self: flex-end; max-width: 85%; }
-.sg-msg--cliente .sg-msg__testo { color: var(--sg-testo); background: var(--sg-colore); }
-.sg-msg--assistente .sg-msg__testo { color: var(--sg-inchiostro); background: var(--sg-fondo); }
-.sg-msg--male .sg-msg__testo { color: #8A2E2E; background: #FBF0F0; }
+
+.sg-msg--cliente .sg-msg__testo {
+  color: var(--sg-testo); background: var(--sg-colore);
+  border-radius: var(--sg-raggio-l) var(--sg-raggio-s) var(--sg-raggio-l) var(--sg-raggio-l);
+}
+
+.sg-msg--assistente { align-self: flex-start; max-width: 92%; }
+
+.sg-msg--assistente .sg-msg__testo {
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea);
+  border-radius: var(--sg-raggio-s) var(--sg-raggio-l) var(--sg-raggio-l) var(--sg-raggio-l);
+}
+
+.sg-msg--male .sg-msg__testo { color: #8A2E2E; background: #FBF0F0; border-color: #F0D8D8; }
 .sg-msg--attesa .sg-msg__testo { color: var(--sg-inchiostro-2); font-style: italic; }
 
-.sg-avvii { display: flex; flex-direction: column; gap: .4rem; margin-top: .6rem; }
+.sg-avvii { display: flex; flex-direction: column; gap: .35rem; margin-top: .6rem; }
 
 .sg-avvio {
-  padding: .55rem .75rem; min-height: 44px;
+  padding: .55rem .85rem; min-height: 44px;
   font: inherit; font-size: .875rem; text-align: left;
   color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
   cursor: pointer;
 }
 
-.sg-avvio:hover { border-color: var(--sg-inchiostro); }
+.sg-avvio:hover { border-color: var(--sg-colore); background: var(--sg-accento-tenue); }
 
+/* Il composer e' una pillola: campo dentro, pulsante tondo accanto. */
 .sg-assistente__modulo {
   display: flex; align-items: flex-end; gap: .5rem;
-  padding: .75rem; border-top: 1px solid var(--sg-linea);
+  padding: .65rem .75rem;
+  background: var(--sg-carta);
+  border-top: 1px solid var(--sg-linea);
 }
 
 .sg-assistente__campo {
   flex: 1 1 auto; min-width: 0;
-  max-height: 120px; padding: .6rem .75rem;
+  max-height: 120px; padding: .65rem 1rem;
   font: inherit; font-size: 1rem; line-height: 1.4;
-  color: var(--sg-inchiostro); background: var(--sg-carta);
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
+  color: var(--sg-inchiostro); background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
   resize: none;
 }
 
-.sg-assistente__invia {
+.sg-assistente__campo:focus { border-color: var(--sg-colore); outline: none; }
+
+.sg-assistente__invia,
+.sg-assistente__ferma {
   flex: 0 0 auto;
   display: inline-flex; align-items: center; justify-content: center;
   width: 44px; height: 44px;
-  color: var(--sg-testo); background: var(--sg-colore);
-  border: 0; border-radius: var(--sg-raggio); cursor: pointer;
+  border: 0; border-radius: 50%; cursor: pointer;
 }
 
-.sg-assistente__invia:disabled { opacity: .5; cursor: default; }
+.sg-assistente__invia { color: var(--sg-testo); background: var(--sg-colore); }
+.sg-assistente__invia:disabled { opacity: .45; cursor: default; }
+.sg-assistente__invia[hidden] { display: none; }
+
+.sg-assistente__ferma {
+  color: var(--sg-inchiostro); background: var(--sg-fondo);
+  border: 1px solid var(--sg-linea);
+}
+
+.sg-assistente__ferma[hidden] { display: none; }
 
 .sg-assistente__nota {
-  margin: 0; padding: 0 1rem .75rem;
+  margin: 0; padding: 0 1rem .7rem;
   font-size: .75rem; line-height: 1.4; color: var(--sg-inchiostro-2);
+  background: var(--sg-carta);
 }
 
 /* ------------------------------------------------------------ formati */
@@ -706,31 +826,39 @@ body.sg-bloccato { overflow: hidden; }
 /*
  * La prima riga porta sempre alla ricerca vera. E' la piu' importante: chi
  * scrive una frase intera ("regalo per una laurea") non la trova fra i nomi
- * dei prodotti, e deve poterci arrivare senza rileggere l'elenco.
+ * dei prodotti, e deve poterci arrivare senza rileggere l'elenco. Prende
+ * l'accento in velatura, cosi' si distingue senza gridare.
  */
 .sg-vai {
-  display: flex; align-items: center; gap: .6rem;
-  min-height: 48px; padding: .6rem .75rem; margin-bottom: .35rem;
+  display: flex; align-items: center; gap: .65rem;
+  min-height: 48px; padding: .6rem .85rem; margin-bottom: .4rem;
   text-decoration: none; color: var(--sg-inchiostro);
-  background: var(--sg-fondo); border-radius: var(--sg-raggio);
-}
-
-.sg-vai:hover { background: var(--sg-colore); color: var(--sg-testo); }
-.sg-vai__lente { font-size: 1.1rem; line-height: 1; opacity: .7; }
-.sg-vai__testo { font-weight: 500; }
-
-.sg-voci { margin: 0; padding: 0; list-style: none; }
-
-.sg-voce {
-  display: flex; align-items: baseline; gap: .6rem;
-  min-height: 44px; padding: .55rem .75rem;
-  text-decoration: none; color: var(--sg-inchiostro);
+  background: var(--sg-accento-tenue);
+  border: 1px solid transparent;
   border-radius: var(--sg-raggio);
 }
 
-.sg-voce:hover { background: var(--sg-fondo); }
+.sg-vai:hover { background: var(--sg-colore); color: var(--sg-testo); }
+.sg-vai__lente { font-size: 1.15rem; line-height: 1; opacity: .65; }
+.sg-vai__testo { font-weight: 500; }
+
+.sg-voci { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .1rem; }
+
+.sg-voce {
+  display: flex; align-items: baseline; gap: .6rem;
+  min-height: 44px; padding: .55rem .85rem;
+  text-decoration: none; color: var(--sg-inchiostro);
+  border: 1px solid transparent;
+  border-radius: var(--sg-raggio);
+}
+
+.sg-voce:hover { background: var(--sg-carta); border-color: var(--sg-linea); }
 .sg-voce__nome { flex: 1 1 auto; min-width: 0; }
-.sg-voce__nota { flex: 0 0 auto; font-size: .8125rem; color: var(--sg-inchiostro-2); }
+
+.sg-voce__nota {
+  flex: 0 0 auto;
+  font-size: .75rem; color: var(--sg-inchiostro-2);
+}
 
 /* Le categorie si distinguono da un prodotto senza bisogno di un'etichetta. */
 .sg-voce--categoria .sg-voce__nome { font-weight: 600; }
@@ -738,52 +866,10 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-suggerimento {
   display: block; width: 100%;
-  min-height: 44px; padding: .6rem .75rem;
+  min-height: 44px; padding: .55rem .85rem;
   text-decoration: none; text-align: left;
-  color: var(--sg-inchiostro); border-radius: var(--sg-raggio);
+  color: var(--sg-inchiostro);
+  border: 1px solid transparent; border-radius: var(--sg-raggio);
 }
 
-/* ------------------------------------------------- attesa dell'assistente */
-
-/*
- * Misurato: il servizio risponde dopo venti-trentacinque secondi, e manda
- * tutto insieme alla fine. Un rettangolo fermo per mezzo minuto si legge come
- * un guasto, quindi qualcosa deve muoversi. Sono tre punti, non una barra di
- * avanzamento: una barra prometterebbe di sapere a che punto siamo, e non lo
- * sappiamo.
- */
-.sg-msg--attesa .sg-msg__testo::after {
-  content: '';
-  display: inline-block; width: 1.6em; margin-left: .1em;
-  text-align: left;
-  animation: sg-punti 1.4s steps(4, end) infinite;
-}
-
-@keyframes sg-punti {
-  0%   { content: ''; }
-  25%  { content: '.'; }
-  50%  { content: '..'; }
-  75%  { content: '...'; }
-  100% { content: ''; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sg-msg--attesa .sg-msg__testo::after { animation: none; content: '…'; }
-}
-
-.sg-msg__nota {
-  margin: .4rem 0 0; padding: 0 .85rem;
-  font-size: .8125rem; line-height: 1.4; color: var(--sg-inchiostro-2);
-}
-
-.sg-assistente__ferma {
-  flex: 0 0 auto;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px;
-  color: var(--sg-inchiostro); background: var(--sg-fondo);
-  border: 1px solid var(--sg-linea); border-radius: var(--sg-raggio);
-  cursor: pointer;
-}
-
-.sg-assistente__ferma[hidden] { display: none; }
-.sg-assistente__invia[hidden] { display: none; }
+.sg-suggerimento:hover { background: var(--sg-carta); border-color: var(--sg-linea); }
