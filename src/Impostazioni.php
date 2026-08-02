@@ -51,6 +51,7 @@ final class Impostazioni {
 			'saluto'              => '',
 			'solo_su'             => array(),   // vuoto = ovunque
 			'sostituisci_ricerca' => false,
+			'assistente'          => true,
 
 			// Catalogo
 			'sincro_automatica'   => true,

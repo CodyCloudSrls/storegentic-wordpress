@@ -7,9 +7,13 @@
  * sorgente di ogni pagina, leggibile da chiunque. Qui il browser parla solo
  * con WordPress; la chiave resta sul server.
  *
- * Il ponte espone il minimo indispensabile: cercare, chiedere all'agente,
- * segnalare un evento. Non espone la sincronizzazione, che e' un'operazione
- * di amministrazione.
+ * Il ponte espone il minimo indispensabile: cercare a parole, cercare con una
+ * foto, chiedere all'assistente, segnalare un evento. Non espone la
+ * sincronizzazione, che e' un'operazione di amministrazione.
+ *
+ * Qui non c'e' logica di ricerca: sta in Ricerca, che serve anche la pagina
+ * dei risultati. Questo file si occupa di chi puo' chiamare, quanto spesso, e
+ * con quali parametri.
  *
  * Ogni rotta e' pubblica per necessita' — chi cerca non e' registrato — e
  * quindi ha un limite di frequenza per indirizzo IP: senza, il ponte
@@ -22,9 +26,8 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Frontend;
 
-use Storegentic\Api\Client;
-use Storegentic\Api\Contratto;
 use Storegentic\Analitica\Registratore;
+use Storegentic\Impostazioni;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -38,8 +41,31 @@ final class Ponte {
 
 	private const SPAZIO = 'storegentic/v1';
 
-	/** Richieste ammesse per finestra, per indirizzo. */
-	private const TETTO = 30;
+	/**
+	 * Quanto costa ogni rotta, e quanto se ne puo' spendere al minuto.
+	 *
+	 * Non tutte le richieste pesano uguale. Una ricerca a parole e' una
+	 * chiamata breve; una foto va caricata e vettorizzata; una risposta
+	 * dell'assistente tiene occupato un processo per decine di secondi e
+	 * consuma la quota molto piu' in fretta. Un limite unico o e' troppo largo
+	 * per l'assistente o e' troppo stretto per chi scrive nella barra.
+	 */
+	private const COSTO = array(
+		'ricerca'    => 1,
+		'immagine'   => 4,
+		'assistente' => 6,
+		'evento'     => 1,
+		/*
+		 * I suggerimenti non costano quota: leggono il database del negozio e
+		 * non chiamano il servizio. Farli pesare sul contatore vorrebbe dire
+		 * che chi scrive una frase lunga esaurisce il proprio credito prima di
+		 * aver premuto Invio una volta sola.
+		 */
+		'suggerimenti' => 0,
+	);
+
+	/** Spesa ammessa per finestra, per indirizzo. */
+	private const TETTO = 40;
 
 	/** Ampiezza della finestra, in secondi. */
 	private const FINESTRA = 60;
@@ -51,7 +77,7 @@ final class Ponte {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( self::class, 'ricerca' ),
-				'permission_callback' => array( self::class, 'ammessa' ),
+				'permission_callback' => static fn( $r ) => self::ammessa( $r, 'ricerca' ),
 				'args'                => array(
 					'query' => array(
 						'type'              => 'string',
@@ -59,10 +85,102 @@ final class Ponte {
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => static fn( $v ) => is_string( $v ) && '' !== trim( $v ),
 					),
+					'forma' => array(
+						'type'              => 'string',
+						'default'           => 'griglia',
+						'sanitize_callback' => static fn( $v ) => 'riga' === $v ? 'riga' : 'griglia',
+					),
 					'topK'  => array(
 						'type'              => 'integer',
-						'default'           => 12,
-						'sanitize_callback' => static fn( $v ) => max( 1, min( 40, (int) $v ) ),
+						'default'           => Ricerca::RAPIDO,
+						'sanitize_callback' => static fn( $v ) => max( 1, min( 50, (int) $v ) ),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::SPAZIO,
+			'/immagine',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( self::class, 'immagine' ),
+				'permission_callback' => static fn( $r ) => self::ammessa( $r, 'immagine' ),
+				'args'                => array(
+					'foto'  => array(
+						'type'     => 'string',
+						'required' => true,
+						/*
+						 * Niente sanitize_text_field: e' base64, e quella
+						 * funzione toglierebbe caratteri validi corrompendo
+						 * l'immagine. La validita' la controlla Ricerca, che
+						 * decodifica e verifica che sia davvero un'immagine.
+						 */
+						'validate_callback' => static fn( $v ) => is_string( $v ) && '' !== trim( $v ),
+					),
+					'mime'  => array(
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => static fn( $v ) => preg_match( '#^image/[a-z0-9.+-]+$#i', (string) $v ) ? strtolower( (string) $v ) : '',
+					),
+					'query' => array(
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'forma' => array(
+						'type'              => 'string',
+						'default'           => 'griglia',
+						'sanitize_callback' => static fn( $v ) => 'riga' === $v ? 'riga' : 'griglia',
+					),
+					'topK'  => array(
+						'type'              => 'integer',
+						'default'           => Ricerca::AMPIO,
+						'sanitize_callback' => static fn( $v ) => max( 1, min( 50, (int) $v ) ),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::SPAZIO,
+			'/assistente',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( Assistente::class, 'rispondi' ),
+				'permission_callback' => static fn( $r ) => self::ammessa( $r, 'assistente' ),
+				'args'                => array(
+					'messaggio' => array(
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => static fn( $v ) => mb_substr( sanitize_textarea_field( (string) $v ), 0, 500 ),
+						'validate_callback' => static fn( $v ) => is_string( $v ) && '' !== trim( $v ),
+					),
+					'storia'    => array(
+						'type'    => 'array',
+						'default' => array(),
+					),
+				),
+			)
+		);
+
+		/*
+		 * I suggerimenti non toccano il servizio: leggono il database del
+		 * negozio. E' una GET perche' e' una lettura, e cosi' il browser puo'
+		 * riusare la risposta quando si cancella una lettera e la si riscrive.
+		 */
+		register_rest_route(
+			self::SPAZIO,
+			'/suggerimenti',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( self::class, 'suggerimenti' ),
+				'permission_callback' => static fn( $r ) => self::ammessa( $r, 'suggerimenti' ),
+				'args'                => array(
+					'q' => array(
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => static fn( $v ) => mb_substr( sanitize_text_field( (string) $v ), 0, 60 ),
 					),
 				),
 			)
@@ -74,7 +192,7 @@ final class Ponte {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( self::class, 'evento' ),
-				'permission_callback' => array( self::class, 'ammessa' ),
+				'permission_callback' => static fn( $r ) => self::ammessa( $r, 'evento' ),
 			)
 		);
 	}
@@ -82,8 +200,8 @@ final class Ponte {
 	/**
 	 * @return true|WP_Error
 	 */
-	public static function ammessa( WP_REST_Request $richiesta ) {
-		if ( ! \Storegentic\Impostazioni::leggi( 'attivo' ) ) {
+	public static function ammessa( WP_REST_Request $richiesta, string $rotta = 'ricerca' ) {
+		if ( ! Impostazioni::leggi( 'attivo' ) ) {
 			return new WP_Error( 'storegentic_spento', __( 'Storegentic non è attivo su questo negozio.', 'storegentic' ), array( 'status' => 403 ) );
 		}
 
@@ -98,9 +216,9 @@ final class Ponte {
 		$finestra = (int) floor( time() / self::FINESTRA );
 		$impronta = 'sg_freq_' . md5( self::indirizzo() . '|' . $finestra );
 
-		$conteggio = (int) get_transient( $impronta );
+		$spesa = (int) get_transient( $impronta );
 
-		if ( $conteggio >= self::TETTO ) {
+		if ( $spesa >= self::TETTO ) {
 			return new WP_Error(
 				'storegentic_troppe_richieste',
 				__( 'Troppe richieste. Riprova fra qualche istante.', 'storegentic' ),
@@ -108,7 +226,7 @@ final class Ponte {
 			);
 		}
 
-		set_transient( $impronta, $conteggio + 1, self::FINESTRA * 2 );
+		set_transient( $impronta, $spesa + ( self::COSTO[ $rotta ] ?? 1 ), self::FINESTRA * 2 );
 
 		return true;
 	}
@@ -117,182 +235,62 @@ final class Ponte {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function ricerca( WP_REST_Request $richiesta ) {
-		$percorso = Contratto::endpoint( 'search' );
-
-		if ( '' === $percorso ) {
-			return new WP_Error( 'storegentic_ricerca_assente', __( 'La ricerca non è disponibile per questo negozio.', 'storegentic' ), array( 'status' => 503 ) );
-		}
-
-		/*
-		 * Un solo tentativo, e un timeout corto. Il client riprova sui 5xx
-		 * con attese crescenti, e va benissimo per la sincronizzazione, che
-		 * gira nel cron. Qui no: questa rotta e' pubblica e c'e' una persona
-		 * che aspetta. Con i ritentativi una singola ricerca poteva tenere
-		 * occupato un processo di PHP per quasi un minuto, e poche richieste
-		 * contemporanee bastavano a saturare i processi disponibili.
-		 */
-		$client = new Client( null, null, 8, 0 );
-
-		$risposta = $client->post(
-			$percorso,
-			array(
-				'query' => (string) $richiesta->get_param( 'query' ),
-				'topK'  => (int) $richiesta->get_param( 'topK' ),
-			)
-		);
-
-		if ( is_wp_error( $risposta ) ) {
-			$stato = (int) ( $risposta->get_error_data()['stato'] ?? 502 );
-			$risposta->add_data( array( 'status' => $stato >= 400 ? $stato : 502 ) );
-			return $risposta;
-		}
-
-		/*
-		 * Al browser va solo cio' che serve a disegnare una scheda. Il resto
-		 * della risposta (punteggi di rerank, diagnostica del rollout) e'
-		 * informazione interna del servizio: non si ripubblica.
-		 */
-		return new WP_REST_Response(
-			array(
-				'risultati' => array_map( array( self::class, 'scheda' ), (array) ( $risposta['results'] ?? array() ) ),
-				'categorie' => self::categorie( (array) ( $risposta['categories'] ?? $risposta['topCategories'] ?? array() ) ),
-				'tempoMs'   => (int) ( $risposta['tookMs'] ?? 0 ),
+		return self::rispondi(
+			Ricerca::testo(
+				(string) $richiesta->get_param( 'query' ),
+				(int) $richiesta->get_param( 'topK' )
 			),
+			$richiesta
+		);
+	}
+
+	/**
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public static function immagine( WP_REST_Request $richiesta ) {
+		return self::rispondi(
+			Ricerca::foto(
+				(string) $richiesta->get_param( 'foto' ),
+				(string) $richiesta->get_param( 'mime' ),
+				(string) $richiesta->get_param( 'query' ),
+				(int) $richiesta->get_param( 'topK' )
+			),
+			$richiesta
+		);
+	}
+
+	/**
+	 * L'esito con il markup gia' pronto.
+	 *
+	 * Il browser riceve i dati per filtrare e ordinare, e l'HTML per
+	 * disegnare. Costruire il markup lato client avrebbe voluto dire tenerne
+	 * due versioni: vedi Frontend\Scheda.
+	 *
+	 * @param array<string,mixed>|WP_Error $esito
+	 * @return WP_REST_Response|WP_Error
+	 */
+	private static function rispondi( $esito, WP_REST_Request $richiesta ) {
+		if ( is_wp_error( $esito ) ) {
+			return $esito;
+		}
+
+		$forma = 'riga' === (string) $richiesta->get_param( 'forma' ) ? 'riga' : 'griglia';
+
+		$esito['risultati'] = Scheda::con_html( (array) $esito['risultati'], $forma );
+
+		return new WP_REST_Response( $esito, 200 );
+	}
+
+	public static function suggerimenti( WP_REST_Request $richiesta ): WP_REST_Response {
+		$risposta = new WP_REST_Response(
+			array( 'voci' => Suggerimenti::per( (string) $richiesta->get_param( 'q' ) ) ),
 			200
 		);
-	}
 
-	/**
-	 * Le categorie suggerite, senza doppioni.
-	 *
-	 * Il servizio le restituisce sia come percorso ("collane") sia come nome
-	 * ("Collane"), e a schermo diventavano due pastiglie per la stessa
-	 * categoria. Si confrontano ignorando maiuscole e trattini, e si tiene
-	 * la prima forma incontrata, resa leggibile.
-	 *
-	 * @param array<int,array<string,mixed>> $grezze
-	 * @return array<int,array<string,mixed>>
-	 */
-	private static function categorie( array $grezze ): array {
-		$viste  = array();
-		$pulite = array();
+		// Un elenco di nomi di prodotti non cambia da un minuto all'altro.
+		$risposta->header( 'Cache-Control', 'public, max-age=300' );
 
-		foreach ( $grezze as $c ) {
-			$percorso = trim( (string) ( $c['categoryPath'] ?? '' ) );
-
-			if ( '' === $percorso ) {
-				continue;
-			}
-
-			// L'ultimo segmento e' la categoria vera: "collane/pietre-dure" -> "pietre-dure".
-			$segmenti = explode( '/', $percorso );
-			$foglia   = (string) end( $segmenti );
-			$chiave = strtolower( str_replace( array( '-', '_' ), ' ', $foglia ) );
-
-			if ( isset( $viste[ $chiave ] ) ) {
-				continue;
-			}
-
-			$viste[ $chiave ] = true;
-
-			$pulite[] = array(
-				'percorso'  => $percorso,
-				'etichetta' => ucfirst( $chiave ),
-				'conteggio' => (int) ( $c['count'] ?? 0 ),
-			);
-		}
-
-		return array_slice( $pulite, 0, 5 );
-	}
-
-	/**
-	 * Una scheda come la vuole il browser.
-	 *
-	 * I valori si cercano in tre posti, in ordine: il primo livello della
-	 * scheda, la variante corrispondente, le sfaccettature.
-	 *
-	 * Non e' pignoleria. Il servizio indicizza tutto quello che gli mandiamo,
-	 * ma la scheda di riepilogo che restituisce lascia vuoti alcuni campi:
-	 * verificato su questo catalogo, `brand` torna nullo in cima mentre nelle
-	 * sfaccettature c'e' `brand: KLK`, e `availability` sta nella variante ma
-	 * non in cima. Leggere solo il primo livello significava buttare via un
-	 * dato che il servizio possiede.
-	 *
-	 * @param array<string,mixed> $c
-	 * @return array<string,mixed>
-	 */
-	private static function scheda( array $c ): array {
-		return array(
-			'sku'          => (string) ( $c['sku'] ?? '' ),
-			'nome'         => (string) ( $c['name'] ?? '' ),
-			'url'          => esc_url_raw( (string) self::valore( $c, 'url' ) ),
-			'immagine'     => esc_url_raw( (string) self::valore( $c, 'imageUrl' ) ),
-			'prezzo'       => self::prezzo( $c ),
-			'marchio'      => self::valore( $c, 'brand' ) ?: null,
-			'categoria'    => self::valore( $c, 'category' ) ?: ( self::valore( $c, 'categoryPath' ) ?: null ),
-			'disponibile'  => 'out_of_stock' !== self::valore( $c, 'availability' ),
-			'sommario'     => wp_strip_all_tags( (string) self::valore( $c, 'shortDescription' ) ) ?: null,
-		);
-	}
-
-	/**
-	 * Il valore di un campo, cercato dove il servizio lo mette davvero.
-	 *
-	 * @param array<string,mixed> $c
-	 */
-	private static function valore( array $c, string $campo ): string {
-		if ( isset( $c[ $campo ] ) && is_scalar( $c[ $campo ] ) && '' !== $c[ $campo ] ) {
-			return (string) $c[ $campo ];
-		}
-
-		if ( isset( $c['matchedVariant'][ $campo ] ) && is_scalar( $c['matchedVariant'][ $campo ] ) ) {
-			return (string) $c['matchedVariant'][ $campo ];
-		}
-
-		$sfaccettature = $c['attributes']['attributes']['facets'] ?? array();
-
-		if ( isset( $sfaccettature[ $campo ][0]['value'] ) ) {
-			return (string) $sfaccettature[ $campo ][0]['value'];
-		}
-
-		return '';
-	}
-
-	/**
-	 * Il prezzo gia' formattato secondo le impostazioni del negozio.
-	 *
-	 * Il servizio restituisce il numero, non la stringa: formattarlo qui
-	 * significa che simbolo, separatori e posizione seguono WooCommerce,
-	 * come nel resto del sito.
-	 *
-	 * @param array<string,mixed> $c
-	 */
-	private static function prezzo( array $c ): ?string {
-		if ( isset( $c['priceFormatted'] ) && '' !== $c['priceFormatted'] ) {
-			return (string) $c['priceFormatted'];
-		}
-
-		$numero = self::valore( $c, 'price' );
-
-		if ( '' === $numero || ! is_numeric( $numero ) ) {
-			return null;
-		}
-
-		if ( ! function_exists( 'wc_price' ) ) {
-			return (string) $numero;
-		}
-
-		/*
-		 * wc_price() restituisce markup con le entita' HTML: togliendo solo
-		 * i tag resta "&euro;49,00", che il browser stampa cosi' com'e'
-		 * perche' il testo viene inserito con textContent e non come HTML.
-		 * Le entita' vanno sciolte qui.
-		 */
-		return html_entity_decode(
-			wp_strip_all_tags( wc_price( (float) $numero ) ),
-			ENT_QUOTES | ENT_HTML5,
-			'UTF-8'
-		);
+		return $risposta;
 	}
 
 	/**

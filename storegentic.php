@@ -3,7 +3,7 @@
  * Plugin Name:       Storegentic per WooCommerce
  * Plugin URI:        https://storegentic.it
  * Description:       Collega un negozio WooCommerce a Storegentic: ricerca semantica, agente conversazionale e analisi. Funziona su qualsiasi negozio, senza toccare il tema.
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            CodyCloud Srls
@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSIONE       = '0.1.0';
+const VERSIONE       = '0.2.0';
 const FILE_PRINCIPALE = __FILE__;
 const PERCORSO       = __DIR__;
 const PREFISSO_OPZIONI = 'storegentic_';

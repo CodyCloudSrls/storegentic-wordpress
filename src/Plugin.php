@@ -18,6 +18,7 @@ use Storegentic\Analitica\Registratore;
 use Storegentic\Api\Contratto;
 use Storegentic\Catalogo\Pianificatore;
 use Storegentic\Frontend\Interfaccia;
+use Storegentic\Frontend\Pagina as PaginaRicerca;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,6 +31,14 @@ final class Plugin {
 
 		Pianificatore::avvia();
 		Registratore::avvia();
+
+		/*
+		 * La pagina dei risultati si monta anche in amministrazione: le regole
+		 * di riscrittura vanno registrate in ogni contesto, altrimenti quando
+		 * WordPress le riscrive — dalla pagina dei permalink, o dopo un
+		 * aggiornamento — la nostra regola non e' presente e sparisce.
+		 */
+		PaginaRicerca::avvia();
 
 		if ( is_admin() ) {
 			Pagina::avvia();

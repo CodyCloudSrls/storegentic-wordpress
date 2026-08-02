@@ -70,6 +70,104 @@ final class Client {
 	}
 
 	/**
+	 * Una risposta che arriva a pezzi, inoltrata mentre arriva.
+	 *
+	 * PERCHE' NON wp_remote_post(). Quella funzione torna quando la risposta e'
+	 * finita: per l'assistente vorrebbe dire aspettare in silenzio dieci secondi
+	 * e poi mostrare tutto insieme. Qui il corpo si legge mentre il server lo
+	 * scrive, e ogni evento completo viene passato subito a chi ha chiamato.
+	 *
+	 * Resta comunque l'unica classe che parla con la rete: autenticazione,
+	 * indirizzo e firma si costruiscono qui come per tutte le altre chiamate.
+	 *
+	 * Il formato e' quello degli eventi del server (SSE): righe `data: {...}`
+	 * separate da una riga vuota. Si accumula in un cuscinetto perche' un
+	 * pacchetto TCP puo' tagliare un evento a meta'.
+	 *
+	 * @param array<string,mixed> $carico
+	 * @param callable            $su_evento Riceve un array decodificato. Se
+	 *                                       torna `false` il flusso si chiude.
+	 */
+	public function flusso( string $percorso, array $carico, callable $su_evento ): ?WP_Error {
+		if ( '' === $this->chiave ) {
+			return new WP_Error( 'storegentic_senza_chiave', __( 'Manca la chiave del negozio.', 'storegentic' ) );
+		}
+
+		if ( ! function_exists( 'curl_init' ) ) {
+			return new WP_Error( 'storegentic_senza_curl', __( 'Questo server non può leggere risposte in streaming.', 'storegentic' ) );
+		}
+
+		$cuscinetto = '';
+		$interrotto = false;
+
+		$maniglia = curl_init( $this->url( $percorso ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		curl_setopt_array( // phpcs:ignore WordPress.WP.AlternativeFunctions
+			$maniglia,
+			array(
+				CURLOPT_POST           => true,
+				CURLOPT_POSTFIELDS     => (string) wp_json_encode( $carico ),
+				CURLOPT_HTTPHEADER     => array(
+					'Authorization: Bearer ' . $this->chiave,
+					'Content-Type: application/json; charset=utf-8',
+					'Accept: text/event-stream',
+					'User-Agent: ' . $this->firma(),
+				),
+				CURLOPT_TIMEOUT        => $this->timeout,
+				CURLOPT_CONNECTTIMEOUT => 10,
+				CURLOPT_RETURNTRANSFER => false,
+				CURLOPT_WRITEFUNCTION  => function ( $_maniglia, string $pezzo ) use ( &$cuscinetto, &$interrotto, $su_evento ): int {
+					$lunghezza   = strlen( $pezzo );
+					$cuscinetto .= $pezzo;
+
+					// Un evento finisce con una riga vuota; il resto aspetta.
+					while ( false !== ( $taglio = strpos( $cuscinetto, "\n\n" ) ) ) {
+						$blocco     = substr( $cuscinetto, 0, $taglio );
+						$cuscinetto = substr( $cuscinetto, $taglio + 2 );
+
+						foreach ( explode( "\n", $blocco ) as $riga ) {
+							$riga = trim( $riga );
+
+							if ( ! str_starts_with( $riga, 'data:' ) ) {
+								continue;
+							}
+
+							$dati = json_decode( trim( substr( $riga, 5 ) ), true );
+
+							if ( is_array( $dati ) && false === $su_evento( $dati ) ) {
+								$interrotto = true;
+								// Zero byte "consumati": cURL chiude la connessione.
+								return 0;
+							}
+						}
+					}
+
+					return $lunghezza;
+				},
+			)
+		);
+
+		curl_exec( $maniglia ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$errore = curl_errno( $maniglia ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$codice = (int) curl_getinfo( $maniglia, CURLINFO_HTTP_CODE ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		curl_close( $maniglia ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+
+		if ( $codice >= 400 ) {
+			return $this->errore_http( $codice, '', '' );
+		}
+
+		// L'interruzione e' voluta da chi chiama: non e' un errore.
+		if ( $errore && ! $interrotto ) {
+			return new WP_Error(
+				'storegentic_flusso_interrotto',
+				__( 'La risposta si è interrotta.', 'storegentic' ),
+				array( 'stato' => 502 )
+			);
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param array<string,scalar> $parametri
 	 * @return array<string,mixed>|WP_Error
 	 */

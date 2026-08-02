@@ -1,0 +1,331 @@
+<?php
+/**
+ * L'assistente: la risposta mentre si scrive.
+ *
+ * PERCHE' UN PROXY E NON UNA CHIAMATA DIRETTA. La chiave del negozio autorizza
+ * a leggere e a scrivere il catalogo. Nel browser sarebbe leggibile da
+ * chiunque. Qui il browser parla con WordPress, WordPress parla con
+ * Storegentic.
+ *
+ * PERCHE' SI RISCRIVE IL FLUSSO. Il servizio manda, a ogni pezzo di testo,
+ * anche tutte le fonti che ha consultato: dodici prodotti interi, ripetuti
+ * identici a ogni pezzo. Misurato su una domanda sola: 1.037.534 byte, di cui
+ * 388 caratteri di risposta. Inoltrarlo cosi' com'e' vorrebbe dire spedire un
+ * megabyte a un telefono per tre righe di testo.
+ *
+ * Il ponte legge quel flusso, tiene il testo e gli SKU, e ne manda al browser
+ * una versione essenziale: i pezzi di testo mentre arrivano, e una sola volta
+ * l'elenco dei prodotti, risolto sul catalogo del negozio.
+ *
+ * PERCHE' L'ASSISTENTE NON RICORDA DA SOLO. L'indirizzo dichiarato dal
+ * contratto accetta `message`, `chatMode` e `attachments`: nessun
+ * identificativo di conversazione. Il filo del discorso lo tiene il browser,
+ * e viene rimandato a ogni domanda dentro il messaggio. E' un limite del
+ * servizio, non una scelta: si dichiara qui invece di far finta di niente.
+ *
+ * @package Storegentic
+ */
+
+declare( strict_types = 1 );
+
+namespace Storegentic\Frontend;
+
+use Storegentic\Api\Client;
+use Storegentic\Api\Contratto;
+use Storegentic\Analitica\Registratore;
+use WP_REST_Request;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+final class Assistente {
+
+	/** Quante domande e risposte si rimandano indietro come contesto. */
+	private const MEMORIA = 6;
+
+	/** Quanti caratteri al massimo occupa il contesto rimandato. */
+	private const MEMORIA_CARATTERI = 2000;
+
+	/** Quanto si aspetta una risposta prima di rinunciare, in secondi. */
+	private const ATTESA = 60;
+
+	/**
+	 * Risponde in streaming e termina il processo.
+	 *
+	 * NON restituisce una risposta REST. Il formato degli eventi del server
+	 * richiede di scrivere sul canale mentre la risposta si forma, mentre
+	 * l'API REST di WordPress costruisce un corpo intero e lo serve alla fine.
+	 * Si prendono quindi in mano le intestazioni e si chiude con `exit`:
+	 * WordPress non arriva mai a scrivere il proprio corpo.
+	 *
+	 * @return never
+	 */
+	public static function rispondi( WP_REST_Request $richiesta ) {
+		$domanda = trim( (string) $richiesta->get_param( 'messaggio' ) );
+
+		self::apri_canale();
+
+		if ( '' === $domanda ) {
+			self::manda( array( 'errore' => __( 'Scrivi una domanda.', 'storegentic' ) ) );
+			exit;
+		}
+
+		$indirizzo = Contratto::endpoint( 'agentChat' );
+
+		if ( '' === $indirizzo || ! Contratto::puo( 'agentChat' ) ) {
+			self::manda( array( 'errore' => __( 'L’assistente non è disponibile su questo negozio.', 'storegentic' ) ) );
+			exit;
+		}
+
+		$risposta = '';
+		$fonti    = array();
+
+		$errore = ( new Client( null, null, self::ATTESA, 0 ) )->flusso(
+			$indirizzo,
+			array(
+				'message'  => self::messaggio( $domanda, (array) $richiesta->get_param( 'storia' ) ),
+				'chatMode' => 'query',
+			),
+			static function ( array $evento ) use ( &$risposta, &$fonti ): bool {
+				$tipo = (string) ( $evento['type'] ?? '' );
+
+				if ( 'abort' === $tipo || ! empty( $evento['error'] ) ) {
+					self::manda( array( 'errore' => __( 'La risposta si è interrotta. Riprova.', 'storegentic' ) ) );
+
+					return false;
+				}
+
+				/*
+				 * Il testo arriva a pezzi, non ripetuto: si inoltra ogni pezzo
+				 * appena arriva, che e' tutto il punto dello streaming.
+				 */
+				$pezzo = (string) ( $evento['textResponse'] ?? '' );
+
+				if ( '' !== $pezzo ) {
+					$risposta .= $pezzo;
+					self::manda( array( 'testo' => $pezzo ) );
+				}
+
+				/*
+				 * Le fonti si raccolgono, non si mandano: servono alla fine,
+				 * quando la risposta e' completa e si puo' vedere quali
+				 * prodotti nomina davvero. Sono anche la parte pesante del
+				 * flusso — 74 kB ripetuti a ogni pezzo — ed e' quella che qui
+				 * non attraversa mai la rete verso il browser.
+				 */
+				self::raccogli( $evento, $fonti );
+
+				if ( ! empty( $evento['close'] ) || 'finalizeResponseStream' === $tipo ) {
+					return false;
+				}
+
+				// Chi guarda ha chiuso la pagina: si smette di consumare quota.
+				return ! connection_aborted();
+			}
+		);
+
+		$testo_totale = mb_strlen( $risposta );
+
+		if ( null !== $errore && 0 === $testo_totale ) {
+			self::manda( array( 'errore' => $errore->get_error_message() ) );
+		}
+
+		$citati = self::citati( $risposta, $fonti );
+
+		if ( ! empty( $citati ) ) {
+			self::manda( array( 'prodotti' => $citati ) );
+		}
+
+		Registratore::accoda(
+			'agent_chat',
+			array(
+				'mode' => 'assistente',
+				'data' => array(
+					'query'      => mb_substr( $domanda, 0, 200 ),
+					'characters' => $testo_totale,
+				),
+			)
+		);
+
+		self::manda( array( 'fine' => true ) );
+		exit;
+	}
+
+	/**
+	 * Raccoglie le fonti di un evento, senza doppioni.
+	 *
+	 * Il campo `commerceResults` previsto dal contratto arriva sempre vuoto su
+	 * questo servizio; i prodotti stanno in `sources`, con SKU e indirizzo.
+	 * Si leggono entrambi: se un domani il primo si popola, funziona lo stesso.
+	 *
+	 * @param array<string,mixed>            $evento
+	 * @param array<string,array<string,mixed>> $fonti Si riempie qui dentro.
+	 */
+	private static function raccogli( array $evento, array &$fonti ): void {
+		foreach ( (array) ( $evento['commerceResults'] ?? array() ) as $r ) {
+			if ( is_array( $r ) && ! empty( $r['sku'] ) ) {
+				$fonti[ (string) $r['sku'] ] = $r;
+			}
+		}
+
+		foreach ( (array) ( $evento['sources'] ?? array() ) as $f ) {
+			if ( ! is_array( $f ) || empty( $f['sku'] ) ) {
+				continue;
+			}
+
+			$sku = (string) $f['sku'];
+
+			if ( isset( $fonti[ $sku ] ) ) {
+				continue;
+			}
+
+			$fonti[ $sku ] = array(
+				'sku'   => $sku,
+				'name'  => (string) ( $f['title'] ?? '' ),
+				'url'   => (string) ( $f['url'] ?? '' ),
+				'score' => $f['score'] ?? null,
+			);
+		}
+	}
+
+	/**
+	 * Solo i prodotti che la risposta nomina davvero.
+	 *
+	 * PERCHE' NON SI MOSTRANO TUTTE LE FONTI. Le fonti sono cio' che il
+	 * servizio ha letto per rispondere, non cio' che consiglia: su una domanda
+	 * di prova la risposta proponeva un bracciale da 20 €, un paio di
+	 * orecchini da 29 € e un anello da 39 €, mentre le fonti erano tre anelli
+	 * da 69 e 98 €. Mostrare quelle sotto quel testo avrebbe messo in
+	 * contraddizione le parole e le figure nella stessa schermata.
+	 *
+	 * Si confrontano quindi i nomi. Il confronto ignora accenti, maiuscole e
+	 * punteggiatura, e si accontenta delle prime parole del nome: la risposta
+	 * puo' abbreviare "Collana con perle Maiorca olografiche e chiusura in
+	 * argento" in "Collana con perle Maiorca".
+	 *
+	 * Se la risposta non nomina nulla — succede con le domande generiche —
+	 * non si mostra nulla. Meglio nessuna scheda che la scheda sbagliata.
+	 *
+	 * @param array<string,array<string,mixed>> $fonti
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function citati( string $risposta, array $fonti ): array {
+		if ( '' === trim( $risposta ) || empty( $fonti ) ) {
+			return array();
+		}
+
+		$piatta  = self::confrontabile( $risposta );
+		$trovati = array();
+
+		foreach ( $fonti as $f ) {
+			$nome = self::confrontabile( (string) ( $f['name'] ?? '' ) );
+
+			if ( '' === $nome ) {
+				continue;
+			}
+
+			$parole = explode( ' ', $nome );
+			$inizio = implode( ' ', array_slice( $parole, 0, 5 ) );
+
+			// Meno di tre parole non identificano un prodotto: "anello oro"
+			// comparirebbe in qualunque risposta che parli di anelli.
+			if ( count( $parole ) >= 3 && str_contains( $piatta, $inizio ) ) {
+				$trovati[] = $f;
+			}
+		}
+
+		/*
+		 * Sei bastano: l'elenco sta sotto una risposta, non e' il catalogo.
+		 *
+		 * Il markup si aggiunge qui. Il browser inserisce l'HTML che riceve e
+		 * non ne costruisce: e' la stessa regola che vale per la ricerca, ed e'
+		 * il motivo per cui una scheda ha lo stesso aspetto ovunque compaia.
+		 */
+		return Scheda::con_html( array_slice( Risolutore::schede( $trovati ), 0, 6 ), 'riga' );
+	}
+
+	/** Testo ridotto alla forma in cui due nomi si possono confrontare. */
+	private static function confrontabile( string $testo ): string {
+		$testo = remove_accents( $testo );
+		$testo = strtolower( $testo );
+		$testo = (string) preg_replace( '/[^a-z0-9]+/', ' ', $testo );
+
+		return trim( (string) preg_replace( '/\s+/', ' ', $testo ) );
+	}
+
+	/**
+	 * La domanda, con quel tanto di conversazione che serve a capirla.
+	 *
+	 * Senza contesto "e in argento?" e' una domanda senza senso. Il contesto
+	 * si tiene corto di proposito: e' testo che il servizio deve rileggere a
+	 * ogni giro, e una conversazione lunga finirebbe per costare piu' della
+	 * risposta.
+	 *
+	 * @param array<int,mixed> $storia
+	 */
+	private static function messaggio( string $domanda, array $storia ): string {
+		$righe = array();
+
+		foreach ( array_slice( $storia, -self::MEMORIA ) as $turno ) {
+			if ( ! is_array( $turno ) ) {
+				continue;
+			}
+
+			$chi   = 'assistente' === (string) ( $turno['chi'] ?? '' ) ? 'Assistente' : 'Cliente';
+			$testo = trim( wp_strip_all_tags( (string) ( $turno['testo'] ?? '' ) ) );
+
+			if ( '' !== $testo ) {
+				$righe[] = $chi . ': ' . mb_substr( $testo, 0, 400 );
+			}
+		}
+
+		if ( empty( $righe ) ) {
+			return $domanda;
+		}
+
+		$contesto = mb_substr( implode( "\n", $righe ), -self::MEMORIA_CARATTERI );
+
+		return "Conversazione fin qui:\n" . $contesto . "\n\nNuova domanda del cliente: " . $domanda;
+	}
+
+	/**
+	 * Prepara il canale a una risposta che arriva a pezzi.
+	 *
+	 * Ogni strato fra PHP e il browser tende ad accumulare l'uscita per
+	 * spedirla in un colpo solo: e' la cosa giusta per una pagina, e la cosa
+	 * sbagliata qui, perche' il testo arriverebbe tutto insieme alla fine.
+	 * Le intestazioni sotto sono i modi di dire "non accumulare" ai server
+	 * piu' diffusi; quella di LiteSpeed serve su questo hosting.
+	 */
+	private static function apri_canale(): void {
+		if ( ! headers_sent() ) {
+			header( 'Content-Type: text/event-stream; charset=utf-8' );
+			header( 'Cache-Control: no-cache, no-store, must-revalidate' );
+			header( 'Connection: keep-alive' );
+			header( 'X-Accel-Buffering: no' );
+			header( 'X-LiteSpeed-Cache-Control: no-cache' );
+		}
+
+		// Se il visitatore chiude, PHP deve accorgersene e fermarsi.
+		ignore_user_abort( false );
+
+		if ( function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( self::ATTESA + 15 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		}
+
+		@ini_set( 'zlib.output_compression', '0' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors, WordPress.PHP.IniSet
+
+		while ( ob_get_level() > 0 ) {
+			ob_end_flush();
+		}
+	}
+
+	/**
+	 * @param array<string,mixed> $dati
+	 */
+	private static function manda( array $dati ): void {
+		echo 'data: ' . wp_json_encode( $dati ) . "\n\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+		flush();
+	}
+}
