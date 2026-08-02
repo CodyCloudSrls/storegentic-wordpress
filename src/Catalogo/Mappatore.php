@@ -29,15 +29,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Mappatore {
 
 	/**
+	 * Un prodotto come lo vuole il servizio.
+	 *
+	 * I campi stanno al PRIMO LIVELLO e non solo dentro `metadata`.
+	 *
+	 * La specifica pubblica documenta cinque campi soli — sku, name,
+	 * description, productUrl, metadata — ma il documento indicizzato dice
+	 * un'altra cosa: il testo su cui il servizio costruisce la ricerca
+	 * elenca `categoryPath`, `brand`, `availability`, `stock` come campi
+	 * propri, e quando arrivano solo dentro `metadata` restano nulli.
+	 * Verificato mandando lo stesso prodotto nei due modi: con
+	 * `categoryPath` al primo livello la scheda torna con categoria e
+	 * percorso, senza torna vuota.
+	 *
+	 * I campi restano ANCHE in `metadata`: li' alimentano le sfaccettature,
+	 * che servono a filtrare. Duplicarli costa pochi byte e copre entrambi
+	 * i modi in cui il servizio li legge.
+	 *
 	 * @return array<string,mixed>
 	 */
 	public static function prodotto( WC_Product $p ): array {
+		$metadati  = self::metadati( $p );
+		$immagini  = self::immagini( $p );
+		$sommario  = self::descrizione_breve( $p );
+
 		$voce = array(
-			'sku'         => self::sku( $p ),
-			'name'        => $p->get_name(),
-			'description' => self::descrizione( $p ),
-			'productUrl'  => (string) get_permalink( $p->get_id() ),
-			'metadata'    => self::metadati( $p ),
+			'sku'              => self::sku( $p ),
+			'name'             => $p->get_name(),
+			'description'      => self::descrizione( $p ),
+			'shortDescription' => $sommario,
+			'productUrl'       => (string) get_permalink( $p->get_id() ),
+
+			/*
+			 * Immagini: la principale piu' la galleria. Il servizio costruisce
+			 * anche vettori sull'immagine — dichiara un endpoint di ricerca
+			 * per somiglianza visiva — quindi mandarne una sola su un
+			 * prodotto che ne ha tre significa indicizzarne un terzo.
+			 */
+			'imageUrl'         => $immagini[0] ?? null,
+			'images'           => $immagini,
+
+			'categoryPath'     => $metadati['categoryPath'] ?? null,
+			'categories'       => $metadati['categories'] ?? array(),
+			'brand'            => $metadati['brand'] ?? null,
+			'price'            => $metadati['price'] ?? null,
+			'currency'         => $metadati['currency'] ?? null,
+			'availability'     => $metadati['availability'] ?? null,
+			'stock'            => $metadati['stock'] ?? null,
+
+			'metadata'         => $metadati,
+		);
+
+		// I campi vuoti non si spediscono: non aggiungono nulla e pesano.
+		$voce = array_filter(
+			$voce,
+			static fn( $v ) => null !== $v && '' !== $v && array() !== $v
 		);
 
 		/**
@@ -77,12 +123,16 @@ final class Mappatore {
 			$testo = trim( (string) $p->get_description() );
 		}
 
+		return self::ripulisci( $testo, 2000 );
+	}
+
+	/** Testo pulito: niente markup, niente shortcode, niente spazi doppi. */
+	private static function ripulisci( string $testo, int $massimo ): string {
 		$testo = wp_strip_all_tags( strip_shortcodes( $testo ), true );
 		$testo = html_entity_decode( $testo, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 		$testo = trim( (string) preg_replace( '/\s+/u', ' ', $testo ) );
 
-		// Oltre questa soglia si descrive un prodotto diverso da quello cercato.
-		return mb_substr( $testo, 0, 2000 );
+		return mb_substr( $testo, 0, $massimo );
 	}
 
 	/**
@@ -98,6 +148,8 @@ final class Mappatore {
 			'availability' => $p->is_in_stock() ? 'in_stock' : 'out_of_stock',
 			'stock'        => $p->managing_stock() ? (int) $p->get_stock_quantity() : null,
 			'imageUrl'     => self::immagine( $p ),
+			'images'       => self::immagini( $p ),
+			'imageCount'   => count( self::immagini( $p ) ),
 			'brand'        => self::marchio( $p ),
 			'categories'   => self::categorie( $p ),
 			'categoryPath' => self::percorso_categoria( $p ),
@@ -122,15 +174,44 @@ final class Mappatore {
 	}
 
 	private static function immagine( WC_Product $p ): ?string {
-		$id = (int) $p->get_image_id();
+		$immagini = self::immagini( $p );
 
-		if ( $id <= 0 ) {
-			return null;
+		return $immagini[0] ?? null;
+	}
+
+	/**
+	 * Tutte le fotografie del prodotto: la principale per prima, poi la
+	 * galleria. Cinque prodotti su 191 ne hanno piu' di una, fino a tre.
+	 *
+	 * @return array<int,string>
+	 */
+	private static function immagini( WC_Product $p ): array {
+		$ids = array_merge(
+			array( (int) $p->get_image_id() ),
+			array_map( 'intval', (array) $p->get_gallery_image_ids() )
+		);
+
+		$url = array();
+
+		foreach ( array_unique( array_filter( $ids ) ) as $id ) {
+			$indirizzo = wp_get_attachment_image_url( $id, 'woocommerce_single' );
+			if ( is_string( $indirizzo ) && '' !== $indirizzo ) {
+				$url[] = $indirizzo;
+			}
 		}
 
-		$url = wp_get_attachment_image_url( $id, 'woocommerce_single' );
+		return array_values( $url );
+	}
 
-		return is_string( $url ) && '' !== $url ? $url : null;
+	/**
+	 * La descrizione breve, quella scritta per essere letta sotto il prezzo.
+	 *
+	 * Va tenuta distinta dalla lunga: il servizio le usa in modo diverso,
+	 * e su questo catalogo la lunga e' vuota su 189 prodotti su 191, quindi
+	 * la breve e' quasi sempre l'unico testo che c'e'.
+	 */
+	private static function descrizione_breve( WC_Product $p ): string {
+		return self::ripulisci( (string) $p->get_short_description(), 600 );
 	}
 
 	/**

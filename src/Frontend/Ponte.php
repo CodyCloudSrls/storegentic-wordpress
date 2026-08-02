@@ -155,13 +155,7 @@ final class Ponte {
 		return new WP_REST_Response(
 			array(
 				'risultati' => array_map( array( self::class, 'scheda' ), (array) ( $risposta['results'] ?? array() ) ),
-				'categorie' => array_map(
-					static fn( $c ) => array(
-						'percorso' => (string) ( $c['categoryPath'] ?? '' ),
-						'conteggio' => (int) ( $c['count'] ?? 0 ),
-					),
-					(array) ( $risposta['categories'] ?? $risposta['topCategories'] ?? array() )
-				),
+				'categorie' => self::categorie( (array) ( $risposta['categories'] ?? $risposta['topCategories'] ?? array() ) ),
 				'tempoMs'   => (int) ( $risposta['tookMs'] ?? 0 ),
 			),
 			200
@@ -169,19 +163,135 @@ final class Ponte {
 	}
 
 	/**
+	 * Le categorie suggerite, senza doppioni.
+	 *
+	 * Il servizio le restituisce sia come percorso ("collane") sia come nome
+	 * ("Collane"), e a schermo diventavano due pastiglie per la stessa
+	 * categoria. Si confrontano ignorando maiuscole e trattini, e si tiene
+	 * la prima forma incontrata, resa leggibile.
+	 *
+	 * @param array<int,array<string,mixed>> $grezze
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function categorie( array $grezze ): array {
+		$viste  = array();
+		$pulite = array();
+
+		foreach ( $grezze as $c ) {
+			$percorso = trim( (string) ( $c['categoryPath'] ?? '' ) );
+
+			if ( '' === $percorso ) {
+				continue;
+			}
+
+			// L'ultimo segmento e' la categoria vera: "collane/pietre-dure" -> "pietre-dure".
+			$segmenti = explode( '/', $percorso );
+			$foglia   = (string) end( $segmenti );
+			$chiave = strtolower( str_replace( array( '-', '_' ), ' ', $foglia ) );
+
+			if ( isset( $viste[ $chiave ] ) ) {
+				continue;
+			}
+
+			$viste[ $chiave ] = true;
+
+			$pulite[] = array(
+				'percorso'  => $percorso,
+				'etichetta' => ucfirst( $chiave ),
+				'conteggio' => (int) ( $c['count'] ?? 0 ),
+			);
+		}
+
+		return array_slice( $pulite, 0, 5 );
+	}
+
+	/**
+	 * Una scheda come la vuole il browser.
+	 *
+	 * I valori si cercano in tre posti, in ordine: il primo livello della
+	 * scheda, la variante corrispondente, le sfaccettature.
+	 *
+	 * Non e' pignoleria. Il servizio indicizza tutto quello che gli mandiamo,
+	 * ma la scheda di riepilogo che restituisce lascia vuoti alcuni campi:
+	 * verificato su questo catalogo, `brand` torna nullo in cima mentre nelle
+	 * sfaccettature c'e' `brand: KLK`, e `availability` sta nella variante ma
+	 * non in cima. Leggere solo il primo livello significava buttare via un
+	 * dato che il servizio possiede.
+	 *
 	 * @param array<string,mixed> $c
 	 * @return array<string,mixed>
 	 */
 	private static function scheda( array $c ): array {
 		return array(
-			'sku'       => (string) ( $c['sku'] ?? '' ),
-			'nome'      => (string) ( $c['name'] ?? '' ),
-			'url'       => esc_url_raw( (string) ( $c['url'] ?? '' ) ),
-			'immagine'  => esc_url_raw( (string) ( $c['imageUrl'] ?? '' ) ),
-			'prezzo'    => isset( $c['priceFormatted'] ) ? (string) $c['priceFormatted'] : null,
-			'marchio'   => isset( $c['brand'] ) ? (string) $c['brand'] : null,
-			'categoria' => isset( $c['category'] ) ? (string) $c['category'] : null,
-			'sommario'  => isset( $c['shortDescription'] ) ? wp_strip_all_tags( (string) $c['shortDescription'] ) : null,
+			'sku'          => (string) ( $c['sku'] ?? '' ),
+			'nome'         => (string) ( $c['name'] ?? '' ),
+			'url'          => esc_url_raw( (string) self::valore( $c, 'url' ) ),
+			'immagine'     => esc_url_raw( (string) self::valore( $c, 'imageUrl' ) ),
+			'prezzo'       => self::prezzo( $c ),
+			'marchio'      => self::valore( $c, 'brand' ) ?: null,
+			'categoria'    => self::valore( $c, 'category' ) ?: ( self::valore( $c, 'categoryPath' ) ?: null ),
+			'disponibile'  => 'out_of_stock' !== self::valore( $c, 'availability' ),
+			'sommario'     => wp_strip_all_tags( (string) self::valore( $c, 'shortDescription' ) ) ?: null,
+		);
+	}
+
+	/**
+	 * Il valore di un campo, cercato dove il servizio lo mette davvero.
+	 *
+	 * @param array<string,mixed> $c
+	 */
+	private static function valore( array $c, string $campo ): string {
+		if ( isset( $c[ $campo ] ) && is_scalar( $c[ $campo ] ) && '' !== $c[ $campo ] ) {
+			return (string) $c[ $campo ];
+		}
+
+		if ( isset( $c['matchedVariant'][ $campo ] ) && is_scalar( $c['matchedVariant'][ $campo ] ) ) {
+			return (string) $c['matchedVariant'][ $campo ];
+		}
+
+		$sfaccettature = $c['attributes']['attributes']['facets'] ?? array();
+
+		if ( isset( $sfaccettature[ $campo ][0]['value'] ) ) {
+			return (string) $sfaccettature[ $campo ][0]['value'];
+		}
+
+		return '';
+	}
+
+	/**
+	 * Il prezzo gia' formattato secondo le impostazioni del negozio.
+	 *
+	 * Il servizio restituisce il numero, non la stringa: formattarlo qui
+	 * significa che simbolo, separatori e posizione seguono WooCommerce,
+	 * come nel resto del sito.
+	 *
+	 * @param array<string,mixed> $c
+	 */
+	private static function prezzo( array $c ): ?string {
+		if ( isset( $c['priceFormatted'] ) && '' !== $c['priceFormatted'] ) {
+			return (string) $c['priceFormatted'];
+		}
+
+		$numero = self::valore( $c, 'price' );
+
+		if ( '' === $numero || ! is_numeric( $numero ) ) {
+			return null;
+		}
+
+		if ( ! function_exists( 'wc_price' ) ) {
+			return (string) $numero;
+		}
+
+		/*
+		 * wc_price() restituisce markup con le entita' HTML: togliendo solo
+		 * i tag resta "&euro;49,00", che il browser stampa cosi' com'e'
+		 * perche' il testo viene inserito con textContent e non come HTML.
+		 * Le entita' vanno sciolte qui.
+		 */
+		return html_entity_decode(
+			wp_strip_all_tags( wc_price( (float) $numero ) ),
+			ENT_QUOTES | ENT_HTML5,
+			'UTF-8'
 		);
 	}
 

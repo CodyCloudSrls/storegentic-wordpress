@@ -138,7 +138,8 @@
         if (!c.percorso) { return; }
         var s = document.createElement('span');
         s.className = 'sg-categorie__voce';
-        s.textContent = c.percorso.split('/').pop().replace(/-/g, ' ');
+        // L'etichetta arriva gia' pulita dal server: qui non si ricalcola.
+        s.textContent = c.etichetta || c.percorso;
         nav.appendChild(s);
       });
       if (nav.childNodes.length) { esiti.appendChild(nav); }

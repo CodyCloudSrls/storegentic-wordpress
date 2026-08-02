@@ -271,6 +271,34 @@ final class Contratto {
 	}
 
 	/**
+	 * I nomi con cui il server puo' chiamare la stessa capacita'.
+	 *
+	 * `varianti()` copre le differenze di grafia dello STESSO nome
+	 * (catalogUpsert, catalog_upsert, catalog.upsert). Non copre i
+	 * sinonimi, che sono nomi diversi per la stessa cosa.
+	 *
+	 * Serve davvero: il plugin chiedeva "catalogIngest" e il contratto di
+	 * questo negozio dichiara "ingest". La domanda tornava NO su una
+	 * capacita' che era accesa. Il caricamento del catalogo funzionava lo
+	 * stesso solo perche' il controllo guarda anche l'indirizzo, ma era
+	 * fortuna, non progetto.
+	 *
+	 * Qui il plugin fa una domanda di senso — "posso caricare il catalogo?"
+	 * — e la mappa elenca i nomi sotto cui quella risposta puo' arrivare.
+	 * Il primo nome trovato nel contratto vince.
+	 *
+	 * @var array<string,array<int,string>>
+	 */
+	private const SINONIMI = array(
+		'catalogIngest' => array( 'catalogIngest', 'ingest', 'catalog' ),
+		'search'        => array( 'search' ),
+		'imageSearch'   => array( 'imageSearch', 'image' ),
+		'agentChat'     => array( 'agentChat', 'chat', 'agent' ),
+		'analytics'     => array( 'analytics' ),
+		'streaming'     => array( 'streaming' ),
+	);
+
+	/**
 	 * Una capacita' e' accesa per questo negozio?
 	 *
 	 * In dubbio si risponde di no: meglio un comando assente di un comando
@@ -289,9 +317,13 @@ final class Contratto {
 			return false;
 		}
 
-		foreach ( self::varianti( $capacita ) as $variante ) {
-			if ( array_key_exists( $variante, $capacita_dichiarate ) ) {
-				return (bool) $capacita_dichiarate[ $variante ];
+		$nomi = self::SINONIMI[ $capacita ] ?? array( $capacita );
+
+		foreach ( $nomi as $nome ) {
+			foreach ( self::varianti( $nome ) as $variante ) {
+				if ( array_key_exists( $variante, $capacita_dichiarate ) ) {
+					return (bool) $capacita_dichiarate[ $variante ];
+				}
 			}
 		}
 
