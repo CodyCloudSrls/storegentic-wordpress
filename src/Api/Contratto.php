@@ -204,17 +204,24 @@ final class Contratto {
 	 * rendering si trasformerebbe in attesa per il visitatore.
 	 */
 	public static function endpoint_in_cache( string $nome ): string {
+		/*
+		 * Prima il contratto fresco: basta che nessuna impronta lo smentisca.
+		 * Poi la copia persistente, che invece la prova la deve dare, perche'
+		 * non scade mai. Vedi impronta_smentita().
+		 */
 		$cache = get_transient( self::CACHE );
 
-		if ( ! is_array( $cache ) || ! self::impronta_valida() ) {
-			$cache = get_option( self::CACHE . '_ultimo', null );
+		if ( is_array( $cache ) && ! self::impronta_smentita() ) {
+			return self::cerca_endpoint( $cache, $nome );
 		}
 
-		if ( ! is_array( $cache ) || ! self::impronta_valida() ) {
-			return '';
+		$vecchio = get_option( self::CACHE . '_ultimo', null );
+
+		if ( is_array( $vecchio ) && self::impronta_valida() ) {
+			return self::cerca_endpoint( $vecchio, $nome );
 		}
 
-		return self::cerca_endpoint( $cache, $nome );
+		return '';
 	}
 
 	/**
@@ -432,5 +439,32 @@ final class Contratto {
 
 	private static function impronta_valida(): bool {
 		return hash_equals( (string) get_option( self::IMPRONTA, '' ), self::impronta_attuale() );
+	}
+
+	/**
+	 * L'impronta c'e' ed e' di un'altra chiave.
+	 *
+	 * PERCHE' SERVE UNA DOMANDA DIVERSA DA impronta_valida(). Quella chiede
+	 * "posso dimostrare che questo contratto e' della chiave giusta?", e
+	 * risponde no in due casi molto diversi: quando l'impronta e' di un'altra
+	 * chiave — e allora il contratto va buttato — e quando l'impronta
+	 * semplicemente non c'e'.
+	 *
+	 * Il secondo caso non e' un contratto sbagliato: e' un pezzo di
+	 * contabilita' perso. Trattarlo come il primo significa spegnere ricerca e
+	 * assistente su tutto il sito, in silenzio, per un'opzione mancante.
+	 * Visto succedere: dopo aver cancellato il contratto per rileggerlo, la
+	 * ricerca e' rimasta assente finche' l'impronta non e' ricomparsa.
+	 *
+	 * Chi ha in mano il contratto ancora fresco puo' fidarsene: quel contratto
+	 * viene buttato ogni volta che chiave o indirizzo cambiano, quindi se e'
+	 * ancora li' e' della chiave in uso. Chi invece pesca dalla copia
+	 * persistente — che non scade mai — deve pretendere la prova, e usa
+	 * impronta_valida().
+	 */
+	private static function impronta_smentita(): bool {
+		$salvata = (string) get_option( self::IMPRONTA, '' );
+
+		return '' !== $salvata && ! hash_equals( $salvata, self::impronta_attuale() );
 	}
 }

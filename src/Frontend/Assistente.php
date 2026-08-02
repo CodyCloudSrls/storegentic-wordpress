@@ -186,9 +186,24 @@ final class Assistente {
 	 * @param array<string,array<string,mixed>> $fonti Si riempie qui dentro.
 	 */
 	private static function raccogli( array $evento, array &$fonti ): void {
-		foreach ( (array) ( $evento['commerceResults'] ?? array() ) as $r ) {
-			if ( is_array( $r ) && ! empty( $r['sku'] ) ) {
-				$fonti[ (string) $r['sku'] ] = $r;
+		/*
+		 * `productCards` e' il paniere piu' ricco che il servizio dichiari, e
+		 * NON e' l'elenco dei consigli. Misurato su sei domande: contiene tutti
+		 * e ventuno i prodotti che le risposte nominano — recall perfetto — ma
+		 * ne porta sessantanove in tutto, cioe' il settanta per cento di
+		 * rumore. Alla domanda "un regalo sotto i 50 euro" ci sono dentro un
+		 * bracciale da 159 € e due anelli da 69 €: mostrarli sotto quel testo
+		 * sarebbe la contraddizione che si vuole evitare.
+		 *
+		 * Entra quindi qui, dove i candidati servono soltanto a sciogliere gli
+		 * omonimi, e non nell'esito. Vale piu' delle fonti perche' e' piu'
+		 * ampio e perche' porta lo SKU, che e' la chiave.
+		 */
+		foreach ( array( 'productCards', 'commerceResults' ) as $campo ) {
+			foreach ( (array) ( $evento[ $campo ] ?? array() ) as $r ) {
+				if ( is_array( $r ) && ! empty( $r['sku'] ) ) {
+					$fonti[ (string) $r['sku'] ] = $r;
+				}
 			}
 		}
 
