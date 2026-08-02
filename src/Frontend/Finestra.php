@@ -180,6 +180,22 @@ final class Finestra {
 						<span class="sg-finestra__titolo"><?php echo esc_html( $titolo ); ?></span>
 					<?php endif; ?>
 
+					<?php
+					/*
+					 * "Ricomincia" sta nella testa e non in fondo: in fondo si
+					 * prendeva una riga tutta sua sotto la nota, e su un telefono
+					 * una riga di cornice e' una riga di conversazione in meno.
+					 * Compare solo quando c'e' una conversazione da ricominciare.
+					 */
+					?>
+					<button type="button" class="sg-finestra__ricomincia" data-sg-ricomincia hidden
+					        aria-label="<?php esc_attr_e( 'Ricomincia la conversazione', 'storegentic' ); ?>">
+						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+						     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M20 11a8 8 0 10-2.3 5.7"></path><path d="M20 5v6h-6"></path>
+						</svg>
+					</button>
+
 					<button type="button" class="sg-finestra__chiudi" data-sg-chiudi
 					        aria-label="<?php esc_attr_e( 'Chiudi', 'storegentic' ); ?>">
 						<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
@@ -292,10 +308,7 @@ final class Finestra {
 				</svg>
 			</button>
 		</form>
-		<p class="sg-nota">
-			<?php esc_html_e( 'Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio.', 'storegentic' ); ?>
-			<button type="button" class="sg-ricomincia" data-sg-ricomincia hidden><?php esc_html_e( 'Ricomincia', 'storegentic' ); ?></button>
-		</p>
+		<p class="sg-nota"><?php esc_html_e( 'Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio.', 'storegentic' ); ?></p>
 		<?php
 	}
 }

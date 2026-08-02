@@ -327,6 +327,15 @@
         b.tabIndex = suo ? 0 : -1;
       });
 
+      /*
+       * "Ricomincia" sta nella testa, che e' condivisa fra i modi: si mostra
+       * solo nella conversazione, e solo se c'e' una conversazione.
+       */
+      var ricomincia = $('[data-sg-ricomincia]');
+      if (ricomincia) {
+        ricomincia.hidden = modo !== 'chat' || !Assistente.storia.length;
+      }
+
       // Ogni modo che si apre per la prima volta dice cosa sa fare.
       if (!this.stato[modo]) { this.stato[modo] = 'iniziale'; this.iniziale(modo); }
     },

@@ -190,7 +190,7 @@ body.sg-bloccato { overflow: hidden; }
   border: 1px solid var(--sg-linea);
 }
 
-.sg-righe--chat { margin-top: .7rem; }
+.sg-righe--chat { margin-top: .55rem; }
 
 /* --------------------------------------------------- risultato: scheda
  *
@@ -869,12 +869,22 @@ a.sg-vai { text-decoration: none; }
     border: 0; border-radius: 0;
   }
 
-  .sg-finestra__testa { padding: .6rem .6rem .6rem .8rem; gap: .5rem; }
+  /*
+   * SU UNO SCHERMO DI 844 PUNTI OGNI RIGA DI CORNICE E' UNA RIGA DI
+   * CONVERSAZIONE IN MENO. Testa piu' bassa, nota piu' piccola, e il comando
+   * "Ricomincia" sale nella testa invece di prendersi una riga tutta sua in
+   * fondo: da solo valeva quaranta punti.
+   */
+  .sg-finestra__testa { padding: .45rem .5rem .45rem .6rem; gap: .4rem; }
+  .sg-modi { padding: .15rem; }
+  .sg-modo { min-height: 38px; font-size: .8125rem; }
+  .sg-msg__testo { padding: .6rem .8rem; font-size: .875rem; line-height: 1.5; }
+  .sg-pannello--chat .sg-pannello__corpo { gap: .45rem; }
   .sg-modi { flex: 1 1 auto; justify-content: space-between; }
   .sg-modo { flex: 1 1 0; padding: 0 .5rem; }
   .sg-pannello__corpo { padding: .85rem; }
   .sg-riga-comando { padding: .6rem; }
-  .sg-nota { padding: 0 .8rem .6rem; font-size: .6875rem; }
+  .sg-nota { padding: .1rem .8rem .5rem; font-size: .625rem; line-height: 1.35; }
 
   .sg-lancia {
     bottom: calc(var(--sg-basso) + env(safe-area-inset-bottom, 0px));
@@ -1036,6 +1046,54 @@ a.sg-vai { text-decoration: none; }
   .sg-punti i { animation: none; opacity: .55; }
 }
 
+/* ------------------------------------------------ la conversazione
+ *
+ * LE BOLLE SONO ASIMMETRICHE. L'angolo rivolto verso chi parla e' stretto,
+ * gli altri tre larghi. E' un dettaglio piccolo che fa un lavoro grosso: dice
+ * da che parte arriva il messaggio anche prima di leggerlo, senza bisogno di
+ * etichette, avatar o frecce.
+ */
+
+.sg-msg { max-width: 100%; }
+
+.sg-msg__testo {
+  padding: .65rem .9rem;
+  font-size: .9375rem; line-height: 1.55;
+  white-space: pre-wrap;          /* finche' il testo e' grezzo, gli a capo contano */
+  overflow-wrap: anywhere;
+}
+
+.sg-msg--cliente { align-self: flex-end; max-width: 85%; }
+
+.sg-msg--cliente .sg-msg__testo {
+  color: var(--sg-testo); background: var(--sg-colore);
+  border-radius: var(--sg-raggio-l) var(--sg-raggio-s) var(--sg-raggio-l) var(--sg-raggio-l);
+}
+
+.sg-msg--assistente { align-self: flex-start; max-width: 94%; }
+
+.sg-msg--assistente .sg-msg__testo {
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea);
+  border-radius: var(--sg-raggio-s) var(--sg-raggio-l) var(--sg-raggio-l) var(--sg-raggio-l);
+}
+
+.sg-msg--male .sg-msg__testo { color: #8A2E2E; background: #FBF0F0; border-color: #F0D8D8; }
+.sg-msg--attesa .sg-msg__testo { color: var(--sg-inchiostro-2); }
+
+/* Gli avvii suggeriti: spariscono appena si e' chiesto qualcosa. */
+.sg-avvii { display: flex; flex-direction: column; gap: .35rem; margin-top: .6rem; }
+
+.sg-avvio {
+  padding: .55rem .9rem; min-height: 44px;
+  font-family: inherit; font-size: .875rem; text-align: left;
+  color: var(--sg-inchiostro); background: var(--sg-carta);
+  border: 1px solid var(--sg-linea); border-radius: 999px;
+  cursor: pointer;
+}
+
+.sg-avvio:hover { border-color: var(--sg-colore); background: var(--sg-accento-tenue); }
+
 /* --------------------------------------------- la risposta impaginata
  *
  * L'assistente scrive in Markdown; il server lo converte in pochi tag sicuri
@@ -1104,3 +1162,26 @@ a.sg-vai { text-decoration: none; }
 
 /* Il lanciatore non serve mentre la finestra e' aperta: la copre e basta. */
 body.sg-finestra-aperta .sg-lancia { display: none; }
+
+/* Il comando "ricomincia", nella testa accanto alla chiusura. */
+.sg-finestra__ricomincia {
+  flex: 0 0 auto; margin-left: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.4rem; height: 2.4rem;
+  color: var(--sg-inchiostro-2); background: none;
+  border: 1px solid var(--sg-linea); border-radius: 50%; cursor: pointer;
+}
+
+.sg-finestra__ricomincia:hover { color: var(--sg-inchiostro); background: var(--sg-fondo); }
+.sg-finestra__ricomincia[hidden] { display: none; }
+
+/*
+ * Quando "ricomincia" c'e', e' lui a spingere a destra e la chiusura lo segue:
+ * senza questa riga i due si accavallerebbero, perche' entrambi chiedevano il
+ * margine automatico.
+ */
+.sg-finestra__ricomincia:not([hidden]) + .sg-finestra__chiudi { margin-left: .35rem; }
+
+@media (pointer: coarse) {
+  .sg-finestra__ricomincia { width: 44px; height: 44px; }
+}
