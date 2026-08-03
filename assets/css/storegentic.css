@@ -975,7 +975,7 @@ a.sg-vai { text-decoration: none; }
 .sg-vai__lente { font-size: 1.15rem; line-height: 1; opacity: .65; }
 .sg-vai__testo { font-weight: 500; }
 
-.sg-voci { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .1rem; }
+.sg-voci { display: flex; flex-direction: column; gap: .15rem; }
 
 .sg-voce {
   display: flex; align-items: baseline; gap: .6rem;

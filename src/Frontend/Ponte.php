@@ -283,7 +283,7 @@ final class Ponte {
 
 	public static function suggerimenti( WP_REST_Request $richiesta ): WP_REST_Response {
 		$risposta = new WP_REST_Response(
-			array( 'voci' => Suggerimenti::per( (string) $richiesta->get_param( 'q' ) ) ),
+			array( 'voci' => self::con_schede( Suggerimenti::per( (string) $richiesta->get_param( 'q' ) ) ) ),
 			200
 		);
 
@@ -291,6 +291,57 @@ final class Ponte {
 		$risposta->header( 'Cache-Control', 'public, max-age=300' );
 
 		return $risposta;
+	}
+
+	/**
+	 * Ai suggerimenti di prodotto si attacca la scheda vera.
+	 *
+	 * Una riga di solo testo dice il nome e il prezzo; la scheda dice anche
+	 * com'e' fatto il gioiello. In un negozio la fotografia non e' decorazione:
+	 * e' meta' dell'informazione, ed e' quella che fa decidere.
+	 *
+	 * Si usa lo stesso componente delle altre righe — Frontend\Scheda — invece
+	 * di disegnarne una terza: cosi' una riga di risultato ha lo stesso aspetto
+	 * ovunque compaia, e resta una sola definizione da mantenere.
+	 *
+	 * Le categorie restano righe di testo: non hanno una fotografia, e
+	 * inventargliela sarebbe peggio che non averla.
+	 *
+	 * @param array<int,array<string,string>> $voci
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function con_schede( array $voci ): array {
+		$grezzi = array();
+
+		foreach ( $voci as $i => $v ) {
+			if ( 'prodotto' === ( $v['tipo'] ?? '' ) && ! empty( $v['sku'] ) ) {
+				$grezzi[ $i ] = array( 'sku' => (string) $v['sku'] );
+			}
+		}
+
+		if ( empty( $grezzi ) ) {
+			return $voci;
+		}
+
+		/*
+		 * Risolutore::schede() salta cio' che non trova e non conserva la
+		 * posizione, quindi si riallinea sullo SKU invece che sull'indice.
+		 */
+		$per_sku = array();
+
+		foreach ( Scheda::con_html( Risolutore::schede( array_values( $grezzi ) ), 'riga' ) as $s ) {
+			$per_sku[ (string) $s['sku'] ] = $s['html'];
+		}
+
+		foreach ( $voci as $i => $v ) {
+			$sku = (string) ( $v['sku'] ?? '' );
+
+			if ( '' !== $sku && isset( $per_sku[ $sku ] ) ) {
+				$voci[ $i ]['html'] = $per_sku[ $sku ];
+			}
+		}
+
+		return $voci;
 	}
 
 	/**

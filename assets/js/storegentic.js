@@ -571,16 +571,28 @@
 
       if (!voci.length) { return; }
 
-      var lista = elemento('ul', 'sg-voci');
+      /*
+       * I prodotti si mostrano con la scheda vera — foto, nome, cartellino del
+       * prezzo — e non con una riga di solo testo: in un negozio la fotografia
+       * non e' decorazione, e' meta' dell'informazione. Il markup arriva gia'
+       * fatto dal server, come per tutti gli altri risultati.
+       *
+       * Le categorie restano righe di testo: non hanno una fotografia, e
+       * inventargliela sarebbe peggio che non averla.
+       */
+      var lista = elemento('div', 'sg-voci');
 
       voci.forEach(function (v) {
-        var li = elemento('li');
+        if (v.html) {
+          var nodo = daHtml(v.html);
+          if (nodo) { lista.appendChild(nodo); return; }
+        }
+
         var a = elemento('a', 'sg-voce sg-voce--' + v.tipo);
         a.href = v.url;
         a.appendChild(elemento('span', 'sg-voce__nome', v.etichetta));
         if (v.nota) { a.appendChild(elemento('span', 'sg-voce__nota', v.nota)); }
-        li.appendChild(a);
-        lista.appendChild(li);
+        lista.appendChild(a);
       });
 
       corpo.appendChild(lista);

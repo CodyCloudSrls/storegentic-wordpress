@@ -243,7 +243,40 @@ final class Contratto {
 	/**
 	 * @param array<string,mixed> $contratto
 	 */
+	/**
+	 * Una via d'uscita per quando il servizio pubblica prima di dichiarare.
+	 *
+	 * Il plugin usa solo cio' che il contratto dichiara, ed e' la regola che
+	 * lo tiene in piedi su un parco di installazioni sparse. Succede pero' che
+	 * un indirizzo esista, sia documentato e funzioni, e l'handshake non lo
+	 * nomini ancora: e' successo con la ricerca istantanea, presente nello
+	 * swagger e assente dal contratto.
+	 *
+	 * In quel caso l'alternativa sarebbe scrivere l'indirizzo nel codice, che
+	 * e' esattamente cio' che questo plugin non fa. Con questo filtro
+	 * l'indirizzo lo fornisce chi installa, in una riga, e sparisce da solo
+	 * appena il contratto lo dichiara: il valore del contratto ha la
+	 * precedenza, e il filtro riceve la stringa vuota solo quando non c'e'.
+	 *
+	 * add_filter( 'storegentic_endpoint', function ( $trovato, $nome ) {
+	 *     return ( '' === $trovato && 'instantSearch' === $nome )
+	 *         ? '/v1/commerce/search/instant'
+	 *         : $trovato;
+	 * }, 10, 2 );
+	 */
 	private static function cerca_endpoint( array $contratto, string $nome ): string {
+		$trovato = self::nel_contratto( $contratto, $nome );
+
+		/**
+		 * @param string              $trovato   L'indirizzo dichiarato, o '' se assente.
+		 * @param string              $nome      Il nome con cui e' stato chiesto.
+		 * @param array<string,mixed> $contratto Il contratto intero.
+		 */
+		return (string) apply_filters( 'storegentic_endpoint', $trovato, $nome, $contratto );
+	}
+
+	/** L'indirizzo come lo dichiara il contratto, e nient'altro. */
+	private static function nel_contratto( array $contratto, string $nome ): string {
 		$endpoints = $contratto['endpoints'] ?? array();
 
 		if ( ! is_array( $endpoints ) ) {
@@ -302,6 +335,7 @@ final class Contratto {
 		'imageSearch'   => array( 'imageSearch', 'image' ),
 		'agentChat'     => array( 'agentChat', 'chat', 'agent' ),
 		'analytics'     => array( 'analytics' ),
+		'instantSearch' => array( 'instantSearch', 'searchInstant', 'instant' ),
 		'streaming'     => array( 'streaming' ),
 	);
 
