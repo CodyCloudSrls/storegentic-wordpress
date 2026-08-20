@@ -200,17 +200,6 @@ final class Consumi {
 		return array( 'quando' => $quando, 'passata' => $quando < time() );
 	}
 
-	/** C'e' almeno un contatore finito? */
-	public static function qualcosa_esaurito(): bool {
-		foreach ( self::contatori() as $c ) {
-			if ( $c['esaurito'] ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	/**
 	 * Un numero come si scrive in italiano, con l'unita' giusta.
 	 *

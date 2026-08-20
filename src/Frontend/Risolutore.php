@@ -71,10 +71,21 @@ final class Risolutore {
 
 			$visti[ $sku ] = true;
 
+			/*
+			 * Tre strade, in ordine di fiducia. Il prodotto del negozio e' la
+			 * fonte migliore: prezzo e disponibilita' letti adesso. Il contenuto
+			 * del sito viene subito dopo, e serve ai siti senza WooCommerce, dove
+			 * l'indice e' fatto di pagine e articoli. Solo se il sito non
+			 * riconosce lo SKU si usa quello che ha mandato il servizio, che puo'
+			 * essere vecchio di ore.
+			 */
 			$prodotto = self::prodotto( $sku );
-			$scheda   = $prodotto instanceof WC_Product
-				? self::dal_negozio( $prodotto )
-				: self::dal_servizio( $grezzo );
+
+			if ( $prodotto instanceof WC_Product ) {
+				$scheda = self::dal_negozio( $prodotto );
+			} else {
+				$scheda = self::dal_contenuto( $sku ) ?? self::dal_servizio( $grezzo );
+			}
 
 			if ( null === $scheda ) {
 				continue;
@@ -155,6 +166,58 @@ final class Risolutore {
 			 * apre la scheda.
 			 */
 			'acquistabile' => $p->is_purchasable() && $p->is_in_stock() && ! $p->is_type( 'variable' ),
+			'daScheda'     => true,
+		);
+	}
+
+	/**
+	 * La scheda di un contenuto del sito.
+	 *
+	 * Serve ai siti senza WooCommerce, dove l'indice e' fatto di pagine e
+	 * articoli: lo SKU che il servizio restituisce e' quello costruito da
+	 * Catalogo\Contenuti, e da li' si risale al contenuto vero.
+	 *
+	 * NIENTE PREZZO, NIENTE CARRELLO. Un articolo non si compra, e una scheda
+	 * con un cartellino a zero e un pulsante "aggiungi" sarebbe una bugia a
+	 * schermo. I campi che non si applicano restano `null`, e chi disegna li
+	 * salta: vedi Frontend\Scheda.
+	 *
+	 * @return array<string,mixed>|null
+	 */
+	private static function dal_contenuto( string $sku ): ?array {
+		$id = \Storegentic\Catalogo\Contenuti::id_da_sku( $sku );
+
+		if ( $id <= 0 ) {
+			return null;
+		}
+
+		$post = get_post( $id );
+
+		// Cio' che il sito non pubblica non si mostra, anche se e' ancora in indice.
+		if ( ! $post instanceof \WP_Post || 'publish' !== $post->post_status ) {
+			return null;
+		}
+
+		$tipo      = get_post_type_object( $post->post_type );
+		$immagine  = get_the_post_thumbnail_url( $post, 'medium' );
+		$estratto  = trim( wp_strip_all_tags( (string) $post->post_excerpt ) );
+
+		return array(
+			'id'           => $post->ID,
+			'nome'         => (string) get_the_title( $post ),
+			'url'          => (string) get_permalink( $post ),
+			'immagine'     => is_string( $immagine ) && '' !== $immagine ? $immagine : null,
+			'alt'          => '',
+			'prezzo'       => null,
+			'prezzoPieno'  => null,
+			'valore'       => null,
+			'marchio'      => null,
+			// Al posto della categoria merceologica si mostra che cos'e'.
+			'categoria'    => $tipo instanceof \WP_Post_Type ? $tipo->labels->singular_name : null,
+			'disponibile'  => true,
+			'unico'        => false,
+			'sommario'     => '' !== $estratto ? self::sommario( $estratto ) : null,
+			'acquistabile' => false,
 			'daScheda'     => true,
 		);
 	}

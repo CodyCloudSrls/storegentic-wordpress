@@ -111,6 +111,33 @@ final class Impostazioni {
 			 */
 			'ripiego'             => true,
 
+			/*
+			 * I parametri che il contratto dichiara regolabili. Zero e stringa
+			 * vuota vogliono dire "usa il valore del servizio": e' diverso dallo
+			 * scrivere quel valore, perche' se il servizio lo cambia il negozio
+			 * lo segue senza che nessuno tocchi nulla. Vedi Api\Parametri.
+			 */
+			'quanti'              => 0,
+			'quanti_foto'         => 0,
+			'soglia'              => '',
+			'soglia_foto'         => '',
+
+			/*
+			 * La ricerca istantanea nei suggerimenti mentre si scrive. Si puo'
+			 * spegnere: non consuma quota, ma e' pur sempre una chiamata di rete
+			 * a ogni parola digitata. Vedi Frontend\Suggerimenti.
+			 */
+			'istantanea'          => true,
+
+			/*
+			 * Cosa si manda all'indice.
+			 *
+			 * Con WooCommerce sono i prodotti, e questo elenco non si usa. Senza,
+			 * il plugin fa da base di conoscenza del sito e indicizza i tipi di
+			 * contenuto scelti qui. Vedi Negozio e Catalogo\Contenuti.
+			 */
+			'tipi'                => array( 'page', 'post' ),
+
 			// Catalogo
 			'sincro_automatica'   => true,
 			'frequenza'           => 'daily',
@@ -243,6 +270,38 @@ final class Impostazioni {
 			case 'solo_su':
 				$valore = is_array( $valore ) ? $valore : array();
 				return array_values( array_filter( array_map( 'sanitize_key', $valore ) ) );
+
+			case 'tipi':
+				/*
+				 * Solo tipi di contenuto che esistono davvero e che sono
+				 * pubblici: indicizzare un tipo interno vorrebbe dire mandare al
+				 * servizio roba che sul sito non si vede, e farla poi comparire
+				 * nei risultati con un indirizzo che porta a una pagina vuota.
+				 */
+				$ammessi = get_post_types( array( 'public' => true ), 'names' );
+
+				return array_values( array_intersect( $ammessi, array_map( 'sanitize_key', (array) $valore ) ) );
+
+			case 'quanti':
+			case 'quanti_foto':
+				// Zero vuol dire "decide il servizio": si lascia passare.
+				$modo = 'quanti_foto' === $nome ? 'image' : 'text';
+
+				return max( 0, min( \Storegentic\Api\Parametri::quanti_al_massimo( $modo ), (int) $valore ) );
+
+			case 'soglia':
+			case 'soglia_foto':
+				/*
+				 * La stringa vuota si conserva com'e' e vuol dire "non mandarla".
+				 * Un `(float) ''` darebbe 0.0, che invece e' una soglia vera —
+				 * la piu' larga possibile — e cambierebbe il comportamento di
+				 * chi non ha scelto niente.
+				 */
+				if ( '' === trim( (string) $valore ) ) {
+					return '';
+				}
+
+				return (string) max( 0, min( 1, (float) str_replace( ',', '.', (string) $valore ) ) );
 
 			case 'risultati':
 				return 'finestra' === $valore ? 'finestra' : 'pagina';

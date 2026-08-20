@@ -11,6 +11,108 @@
 
 .sg-allarme { color: #b32d2e; }
 .sg-attenzione { color: #8a6100; }
+.sg-tenue { color: #646970; }
+
+/*
+   Una misura sola per la larghezza del testo.
+
+   Oltre le cinquantadue righe di carattere una riga si legge male: l'occhio
+   perde il capo della successiva. Vale per le tabelle come per i paragrafi,
+   quindi e' una classe e non un valore ripetuto in venti attributi style.
+*/
+.sg-largo { max-width: 52rem; }
+
+.sg-titolo__pagina {
+  display: inline-block;
+  margin-inline-start: .5rem;
+  font-weight: 400; color: #646970;
+}
+
+.sg-titolo__pagina::before { content: '· '; }
+
+.sg-linguette { margin-block-end: 1rem; }
+
+.sg-elenco { list-style: disc; margin-inline-start: 1.5rem; }
+.sg-elenco--fitto { list-style: none; margin-inline-start: 0; }
+.sg-elenco--fitto li { margin-block-end: .25rem; }
+
+.sg-diario { max-width: 52rem; }
+
+.sg-numero { inline-size: 6rem; }
+
+.sg-riga-spunta { display: block; margin-block-end: .5rem; }
+.sg-riga-spunta--fianco { display: inline-block; margin-inline-end: 1rem; }
+
+/*
+   UNA TABELLA NON DEVE MAI FAR SCORRERE LA PAGINA.
+
+   Su un telefono una tabella a quattro colonne non ci sta, e senza questo
+   contenitore trascina in orizzontale tutto il pannello: si perde il menu,
+   il titolo, e il pulsante di salvataggio finisce fuori schermo. Cosi'
+   invece scorre solo lei, dentro il proprio riquadro.
+*/
+.sg-tabella-larga { max-width: 52rem; overflow-x: auto; }
+.sg-tabella-larga > table { min-inline-size: 34rem; }
+
+.sg-col-stretta { inline-size: 7rem; }
+.sg-col-media { inline-size: 9rem; }
+.sg-col-larga { inline-size: 12rem; }
+.sg-cella-nome { inline-size: 16rem; }
+
+/* --- i quadri della panoramica --- */
+
+/*
+   Si parte dal telefono: una colonna sola, e le colonne si aggiungono quando
+   c'e' spazio. `auto-fit` con un minimo in rem fa da solo, senza media query
+   e senza numeri di rottura da indovinare.
+*/
+.sg-quadri {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: .75rem;
+  max-width: 52rem;
+  margin-block: 1rem;
+}
+
+.sg-quadro {
+  display: flex; flex-direction: column; gap: .15rem;
+  padding: .85rem 1rem;
+  background: #fff; border: 1px solid #dcdcde; border-radius: 6px;
+}
+
+.sg-quadro__voce {
+  font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #646970;
+}
+
+.sg-quadro__valore { font-size: 1.35rem; line-height: 1.2; }
+.sg-quadro__nota { font-size: 12px; color: #646970; }
+
+/* --- il riquadro della bacheca --- */
+
+/*
+   Il riquadro sta in una colonna stretta, e la bacheca puo' averne due o
+   quattro a seconda dello schermo: i quadri qui dentro devono stringersi piu'
+   di quelli del pannello, dove la larghezza e' quella della pagina.
+*/
+.sg-quadri--fitti { grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr)); gap: .5rem; margin-block: .75rem; }
+.sg-quadri--fitti .sg-quadro { padding: .6rem .7rem; }
+.sg-quadri--fitti .sg-quadro__valore { font-size: 1.15rem; }
+
+.sg-riquadro__bene { margin: 0 0 .5rem; color: #1d2327; }
+
+/*
+   Gli allarmi non hanno il pallino dell'elenco: hanno il proprio segno, che
+   distingue "va sistemato" da "tienilo d'occhio" anche a chi non vede la
+   differenza fra rosso e ocra.
+*/
+.sg-riquadro__allarmi { margin: 0 0 .75rem; list-style: none; }
+.sg-riquadro__allarmi li { margin-block-end: .35rem; padding-inline-start: 1.35rem; position: relative; line-height: 1.5; }
+.sg-riquadro__allarmi li::before { position: absolute; inset-inline-start: 0; font-weight: 700; }
+.sg-riquadro__allarmi li.sg-allarme::before { content: '!'; }
+.sg-riquadro__allarmi li.sg-attenzione::before { content: '·'; }
+
+.sg-riquadro__titolo { margin: .75rem 0 .35rem; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #646970; }
+.sg-riquadro__piede { margin: .75rem 0 0; padding-block-start: .6rem; border-block-start: 1px solid #f0f0f1; }
 
 /* --- piano e consumi --- */
 

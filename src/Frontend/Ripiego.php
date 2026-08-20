@@ -33,6 +33,8 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Frontend;
 
+use Storegentic\Negozio;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -149,6 +151,14 @@ final class Ripiego {
 			$valori[] = $come;
 		}
 
+		/*
+		 * I tipi sono quelli che finiscono nell'indice: prodotti su un negozio,
+		 * i contenuti scelti altrimenti. Cercare altrove vorrebbe dire proporre
+		 * una pagina che il servizio non conosce. Vedi Negozio.
+		 */
+		$tipi     = Negozio::tipi_indicizzati();
+		$segnaposti = implode( ',', array_fill( 0, count( $tipi ), '%s' ) );
+		$valori   = array_merge( $tipi, $valori );
 		$valori[] = self::CANDIDATI;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
@@ -156,7 +166,7 @@ final class Ripiego {
 			$wpdb->prepare(
 				"SELECT ID, post_title, post_excerpt
 				   FROM {$wpdb->posts}
-				  WHERE post_type = 'product'
+				  WHERE post_type IN ( $segnaposti )
 				    AND post_status = 'publish'
 				    AND ( " . implode( ' OR ', $dove ) . " )
 			   ORDER BY CHAR_LENGTH(post_title) ASC
@@ -223,14 +233,20 @@ final class Ripiego {
 				break;
 			}
 
-			$prodotto = wc_get_product( $voce['id'] );
+			if ( Negozio::c_e() ) {
+				$prodotto = wc_get_product( $voce['id'] );
 
-			// Cio' che il catalogo non mostra non si mostra nemmeno qui.
-			if ( ! $prodotto || ! $prodotto->is_visible() ) {
-				continue;
+				// Cio' che il catalogo non mostra non si mostra nemmeno qui.
+				if ( ! $prodotto || ! $prodotto->is_visible() ) {
+					continue;
+				}
 			}
 
-			$risultati[] = array( 'sku' => Risolutore::sku( $prodotto ) );
+			$sku = Negozio::sku_di( (int) $voce['id'] );
+
+			if ( '' !== $sku ) {
+				$risultati[] = array( 'sku' => $sku );
+			}
 		}
 
 		return $risultati;

@@ -27,6 +27,7 @@ namespace Storegentic\Frontend;
 use Storegentic\Analitica\Misure;
 use Storegentic\Api\Client;
 use Storegentic\Api\Contratto;
+use Storegentic\Api\Parametri;
 use Storegentic\Impostazioni;
 use WP_Error;
 
@@ -168,7 +169,42 @@ final class Ricerca {
 			);
 		}
 
-		$carico['topK'] = max( 1, min( 50, $quanti ) );
+		/*
+		 * IL TETTO LO DICE IL CONTRATTO, NON IL PLUGIN.
+		 *
+		 * Prima qui c'era `min( 50, ... )`, scritto a mano. Cinquanta e' il tetto
+		 * che questo servizio dichiara oggi: il giorno che lo alza, ogni
+		 * installazione resta ferma a cinquanta finche' qualcuno non aggiorna il
+		 * plugin, e il giorno che lo abbassa le richieste cominciano a essere
+		 * rifiutate. Vedi Api\Parametri.
+		 *
+		 * La soglia e gli altri parametri arrivano dalle impostazioni, e si
+		 * mandano solo se qualcuno li ha scelti davvero.
+		 */
+		$modo = isset( $carico['imageBase64'] ) && ! isset( $carico['query'] ) ? 'image' : 'text';
+
+		/*
+		 * Il valore scelto nelle impostazioni fa da TETTO, non da valore fisso.
+		 *
+		 * Chi chiama chiede quanti gliene servono, e ha le sue ragioni: il
+		 * pannello rapido ne vuole dodici perche' ci stanno, la pagina dei
+		 * risultati quarantotto perche' li filtra. Un valore fisso romperebbe la
+		 * seconda. Un tetto invece rispetta tutti e due: chi ne vuole meno di
+		 * quanti ne chiede il pannello li ottiene ovunque.
+		 */
+		$scelti = (int) Impostazioni::leggi( 'image' === $modo ? 'quanti_foto' : 'quanti' );
+
+		if ( $scelti > 0 ) {
+			$quanti = min( $quanti, $scelti );
+		}
+
+		$carico['topK'] = max( 1, min( Parametri::quanti_al_massimo( $modo ), $quanti ) );
+
+		$carico += Parametri::per(
+			$modo,
+			0,
+			Impostazioni::leggi( 'image' === $modo ? 'soglia_foto' : 'soglia' )
+		);
 
 		$impronta = self::impronta( $indirizzo, $carico );
 		$in_cache = get_transient( $impronta );

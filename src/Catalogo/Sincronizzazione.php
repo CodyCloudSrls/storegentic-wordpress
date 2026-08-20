@@ -51,6 +51,7 @@ namespace Storegentic\Catalogo;
 use Storegentic\Api\Client;
 use Storegentic\Api\Contratto;
 use Storegentic\Impostazioni;
+use Storegentic\Negozio;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -225,10 +226,26 @@ final class Sincronizzazione {
 
 		$prodotti = array();
 
+		/*
+		 * Da che cosa si parte dipende dal sito: prodotti se c'e' WooCommerce,
+		 * contenuti altrimenti. Cio' che si spedisce ha la stessa forma nei due
+		 * casi, quindi da qui in giu' non cambia nulla. Vedi Negozio.
+		 */
 		foreach ( $fetta as $id ) {
-			$p = wc_get_product( $id );
-			if ( $p instanceof \WC_Product ) {
-				$prodotti[] = Mappatore::prodotto( $p );
+			if ( Negozio::c_e() ) {
+				$p = wc_get_product( $id );
+
+				if ( $p instanceof \WC_Product ) {
+					$prodotti[] = Mappatore::prodotto( $p );
+				}
+
+				continue;
+			}
+
+			$post = get_post( (int) $id );
+
+			if ( $post instanceof \WP_Post ) {
+				$prodotti[] = Contenuti::contenuto( $post );
 			}
 		}
 
@@ -486,6 +503,11 @@ final class Sincronizzazione {
 	 * @return array<int,int>
 	 */
 	private static function identificativi(): array {
+		// Senza negozio si indicizzano i contenuti del sito: vedi Catalogo\Contenuti.
+		if ( ! Negozio::c_e() ) {
+			return Contenuti::identificativi();
+		}
+
 		$stati = array( 'publish' );
 
 		if ( Impostazioni::leggi( 'includi_bozze' ) ) {
@@ -518,6 +540,11 @@ final class Sincronizzazione {
 	 * @return array<int,\WP_Term>
 	 */
 	private static function termini_categoria(): array {
+		// Le categorie di prodotto esistono solo se esiste WooCommerce.
+		if ( ! Negozio::c_e() || ! taxonomy_exists( 'product_cat' ) ) {
+			return array();
+		}
+
 		$termini = get_terms(
 			array(
 				'taxonomy'   => 'product_cat',

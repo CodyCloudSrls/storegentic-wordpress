@@ -2,9 +2,8 @@
 /**
  * Le statistiche, nella pagina di Storegentic.
  *
- * Sta in un file suo e non dentro vista-pagina.php perche' quella pagina e' un
- * modulo da compilare, e questa e' una cosa da leggere: due mestieri diversi,
- * due file. Le variabili arrivano da Admin\Pagina.
+ * Una pagina che si legge, non un modulo da compilare: qui non si salva
+ * niente. Le variabili arrivano da Admin\Pagina.
  *
  * COSA SI GUARDA, IN ORDINE DI UTILITA'
  *
@@ -51,10 +50,13 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 
 <?php if ( ! (bool) $i['statistiche'] ) : ?>
 	<div class="notice notice-info inline">
-		<p><?php esc_html_e( 'Le statistiche sono spente. Accendi «Tieni il conto anche qui», qui sopra, per cominciare a raccoglierle.', 'storegentic' ); ?></p>
+		<p>
+			<?php esc_html_e( 'Le statistiche sono spente: non si sta contando niente.', 'storegentic' ); ?>
+			<a href="<?php echo esc_url( Menu::url( 'storegentic-contenuti' ) ); ?>"><?php esc_html_e( 'Accendile', 'storegentic' ); ?></a>
+		</p>
 	</div>
 <?php elseif ( empty( $mesi ) || 0 === $sg_totale ) : ?>
-	<p class="description" style="max-width:52rem">
+	<p class="description sg-largo">
 		<?php esc_html_e( 'Ancora niente da mostrare. Le prime ricerche dei clienti compaiono qui: cosa cercano, cosa non trovano, e quanto ci mette il servizio a rispondere.', 'storegentic' ); ?>
 	</p>
 <?php else : ?>
@@ -65,7 +67,7 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 				<?php if ( $sg_m === $mese ) : ?>
 					<strong><?php echo esc_html( $sg_nome_mese( $sg_m ) ); ?></strong>
 				<?php else : ?>
-					<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'storegentic', 'mese' => $sg_m ), admin_url( 'admin.php' ) ) ); ?>#statistiche">
+					<a href="<?php echo esc_url( Menu::url( 'storegentic-statistiche', array( 'mese' => $sg_m ) ) ); ?>">
 						<?php echo esc_html( $sg_nome_mese( $sg_m ) ); ?>
 					</a>
 				<?php endif; ?>
@@ -73,14 +75,15 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 		</p>
 	<?php endif; ?>
 
-	<table class="widefat striped" style="max-width:52rem" id="statistiche">
+	<div class="sg-tabella-larga" id="statistiche">
+	<table class="widefat striped sg-largo">
 		<thead>
 			<tr>
 				<th><?php esc_html_e( 'Funzione', 'storegentic' ); ?></th>
-				<th style="width:7rem"><?php esc_html_e( 'Domande', 'storegentic' ); ?></th>
-				<th style="width:9rem"><?php esc_html_e( 'Senza risultati', 'storegentic' ); ?></th>
-				<th style="width:11rem"><?php esc_html_e( 'Servizio muto', 'storegentic' ); ?></th>
-				<th style="width:8rem"><?php esc_html_e( 'Tempo medio', 'storegentic' ); ?></th>
+				<th class="sg-col-stretta"><?php esc_html_e( 'Domande', 'storegentic' ); ?></th>
+				<th class="sg-col-media"><?php esc_html_e( 'Senza risultati', 'storegentic' ); ?></th>
+				<th class="sg-col-media"><?php esc_html_e( 'Servizio muto', 'storegentic' ); ?></th>
+				<th class="sg-col-stretta"><?php esc_html_e( 'Tempo medio', 'storegentic' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -120,21 +123,23 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 			<?php endforeach; ?>
 		</tbody>
 	</table>
+	</div>
 
-	<p class="description" style="max-width:52rem">
+	<p class="description sg-largo">
 		<?php esc_html_e( '«Senza risultati» conta le domande a cui il cliente non ha visto nulla. «Servizio muto» conta le volte in cui Storegentic non ha risposto: le due colonne possono non coincidere, perché con il ripiego acceso il cliente vede lo stesso i prodotti del catalogo. Il tempo medio non conta le risposte già in cache, che arrivano subito.', 'storegentic' ); ?>
 	</p>
 
 	<?php if ( ! empty( $riepilogo['senza'] ) ) : ?>
 		<h3><?php esc_html_e( 'Cosa cercano e non trovano', 'storegentic' ); ?></h3>
-		<p class="description" style="max-width:52rem">
+		<p class="description sg-largo">
 			<?php esc_html_e( 'È l’elenco più utile di questa pagina. Ogni riga è un cliente che ha cercato e non ha avuto niente: a volte manca il prodotto, più spesso c’è ma si chiama in un altro modo.', 'storegentic' ); ?>
 		</p>
-		<table class="widefat striped" style="max-width:52rem">
+		<div class="sg-tabella-larga">
+		<table class="widefat striped sg-largo">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Cercato', 'storegentic' ); ?></th>
-					<th style="width:11rem"><?php esc_html_e( 'Volte a vuoto', 'storegentic' ); ?></th>
+					<th class="sg-col-media"><?php esc_html_e( 'Volte a vuoto', 'storegentic' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -146,16 +151,18 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+		</div>
 	<?php endif; ?>
 
 	<?php if ( ! empty( $riepilogo['cercate'] ) ) : ?>
 		<h3><?php esc_html_e( 'Cosa cercano di più', 'storegentic' ); ?></h3>
-		<table class="widefat striped" style="max-width:52rem">
+		<div class="sg-tabella-larga">
+		<table class="widefat striped sg-largo">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Cercato', 'storegentic' ); ?></th>
-					<th style="width:7rem"><?php esc_html_e( 'Volte', 'storegentic' ); ?></th>
-					<th style="width:11rem"><?php esc_html_e( 'Di cui a vuoto', 'storegentic' ); ?></th>
+					<th class="sg-col-stretta"><?php esc_html_e( 'Volte', 'storegentic' ); ?></th>
+					<th class="sg-col-media"><?php esc_html_e( 'Di cui a vuoto', 'storegentic' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -170,15 +177,17 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+		</div>
 	<?php endif; ?>
 
 	<?php if ( ! empty( $riepilogo['aperti'] ) ) : ?>
 		<h3><?php esc_html_e( 'Cosa si apre dai risultati', 'storegentic' ); ?></h3>
-		<table class="widefat striped" style="max-width:52rem">
+		<div class="sg-tabella-larga">
+		<table class="widefat striped sg-largo">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Prodotto', 'storegentic' ); ?></th>
-					<th style="width:7rem"><?php esc_html_e( 'Aperture', 'storegentic' ); ?></th>
+					<th class="sg-col-stretta"><?php esc_html_e( 'Aperture', 'storegentic' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -208,6 +217,7 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
+		</div>
 	<?php endif; ?>
 
 	<?php
@@ -236,7 +246,7 @@ foreach ( (array) $riepilogo['funzioni'] as $sg_f ) {
 	?>
 
 	<?php if ( ! empty( $sg_note ) ) : ?>
-		<p class="description" style="max-width:52rem"><?php echo esc_html( implode( ' ', $sg_note ) ); ?></p>
+		<p class="description sg-largo"><?php echo esc_html( implode( ' ', $sg_note ) ); ?></p>
 	<?php endif; ?>
 
 	<p>

@@ -46,7 +46,7 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Frontend;
 
-use WC_Product;
+use Storegentic\Negozio;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -140,11 +140,17 @@ final class Citazioni {
 	public static function schede( string $risposta, array $fonti = array() ): array {
 		$grezzi = array();
 
+		/*
+		 * Da identificativo a SKU passando da Negozio: su un negozio e' lo SKU
+		 * del prodotto, su un sito senza WooCommerce quello del contenuto. Il
+		 * riconoscimento del testo, che e' il mestiere di questa classe, non
+		 * cambia nei due casi: cambia solo come si chiama cio' che ha trovato.
+		 */
 		foreach ( self::trova( $risposta, $fonti ) as $id ) {
-			$prodotto = wc_get_product( $id );
+			$sku = Negozio::sku_di( (int) $id );
 
-			if ( $prodotto instanceof WC_Product ) {
-				$grezzi[] = array( 'sku' => Risolutore::sku( $prodotto ) );
+			if ( '' !== $sku ) {
+				$grezzi[] = array( 'sku' => $sku );
 			}
 		}
 
@@ -179,7 +185,7 @@ final class Citazioni {
 				continue;
 			}
 
-			$pagina = get_page_by_path( $lumaca, OBJECT, 'product' );
+			$pagina = get_page_by_path( $lumaca, OBJECT, Negozio::tipi_indicizzati() );
 
 			if ( $pagina && 'publish' === $pagina->post_status ) {
 				$esito[ (int) $pezzo[1] ] = (int) $pagina->ID;
@@ -412,13 +418,17 @@ final class Citazioni {
 			$dati[]  = $wpdb->esc_like( $inizio ) . '%';
 		}
 
-		$dati[] = self::TETTO_CANDIDATI;
+		// Gli stessi tipi che finiscono nell'indice, e nessun altro. Vedi Negozio.
+		$tipi       = Negozio::tipi_indicizzati();
+		$segnaposti = implode( ',', array_fill( 0, count( $tipi ), '%s' ) );
+		$dati       = array_merge( $tipi, $dati );
+		$dati[]     = self::TETTO_CANDIDATI;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
 		$righe = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT ID, post_title FROM ' . $wpdb->posts . "
-				  WHERE post_type = 'product' AND post_status = 'publish'
+				  WHERE post_type IN ( $segnaposti ) AND post_status = 'publish'
 				    AND ( " . implode( ' OR ', $pezzi ) . ' )
 			   ORDER BY CHAR_LENGTH(post_title) DESC
 				  LIMIT %d',
@@ -465,9 +475,9 @@ final class Citazioni {
 		 * sciolgono un dubbio fra prodotti che il testo ha gia' nominato.
 		 */
 		foreach ( $ids as $id ) {
-			$prodotto = wc_get_product( $id );
+			$sku = Negozio::sku_di( (int) $id );
 
-			if ( $prodotto instanceof WC_Product && isset( $fonti[ Risolutore::sku( $prodotto ) ] ) ) {
+			if ( '' !== $sku && isset( $fonti[ $sku ] ) ) {
 				return $id;
 			}
 		}

@@ -33,6 +33,8 @@ namespace Storegentic\Frontend;
 
 use Storegentic\Api\Client;
 use Storegentic\Api\Contratto;
+use Storegentic\Impostazioni;
+use Storegentic\Negozio;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -124,6 +126,10 @@ final class Suggerimenti {
 	 * @return array<int,array<string,string>>
 	 */
 	private static function dal_servizio( string $inizio, bool &$completo ): array {
+		if ( ! Impostazioni::leggi( 'istantanea' ) ) {
+			return array();
+		}
+
 		$indirizzo = Contratto::endpoint_in_cache( 'instantSearch' );
 
 		// Nessuna istantanea dichiarata: l'elenco locale E' la risposta intera.
@@ -230,7 +236,8 @@ final class Suggerimenti {
 	 * @return array<int,array<string,string>>
 	 */
 	private static function categorie( string $inizio ): array {
-		if ( ! taxonomy_exists( 'product_cat' ) ) {
+		// Le categorie di prodotto esistono solo dove esiste un negozio.
+		if ( ! Negozio::c_e() || ! taxonomy_exists( 'product_cat' ) ) {
 			return array();
 		}
 
@@ -293,21 +300,24 @@ final class Suggerimenti {
 		$primo = $come . '%';
 		$dopo  = '% ' . $come . '%';
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		// I tipi che finiscono nell'indice, e nessun altro. Vedi Negozio.
+		$tipi       = Negozio::tipi_indicizzati();
+		$segnaposti = implode( ',', array_fill( 0, count( $tipi ), '%s' ) );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$righe = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT ID, post_title
 				   FROM {$wpdb->posts}
-				  WHERE post_type = 'product'
+				  WHERE post_type IN ( $segnaposti )
 				    AND post_status = 'publish'
 				    AND ( post_title LIKE %s OR post_title LIKE %s )
 			   ORDER BY CHAR_LENGTH(post_title) ASC
 				  LIMIT 6",
-				$primo,
-				$dopo
+				array_merge( $tipi, array( $primo, $dopo ) )
 			)
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery
+		// phpcs:enable
 
 		if ( empty( $righe ) ) {
 			return array();
@@ -316,15 +326,48 @@ final class Suggerimenti {
 		$voci = array();
 
 		foreach ( $righe as $riga ) {
-			$prodotto = wc_get_product( (int) $riga->ID );
+			if ( Negozio::c_e() ) {
+				$prodotto = wc_get_product( (int) $riga->ID );
 
-			if ( ! $prodotto || ! $prodotto->is_visible() ) {
+				if ( ! $prodotto || ! $prodotto->is_visible() ) {
+					continue;
+				}
+
+				$voci[] = self::voce_prodotto( $prodotto );
+
 				continue;
 			}
 
-			$voci[] = self::voce_prodotto( $prodotto );
+			$voci[] = self::voce_contenuto( (int) $riga->ID );
 		}
 
-		return $voci;
+		return array_values( array_filter( $voci ) );
+	}
+
+	/**
+	 * Una voce che punta a un contenuto del sito.
+	 *
+	 * Al posto del prezzo si scrive di che cosa si tratta — "Pagina",
+	 * "Articolo" — perche' quello e' l'unico contorno utile: chi legge un
+	 * suggerimento vuole sapere dove sta per andare.
+	 *
+	 * @return array<string,string>|null
+	 */
+	private static function voce_contenuto( int $id ): ?array {
+		$post = get_post( $id );
+
+		if ( ! $post instanceof \WP_Post ) {
+			return null;
+		}
+
+		$tipo = get_post_type_object( $post->post_type );
+
+		return array(
+			'tipo'      => 'prodotto',
+			'sku'       => \Storegentic\Catalogo\Contenuti::sku( $post ),
+			'etichetta' => (string) get_the_title( $post ),
+			'nota'      => $tipo instanceof \WP_Post_Type ? (string) $tipo->labels->singular_name : '',
+			'url'       => (string) get_permalink( $post ),
+		);
 	}
 }

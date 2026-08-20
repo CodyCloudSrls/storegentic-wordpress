@@ -14,6 +14,7 @@ declare( strict_types = 1 );
 namespace Storegentic;
 
 use Storegentic\Admin\Pagina;
+use Storegentic\Admin\Riquadro;
 use Storegentic\Analitica\Registratore;
 use Storegentic\Api\Contratto;
 use Storegentic\Catalogo\Pianificatore;
@@ -42,6 +43,7 @@ final class Plugin {
 
 		if ( is_admin() ) {
 			Pagina::avvia();
+			Riquadro::avvia();
 		} else {
 			Interfaccia::avvia();
 		}

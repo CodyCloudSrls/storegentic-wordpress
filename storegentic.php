@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       Storegentic per WooCommerce
+ * Plugin Name:       Storegentic
  * Plugin URI:        https://storegentic.it
- * Description:       Collega un negozio WooCommerce a Storegentic: ricerca semantica, agente conversazionale e analisi. Funziona su qualsiasi negozio, senza toccare il tema.
- * Version:           0.2.0
+ * Description:       Collega un sito WordPress a Storegentic: ricerca semantica, ricerca con una foto, assistente e analisi. Con WooCommerce indicizza i prodotti; senza, indicizza i contenuti del sito e fa da base di conoscenza. Funziona con qualsiasi tema, senza toccarlo.
+ * Version:           0.3.0
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            CodyCloud Srls
@@ -13,7 +13,6 @@
  * Text Domain:       storegentic
  * Domain Path:       /languages
  * WC requires at least: 8.0
- * Requires Plugins:  woocommerce
  *
  * -----------------------------------------------------------------------------
  * IMPIANTO
@@ -44,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSIONE       = '0.2.0';
+const VERSIONE       = '0.3.0';
 const FILE_PRINCIPALE = __FILE__;
 const PERCORSO       = __DIR__;
 const PREFISSO_OPZIONI = 'storegentic_';
@@ -72,33 +71,22 @@ spl_autoload_register(
 );
 
 /**
- * WooCommerce e' un requisito, non un'opzione: senza, il plugin non ha un
- * catalogo da sincronizzare. Si controlla su `plugins_loaded` perche' prima
- * di quel momento l'elenco dei plugin attivi non e' ancora completo.
+ * WOOCOMMERCE NON E' PIU' UN REQUISITO.
+ *
+ * Prima lo era, e senza WooCommerce il plugin si fermava qui con un avviso.
+ * Era una restrizione senza motivo: quello che il plugin sa fare — indicizzare
+ * dei contenuti, cercarli a parole o con una foto, rispondere a domande su di
+ * essi — non ha bisogno di un carrello. Su un sito senza negozio diventa la
+ * base di conoscenza del sito: indicizza pagine e articoli e risponde su
+ * quelli.
+ *
+ * Il plugin si adatta da solo; la domanda "c'e' un negozio?" si fa in un posto
+ * solo, in Storegentic\Negozio.
+ *
+ * Si aspetta comunque `plugins_loaded`, perche' prima di quel momento non si
+ * puo' sapere se WooCommerce c'e'.
  */
-add_action(
-	'plugins_loaded',
-	static function (): void {
-		if ( ! class_exists( 'WooCommerce' ) ) {
-			add_action(
-				'admin_notices',
-				static function (): void {
-					if ( ! current_user_can( 'activate_plugins' ) ) {
-						return;
-					}
-					printf(
-						'<div class="notice notice-error"><p>%s</p></div>',
-						esc_html__( 'Storegentic richiede WooCommerce attivo. Il plugin resta inattivo finché WooCommerce non viene attivato.', 'storegentic' )
-					);
-				}
-			);
-			return;
-		}
-
-		Plugin::avvia();
-	},
-	20
-);
+add_action( 'plugins_loaded', array( Plugin::class, 'avvia' ), 20 );
 
 /**
  * Dichiara la compatibilita' con l'archiviazione ordini ad alte prestazioni.

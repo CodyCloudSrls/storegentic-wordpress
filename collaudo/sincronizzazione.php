@@ -50,11 +50,29 @@ use Storegentic\Impostazioni;
  * Adesso si conserva l'opzione intera e la si rimette com'era, anche se il
  * collaudo si interrompe a meta' per un errore fatale: la registrazione su
  * shutdown vale in ogni caso di uscita.
+ *
+ * ANCHE IL DIARIO E' UN DATO DEL NEGOZIO.
+ *
+ * Il diario tiene le ultime venti operazioni, ed e' quello che si guarda nel
+ * pannello per capire quando e perche' una sincronizzazione e' andata storta.
+ * Questo collaudo ne fa una decina di finte — "errore interno simulato",
+ * "cancellerebbe 110 SKU su 200" — e in venti voci quelle finte cacciano fuori
+ * tutte quelle vere. Visto succedere: dopo un giro di prove il diario del sito
+ * raccontava solo guasti che non erano mai avvenuti.
+ *
+ * Si conserva e si rimette com'era, insieme alle impostazioni.
  */
 $GLOBALS['sg_impostazioni_vere'] = get_option( Impostazioni::CHIAVE );
+$GLOBALS['sg_diario_vero']       = get_option( 'storegentic_sincro_diario' );
 
 register_shutdown_function(
 	static function (): void {
+		if ( is_array( $GLOBALS['sg_diario_vero'] ?? null ) ) {
+			update_option( 'storegentic_sincro_diario', $GLOBALS['sg_diario_vero'], false );
+		} else {
+			delete_option( 'storegentic_sincro_diario' );
+		}
+
 		if ( ! is_array( $GLOBALS['sg_impostazioni_vere'] ?? null ) ) {
 			return;
 		}
