@@ -1,15 +1,22 @@
 <?php
 /**
- * L'interfaccia sul negozio.
+ * L'interfaccia sul sito: cosa si carica, dove, e con quali testi.
  *
- * DUE COSE, NON UNA. Il pannello di ricerca risponde a "trova questo"; l'
- * assistente risponde a "aiutami a scegliere". Sono due bisogni diversi e
- * hanno due comandi diversi: chi sa cosa vuole non deve passare da una
- * conversazione, e chi non lo sa non deve indovinare le parole giuste.
+ * QUESTO FILE NON DISEGNA NIENTE. Decide se il plugin deve comparire su questa
+ * pagina, carica il foglio di stile e lo script, e passa al browser i testi
+ * tradotti e le impostazioni. Il disegno sta in Frontend\Finestra.
  *
- * Il pannello e' un trampolino, non un magazzino: mostra i primi risultati e
- * porta alla pagina della ricerca, che e' il posto dove si affina, si ordina
- * e si condivide un indirizzo.
+ * UN COMANDO SOLO, TRE MODI. Prima erano due cose separate — un pannello per
+ * la ricerca e un riquadro per l'assistente — con due comandi diversi. Su
+ * questo negozio funzionava; su un negozio qualunque no, perche' meta' del
+ * plugin dipendeva da un elemento del tema che poteva non esserci. Oggi c'e'
+ * un pulsante, disegnato dal plugin, e una finestra che contiene tutto:
+ * cercare a parole, cercare con una foto, chiedere all'assistente.
+ *
+ * TUTTI I TESTI PASSANO DI QUI, TRADOTTI. Il JavaScript non ne scrive
+ * nessuno: un plugin che stampa frasi scritte nel codice non si puo'
+ * tradurre, e chi lo installa in un'altra lingua se ne accorge quando e' gia'
+ * in produzione.
  *
  * Niente CSS del tema viene toccato. Tutte le classi hanno il prefisso `sg-`
  * e i valori di stile passano da variabili con un ripiego: un tema che vuole

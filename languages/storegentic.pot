@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-20T16:58:23+00:00\n"
+"POT-Creation-Date: 2026-08-20T20:28:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: storegentic\n"
@@ -308,7 +308,7 @@ msgstr ""
 
 #: src/Admin/viste/aspetto.php:187
 #: src/Frontend/Finestra.php:258
-#: src/Frontend/Interfaccia.php:142
+#: src/Frontend/Interfaccia.php:149
 #: src/Frontend/vista-ricerca.php:76
 msgid "Che cosa stai cercando?"
 msgstr ""
@@ -322,7 +322,7 @@ msgid "Prima frase dell’assistente"
 msgstr ""
 
 #: src/Admin/viste/aspetto.php:196
-#: src/Frontend/Interfaccia.php:143
+#: src/Frontend/Interfaccia.php:150
 msgid "Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa."
 msgstr ""
 
@@ -1202,7 +1202,7 @@ msgstr ""
 #: src/Frontend/Finestra.php:56
 #: src/Frontend/Finestra.php:109
 #: src/Frontend/Finestra.php:268
-#: src/Frontend/Interfaccia.php:230
+#: src/Frontend/Interfaccia.php:237
 #: src/Frontend/vista-ricerca.php:90
 msgid "Cerca"
 msgstr ""
@@ -1231,7 +1231,7 @@ msgid "Ricomincia la conversazione"
 msgstr ""
 
 #: src/Frontend/Finestra.php:200
-#: src/Frontend/Interfaccia.php:229
+#: src/Frontend/Interfaccia.php:236
 msgid "Chiudi"
 msgstr ""
 
@@ -1241,7 +1241,7 @@ msgid "Che cosa cerchi"
 msgstr ""
 
 #: src/Frontend/Finestra.php:261
-#: src/Frontend/Interfaccia.php:247
+#: src/Frontend/Interfaccia.php:254
 msgid "Cancella"
 msgstr ""
 
@@ -1359,140 +1359,140 @@ msgstr ""
 msgid "Stretto"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:200
+#: src/Frontend/Interfaccia.php:207
 #: src/Frontend/vista-ricerca.php:129
 msgid "una cosa che regge il freddo"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:201
+#: src/Frontend/Interfaccia.php:208
 #: src/Frontend/vista-ricerca.php:130
 msgid "qualcosa di leggero per l’estate"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:202
+#: src/Frontend/Interfaccia.php:209
 #: src/Frontend/vista-ricerca.php:131
 msgid "un regalo sotto i 50 euro"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:203
+#: src/Frontend/Interfaccia.php:210
 #: src/Frontend/vista-ricerca.php:132
 msgid "come questa, ma di un altro colore"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:218
+#: src/Frontend/Interfaccia.php:225
 msgid "Un regalo sotto i 60 €, per mia madre"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:219
+#: src/Frontend/Interfaccia.php:226
 msgid "Che cosa mi consigliate per un matrimonio?"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:220
+#: src/Frontend/Interfaccia.php:227
 msgid "Qual è la differenza fra questi due?"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:231
+#: src/Frontend/Interfaccia.php:238
 msgid "Sto cercando…"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:232
+#: src/Frontend/Interfaccia.php:239
 msgid "Nessun risultato. Prova con parole diverse."
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:233
+#: src/Frontend/Interfaccia.php:240
 msgid "La ricerca non ha risposto. Riprova fra poco."
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:240
+#: src/Frontend/Interfaccia.php:247
 #: src/Frontend/vista-ricerca.php:113
 msgid "La ricerca intelligente non risponde in questo momento: questi risultati arrivano dal catalogo del negozio, cercando le parole che hai scritto."
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:241
+#: src/Frontend/Interfaccia.php:248
 msgid "Le tue ultime ricerche"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:242
+#: src/Frontend/Interfaccia.php:249
 msgid "Prova con"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:243
+#: src/Frontend/Interfaccia.php:250
 msgid "Oppure sfoglia"
 msgstr ""
 
 #. translators: %s: le parole scritte da chi cerca.
-#: src/Frontend/Interfaccia.php:245
+#: src/Frontend/Interfaccia.php:252
 #, php-format
 msgid "Cerca «%s» nel catalogo"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:246
+#: src/Frontend/Interfaccia.php:253
 msgid "Apri la pagina dei risultati"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:249
+#: src/Frontend/Interfaccia.php:256
 msgid "Ordina i risultati"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:250
+#: src/Frontend/Interfaccia.php:257
 #: src/Frontend/vista-ricerca.php:216
 msgid "Più pertinenti"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:251
+#: src/Frontend/Interfaccia.php:258
 #: src/Frontend/vista-ricerca.php:217
 msgid "Prezzo crescente"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:252
+#: src/Frontend/Interfaccia.php:259
 #: src/Frontend/vista-ricerca.php:218
 msgid "Prezzo decrescente"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:253
+#: src/Frontend/Interfaccia.php:260
 msgid "1 risultato"
 msgstr ""
 
 #. translators: %d: quanti risultati.
-#: src/Frontend/Interfaccia.php:255
+#: src/Frontend/Interfaccia.php:262
 #, php-format
 msgid "%d risultati"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:257
+#: src/Frontend/Interfaccia.php:264
 #: src/Frontend/vista-ricerca.php:81
 msgid "Cerca con una foto"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:258
+#: src/Frontend/Interfaccia.php:265
 msgid "Scegli una foto o trascinala qui: ti mostro i prodotti che le somigliano di più."
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:259
+#: src/Frontend/Interfaccia.php:266
 msgid "Sto guardando la foto…"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:260
+#: src/Frontend/Interfaccia.php:267
 msgid "Non riesco a leggere questa foto. Prova con un altro file."
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:261
+#: src/Frontend/Interfaccia.php:268
 msgid "I più simili alla tua foto"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:262
+#: src/Frontend/Interfaccia.php:269
 msgid "Cambia foto"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:264
+#: src/Frontend/Interfaccia.php:271
 msgid "Sto pensando…"
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:265
+#: src/Frontend/Interfaccia.php:272
 msgid "Va bene, ho smesso."
 msgstr ""
 
-#: src/Frontend/Interfaccia.php:266
+#: src/Frontend/Interfaccia.php:273
 msgid "Non riesco a rispondere adesso. Riprova fra poco."
 msgstr ""
 

@@ -51,16 +51,26 @@
 
 body.sg-bloccato { overflow: hidden; }
 
+.sg-finestra *,
 .sg-pannello *,
-.sg-assistente *,
 .sg-pagina * { box-sizing: border-box; }
 
-/* Il fuoco deve vedersi sempre, anche sopra i nostri fondi scuri. */
+/*
+   IL FUOCO DEVE VEDERSI SEMPRE, anche sopra i nostri fondi scuri.
+
+   Lo stacco di due pixel non e' un dettaglio estetico: sul pulsante di invio,
+   che e' pieno del colore d'accento, un contorno dello stesso colore senza
+   stacco sparirebbe dentro il pulsante. Con lo stacco resta una riga chiara
+   fra i due, e l'anello si legge.
+
+   `.sg-finestra` c'e' perche' i comandi della cornice — chiudere, cambiare
+   modo, ricominciare — non stanno dentro nessun pannello, e prima restavano
+   fuori da questa regola.
+*/
+.sg-finestra :focus-visible,
 .sg-pannello :focus-visible,
-.sg-assistente :focus-visible,
 .sg-pagina :focus-visible,
-.sg-chiama:focus-visible,
-.sg-bolla:focus-visible {
+.sg-lancia:focus-visible {
   outline: 2px solid var(--sg-colore);
   outline-offset: 2px;
 }
