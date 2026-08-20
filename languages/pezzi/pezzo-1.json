@@ -1,0 +1,405 @@
+[
+ {
+  "msgid": "Storegentic",
+  "nota": "Plugin Name of the plugin"
+ },
+ {
+  "msgid": "https://storegentic.it",
+  "nota": "Plugin URI of the plugin"
+ },
+ {
+  "msgid": "Collega un sito WordPress a Storegentic: ricerca semantica, ricerca con una foto, assistente e analisi. Con WooCommerce indicizza i prodotti; senza, indicizza i contenuti del sito e fa da base di conoscenza. Funziona con qualsiasi tema, senza toccarlo.",
+  "nota": "Description of the plugin"
+ },
+ {
+  "msgid": "CodyCloud Srls",
+  "nota": "Author of the plugin"
+ },
+ {
+  "msgid": "https://www.codycloud.it",
+  "nota": "Author URI of the plugin"
+ },
+ {
+  "msgid": "Panoramica"
+ },
+ {
+  "msgid": "Collegamento"
+ },
+ {
+  "msgid": "Aspetto"
+ },
+ {
+  "msgid": "Ricerca"
+ },
+ {
+  "msgid": "Catalogo"
+ },
+ {
+  "msgid": "Contenuti"
+ },
+ {
+  "msgid": "Statistiche"
+ },
+ {
+  "msgid": "Storegentic — %s",
+  "nota": "translators: %s: il nome della pagina."
+ },
+ {
+  "msgid": "Impostazioni"
+ },
+ {
+  "msgid": "Non hai i permessi per modificare queste impostazioni."
+ },
+ {
+  "msgid": "Colori salvati, ma questi accostamenti sono sotto il 4,5:1 richiesto e non si leggono bene: %s.",
+  "nota": "translators: %s: l'elenco degli accostamenti che non si leggono, con il loro rapporto."
+ },
+ {
+  "msgid": "Non hai i permessi per questa operazione."
+ },
+ {
+  "msgid": "Salva le impostazioni"
+ },
+ {
+  "msgid": "Tutte le statistiche"
+ },
+ {
+  "msgid": "Storegentic non è ancora collegato: manca la chiave del servizio."
+ },
+ {
+  "msgid": "Collega ora"
+ },
+ {
+  "msgid": "Il piano ha finito: %s. Il servizio rifiuta le richieste.",
+  "nota": "translators: %s: il nome del contatore finito."
+ },
+ {
+  "msgid": "Quasi finito: %1$s, ne restano %2$s.",
+  "nota": "translators: 1: nome del contatore, 2: quanti ne restano."
+ },
+ {
+  "msgid": "%1$s: il servizio non ha risposto %2$s volte. Ultimo messaggio: «%3$s».",
+  "nota": "translators: 1: nome della funzione, 2: quante volte, 3: il messaggio del servizio."
+ },
+ {
+  "msgid": "Tutto in ordine: il servizio risponde e il piano tiene."
+ },
+ {
+  "msgid": "Questo mese non è ancora arrivata nessuna domanda."
+ },
+ {
+  "msgid": "Domande"
+ },
+ {
+  "msgid": "Senza risultati"
+ },
+ {
+  "msgid": "Domande diverse"
+ },
+ {
+  "msgid": "Cercato e non trovato"
+ },
+ {
+  "msgid": "%s volta",
+  "plurale": "%s volte",
+  "nota": "translators: %s: quante volte."
+ },
+ {
+  "msgid": "L’aspetto si configura a servizio collegato: quali modalità mostrare dipende anche da quali il servizio dichiara."
+ },
+ {
+  "msgid": "Colori"
+ },
+ {
+  "msgid": "Combinazione"
+ },
+ {
+  "msgid": "Sfondo"
+ },
+ {
+  "msgid": "Superficie"
+ },
+ {
+  "msgid": "Testo"
+ },
+ {
+  "msgid": "Testo tenue"
+ },
+ {
+  "msgid": "Bordo"
+ },
+ {
+  "msgid": "Accento"
+ },
+ {
+  "msgid": "Sopra l’accento"
+ },
+ {
+  "msgid": "Angoli"
+ },
+ {
+  "msgid": "Anteprima"
+ },
+ {
+  "msgid": "Dimmi che cosa cerchi: ti propongo qualcosa."
+ },
+ {
+  "msgid": "Un regalo sotto i 60 €"
+ },
+ {
+  "msgid": "Nome del prodotto"
+ },
+ {
+  "msgid": "Categoria"
+ },
+ {
+  "msgid": "Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. I numeri qui sopra misurano gli accostamenti che contano davvero."
+ },
+ {
+  "msgid": "Il pulsante e la finestra"
+ },
+ {
+  "msgid": "Che cosa offre la finestra"
+ },
+ {
+  "msgid": "Ricerca a parole"
+ },
+ {
+  "msgid": "Chi sa che cosa vuole lo descrive e lo trova."
+ },
+ {
+  "msgid": "Ricerca con una foto"
+ },
+ {
+  "msgid": "Si carica una foto e si trova quello che le somiglia."
+ },
+ {
+  "msgid": "Assistente"
+ },
+ {
+  "msgid": "Chi non sa che cosa vuole lo chiede a parole sue."
+ },
+ {
+  "msgid": "(il servizio non la dichiara: non compare)"
+ },
+ {
+  "msgid": "Una modalità compare solo se la vuoi tu e se il servizio la dichiara. Un comando che risponde «non disponibile» è peggio di un comando assente."
+ },
+ {
+  "msgid": "Angolo del pulsante"
+ },
+ {
+  "msgid": "In basso a destra"
+ },
+ {
+  "msgid": "In basso a sinistra"
+ },
+ {
+  "msgid": "Testo del pulsante"
+ },
+ {
+  "msgid": "Lasciandolo vuoto il testo si adatta alle modalità accese."
+ },
+ {
+  "msgid": "Testo nel campo"
+ },
+ {
+  "msgid": "Che cosa stai cercando?"
+ },
+ {
+  "msgid": "Un esempio concreto fa capire cosa si può chiedere meglio di una domanda generica."
+ },
+ {
+  "msgid": "Prima frase dell’assistente"
+ },
+ {
+  "msgid": "Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa."
+ },
+ {
+  "msgid": "È la frase che si legge appena si apre l’assistente. Lasciala vuota per quella predefinita."
+ },
+ {
+  "msgid": "Come si apre"
+ },
+ {
+  "msgid": "È la scelta che cambia di più la sensazione del negozio, più dei colori. Una finestra al centro chiede attenzione; un cassetto lascia continuare a leggere."
+ },
+ {
+  "msgid": "Forma della finestra"
+ },
+ {
+  "msgid": "Sul telefono «al centro» e «a lato» diventano schermo pieno: un cassetto largo quanto lo schermo è lo schermo. «Dal basso» invece resta dal basso, perché è lì che arriva il pollice."
+ },
+ {
+  "msgid": "Quanto è grande"
+ },
+ {
+  "msgid": "Larghezza"
+ },
+ {
+  "msgid": "decimi di rem — 680 fa 68rem, circa 1088 px"
+ },
+ {
+  "msgid": "Altezza"
+ },
+ {
+  "msgid": "Sono massimi: su uno schermo più stretto la finestra si adatta da sola e non esce mai dai bordi."
+ },
+ {
+  "msgid": "Il comando che apre"
+ },
+ {
+  "msgid": "Distanza dal bordo"
+ },
+ {
+  "msgid": "alzalo se il sito ha già un comando in basso"
+ },
+ {
+  "msgid": "Come si legge"
+ },
+ {
+  "msgid": "Densità"
+ },
+ {
+  "msgid": "Larghezza minima di una scheda"
+ },
+ {
+  "msgid": "Da qui si decidono le colonne: più stretta, più prodotti in riga. Non serve indicare un numero di colonne, che sarebbe sbagliato a ogni altra larghezza di schermo."
+ },
+ {
+  "msgid": "Carattere dei titoli"
+ },
+ {
+  "msgid": "Nessun carattere si scarica da fuori: sono quelli già presenti nei dispositivi. Non fanno attendere il testo e non mandano l’indirizzo di chi visita a servizi di terze parti."
+ },
+ {
+  "msgid": "Dietro la finestra"
+ },
+ {
+  "msgid": "Quanto si copre la pagina"
+ },
+ {
+  "msgid": "Sfoca quello che sta dietro"
+ },
+ {
+  "msgid": "La finestra entra con un’animazione"
+ },
+ {
+  "msgid": "Chi ha chiesto meno animazioni al proprio dispositivo non le vede comunque: è una richiesta di accessibilità, non una preferenza."
+ },
+ {
+  "msgid": "Indirizzo del servizio"
+ },
+ {
+  "msgid": "Gli indirizzi ufficiali sono già nell’elenco. Cambialo solo se Storegentic te ne ha dato un altro: tutti gli altri indirizzi li dichiara il servizio."
+ },
+ {
+  "msgid": "Prima di salvarlo viene provato: se non risponde, resta quello di prima e te lo diciamo, invece di spegnere la ricerca sul sito."
+ },
+ {
+  "msgid": "Chiave"
+ },
+ {
+  "msgid": "Lascia vuoto per non cambiarla. La chiave resta sul server: non viene mai stampata nelle pagine pubbliche."
+ },
+ {
+  "msgid": "Attivo sul sito"
+ },
+ {
+  "msgid": "Mostra la ricerca Storegentic ai visitatori"
+ },
+ {
+  "msgid": "Spegnendolo il servizio resta collegato e il catalogo resta sincronizzato, ma sul sito non compare nulla."
+ },
+ {
+  "msgid": "Cosa dichiara il servizio"
+ },
+ {
+  "msgid": "Il plugin non conosce nessun indirizzo oltre a questo: quali funzioni esistono e dove stanno lo dichiara il servizio a ogni collegamento. Se qui manca qualcosa, manca sul servizio, non nel plugin."
+ },
+ {
+  "msgid": "Funzioni accese"
+ },
+ {
+  "msgid": "Il servizio non dichiara alcuna funzione per questa chiave."
+ },
+ {
+  "msgid": "Indirizzi dichiarati"
+ },
+ {
+  "msgid": "Nessuno."
+ },
+ {
+  "msgid": "Identificativo di questa installazione"
+ },
+ {
+  "msgid": "Serve a Storegentic per riconoscere questo sito. Non cambia se il sito cambia indirizzo."
+ },
+ {
+  "msgid": "Verifica il collegamento"
+ },
+ {
+  "msgid": "I contenuti si sincronizzano a servizio collegato."
+ },
+ {
+  "msgid": "Cosa mandare"
+ },
+ {
+  "msgid": "Su questo sito non c’è WooCommerce, quindi Storegentic non indicizza prodotti: legge i contenuti che scegli qui e risponde su quelli. È il modo di usarlo come base di conoscenza del sito."
+ },
+ {
+  "msgid": "Tipi di contenuto"
+ },
+ {
+  "msgid": "— %s pubblicati",
+  "nota": "translators: %s: quanti contenuti pubblicati ci sono di questo tipo."
+ },
+ {
+  "msgid": "Solo i contenuti pubblici: mandare un tipo interno vorrebbe dire farlo comparire nei risultati con un indirizzo che non porta da nessuna parte."
+ },
+ {
+  "msgid": "Sincronizzazione"
+ },
+ {
+  "msgid": "Da sola"
+ },
+ {
+  "msgid": "Sincronizza a intervalli regolari"
+ },
+ {
+  "msgid": "Ogni"
+ },
+ {
+  "msgid": "Quanti per volta"
+ },
+ {
+  "msgid": "Non si cambia a sincronizzazione avviata: le pagine sono già calcolate sul valore attuale."
+ },
+ {
+  "msgid": "Abbassalo se l’hosting interrompe le sincronizzazioni a metà."
+ },
+ {
+  "msgid": "Includi i prodotti esauriti"
+ },
+ {
+  "msgid": "Includi i prodotti privati"
+ },
+ {
+  "msgid": "Manda anche le categorie, con le loro descrizioni"
+ },
+ {
+  "msgid": "A fine sincronizzazione"
+ },
+ {
+  "msgid": "Togli dall’indice quello che non c’è più sul sito"
+ },
+ {
+  "msgid": "Se una sincronizzazione si interrompe a metà, questa operazione resta sospesa e chiede conferma invece di svuotare l’indice."
+ },
+ {
+  "msgid": "Analisi e statistiche"
+ },
+ {
+  "msgid": "Cosa se ne fa"
+ }
+]

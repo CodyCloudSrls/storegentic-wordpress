@@ -189,6 +189,58 @@ sg_coda();
 Percorso::ordinato( $sg_o->get_id() );
 sg_prova( 'lo stesso ordine non si conta due volte', 0 === count( sg_coda() ) );
 
+echo "\nLa cassa\n";
+
+/*
+ * Serve un carrello vero: `alla_cassa()` legge WC()->cart, che su una richiesta
+ * da riga di comando non esiste finche' non lo si carica a mano. E' la stessa
+ * cosa che fa WooCommerce quando serve una pagina.
+ */
+if ( function_exists( 'wc_load_cart' ) ) {
+	wc_load_cart();
+}
+
+/*
+ * IL FILO VA RIANNODATO, PERCHE' L'ORDINE LO TAGLIA.
+ *
+ * `Percorso::ordinato()` chiude la sessione: e' voluto — lasciarla in piedi
+ * vorrebbe dire attribuire alla ricerca di oggi anche l'ordine che la stessa
+ * persona fara' fra tre settimane. Qui pero' la prova della cassa viene dopo
+ * quella dell'ordine, quindi senza questa riga si misurerebbe una sessione
+ * appena chiusa e l'attribuzione risulterebbe zero. Non era un difetto del
+ * codice: era l'ordine delle prove.
+ */
+$_COOKIE[ Sessione::COOKIE ] = bin2hex( random_bytes( 16 ) );
+Sessione::ricorda( $sg_s[0], 'agent_search' );
+
+if ( function_exists( 'WC' ) && WC()->cart ) {
+	WC()->cart->empty_cart();
+	WC()->cart->add_to_cart( $sg_ids[0] );   // attribuito
+	WC()->cart->add_to_cart( $sg_ids[2] );   // no
+
+	delete_transient( 'sg_cassa_' . hash( 'sha256', Sessione::id() ) );
+	sg_coda();
+
+	Percorso::alla_cassa();
+	$sg_cassa = sg_evento( sg_coda(), 'checkout_started' );
+
+	sg_prova( 'aprire la cassa manda checkout_started', null !== $sg_cassa );
+	sg_prova( 'con gli articoli del carrello', 2 === (int) ( $sg_cassa['data']['items'] ?? 0 ) );
+	sg_prova( 'e con la parte attribuita separata', 1 === (int) ( $sg_cassa['data']['attributedItems'] ?? 0 ) );
+	sg_prova( 'il valore attribuito e minore del totale', (float) ( $sg_cassa['data']['attributedValue'] ?? 0 ) < (float) ( $sg_cassa['data']['value'] ?? 0 ) );
+
+	/*
+	 * Chi sbaglia la carta e riprova non deve contare come due partenze:
+	 * l'abbandono verrebbe fuori migliore di com'e'.
+	 */
+	Percorso::alla_cassa();
+	sg_prova( 'ricaricare la cassa non conta due volte', 0 === count( sg_coda() ) );
+
+	WC()->cart->empty_cart();
+} else {
+	echo "  (carrello non disponibile in questo contesto: prova saltata)\n";
+}
+
 echo "\nIl consenso\n";
 
 Impostazioni::salva( array( 'analitica' => false ) );

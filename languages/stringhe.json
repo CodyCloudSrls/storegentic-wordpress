@@ -1,0 +1,2519 @@
+[
+ {
+  "commento": [
+   "Plugin Name of the plugin"
+  ],
+  "dove": [
+   "storegentic.php",
+   "src/Admin/Menu.php:96",
+   "src/Admin/Menu.php:97",
+   "src/Admin/Riquadro.php:50",
+   "src/Admin/viste/cornice.php:42"
+  ],
+  "msgid": "Storegentic"
+ },
+ {
+  "commento": [
+   "Plugin URI of the plugin"
+  ],
+  "dove": [
+   "storegentic.php"
+  ],
+  "msgid": "https://storegentic.it"
+ },
+ {
+  "commento": [
+   "Description of the plugin"
+  ],
+  "dove": [
+   "storegentic.php"
+  ],
+  "msgid": "Collega un sito WordPress a Storegentic: ricerca semantica, ricerca con una foto, assistente e analisi. Con WooCommerce indicizza i prodotti; senza, indicizza i contenuti del sito e fa da base di conoscenza. Funziona con qualsiasi tema, senza toccarlo."
+ },
+ {
+  "commento": [
+   "Author of the plugin"
+  ],
+  "dove": [
+   "storegentic.php"
+  ],
+  "msgid": "CodyCloud Srls"
+ },
+ {
+  "commento": [
+   "Author URI of the plugin"
+  ],
+  "dove": [
+   "storegentic.php"
+  ],
+  "msgid": "https://www.codycloud.it"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:60",
+   "src/Admin/Riquadro.php:74"
+  ],
+  "msgid": "Panoramica"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:65",
+   "src/Admin/viste/panoramica.php:45"
+  ],
+  "msgid": "Collegamento"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:70"
+  ],
+  "msgid": "Aspetto"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:75"
+  ],
+  "msgid": "Ricerca"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:80"
+  ],
+  "msgid": "Catalogo"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:80",
+   "src/Admin/viste/panoramica.php:71"
+  ],
+  "msgid": "Contenuti"
+ },
+ {
+  "dove": [
+   "src/Admin/Menu.php:85",
+   "src/Admin/viste/statistiche.php:49"
+  ],
+  "msgid": "Statistiche"
+ },
+ {
+  "commento": [
+   "translators: %s: il nome della pagina."
+  ],
+  "dove": [
+   "src/Admin/Menu.php:115"
+  ],
+  "msgid": "Storegentic — %s"
+ },
+ {
+  "dove": [
+   "src/Admin/Pagina.php:108"
+  ],
+  "msgid": "Impostazioni"
+ },
+ {
+  "dove": [
+   "src/Admin/Pagina.php:118"
+  ],
+  "msgid": "Non hai i permessi per modificare queste impostazioni."
+ },
+ {
+  "commento": [
+   "translators: %s: l'elenco degli accostamenti che non si leggono, con il loro rapporto."
+  ],
+  "dove": [
+   "src/Admin/Pagina.php:301"
+  ],
+  "msgid": "Colori salvati, ma questi accostamenti sono sotto il 4,5:1 richiesto e non si leggono bene: %s."
+ },
+ {
+  "dove": [
+   "src/Admin/Pagina.php:327"
+  ],
+  "msgid": "Non hai i permessi per questa operazione."
+ },
+ {
+  "dove": [
+   "src/Admin/Pagina.php:437"
+  ],
+  "msgid": "Salva le impostazioni"
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:76"
+  ],
+  "msgid": "Tutte le statistiche"
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:83"
+  ],
+  "msgid": "Storegentic non è ancora collegato: manca la chiave del servizio."
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:85"
+  ],
+  "msgid": "Collega ora"
+ },
+ {
+  "commento": [
+   "translators: %s: il nome del contatore finito."
+  ],
+  "dove": [
+   "src/Admin/Riquadro.php:104"
+  ],
+  "msgid": "Il piano ha finito: %s. Il servizio rifiuta le richieste."
+ },
+ {
+  "commento": [
+   "translators: 1: nome del contatore, 2: quanti ne restano."
+  ],
+  "dove": [
+   "src/Admin/Riquadro.php:113"
+  ],
+  "msgid": "Quasi finito: %1$s, ne restano %2$s."
+ },
+ {
+  "commento": [
+   "translators: 1: nome della funzione, 2: quante volte, 3: il messaggio del servizio."
+  ],
+  "dove": [
+   "src/Admin/Riquadro.php:131"
+  ],
+  "msgid": "%1$s: il servizio non ha risposto %2$s volte. Ultimo messaggio: «%3$s»."
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:143"
+  ],
+  "msgid": "Tutto in ordine: il servizio risponde e il piano tiene."
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:177"
+  ],
+  "msgid": "Questo mese non è ancora arrivata nessuna domanda."
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:184",
+   "src/Admin/viste/panoramica.php:146",
+   "src/Admin/viste/statistiche.php:83"
+  ],
+  "msgid": "Domande"
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:185",
+   "src/Admin/viste/panoramica.php:150",
+   "src/Admin/viste/statistiche.php:84"
+  ],
+  "msgid": "Senza risultati"
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:186",
+   "src/Admin/viste/panoramica.php:158"
+  ],
+  "msgid": "Domande diverse"
+ },
+ {
+  "dove": [
+   "src/Admin/Riquadro.php:215",
+   "src/Admin/viste/panoramica.php:164"
+  ],
+  "msgid": "Cercato e non trovato"
+ },
+ {
+  "commento": [
+   "translators: %s: quante volte."
+  ],
+  "dove": [
+   "src/Admin/Riquadro.php:226",
+   "src/Admin/viste/panoramica.php:173"
+  ],
+  "msgid": "%s volta",
+  "plurale": "%s volte"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:26"
+  ],
+  "msgid": "L’aspetto si configura a servizio collegato: quali modalità mostrare dipende anche da quali il servizio dichiara."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:35"
+  ],
+  "msgid": "Colori"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:39"
+  ],
+  "msgid": "Combinazione"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:65"
+  ],
+  "msgid": "Sfondo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:66"
+  ],
+  "msgid": "Superficie"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:67"
+  ],
+  "msgid": "Testo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:68"
+  ],
+  "msgid": "Testo tenue"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:69"
+  ],
+  "msgid": "Bordo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:70"
+  ],
+  "msgid": "Accento"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:71"
+  ],
+  "msgid": "Sopra l’accento"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:87"
+  ],
+  "msgid": "Angoli"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:101"
+  ],
+  "msgid": "Anteprima"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:103"
+  ],
+  "msgid": "Dimmi che cosa cerchi: ti propongo qualcosa."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:104"
+  ],
+  "msgid": "Un regalo sotto i 60 €"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:108"
+  ],
+  "msgid": "Nome del prodotto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:109",
+   "src/Frontend/vista-ricerca.php:160"
+  ],
+  "msgid": "Categoria"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:127"
+  ],
+  "msgid": "Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. I numeri qui sopra misurano gli accostamenti che contano davvero."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:132"
+  ],
+  "msgid": "Il pulsante e la finestra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:136"
+  ],
+  "msgid": "Che cosa offre la finestra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:141"
+  ],
+  "msgid": "Ricerca a parole"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:141"
+  ],
+  "msgid": "Chi sa che cosa vuole lo descrive e lo trova."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:142"
+  ],
+  "msgid": "Ricerca con una foto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:142"
+  ],
+  "msgid": "Si carica una foto e si trova quello che le somiglia."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:143",
+   "src/Frontend/Finestra.php:64"
+  ],
+  "msgid": "Assistente"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:143"
+  ],
+  "msgid": "Chi non sa che cosa vuole lo chiede a parole sue."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:156"
+  ],
+  "msgid": "(il servizio non la dichiara: non compare)"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:161"
+  ],
+  "msgid": "Una modalità compare solo se la vuoi tu e se il servizio la dichiara. Un comando che risponde «non disponibile» è peggio di un comando assente."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:165"
+  ],
+  "msgid": "Angolo del pulsante"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:168"
+  ],
+  "msgid": "In basso a destra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:169"
+  ],
+  "msgid": "In basso a sinistra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:174"
+  ],
+  "msgid": "Testo del pulsante"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:179"
+  ],
+  "msgid": "Lasciandolo vuoto il testo si adatta alle modalità accese."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:183"
+  ],
+  "msgid": "Testo nel campo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:187",
+   "src/Frontend/Finestra.php:258",
+   "src/Frontend/Interfaccia.php:142",
+   "src/Frontend/vista-ricerca.php:76"
+  ],
+  "msgid": "Che cosa stai cercando?"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:188"
+  ],
+  "msgid": "Un esempio concreto fa capire cosa si può chiedere meglio di una domanda generica."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:192"
+  ],
+  "msgid": "Prima frase dell’assistente"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:196",
+   "src/Frontend/Interfaccia.php:143"
+  ],
+  "msgid": "Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:197"
+  ],
+  "msgid": "È la frase che si legge appena si apre l’assistente. Lasciala vuota per quella predefinita."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:203"
+  ],
+  "msgid": "Come si apre"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:206"
+  ],
+  "msgid": "È la scelta che cambia di più la sensazione del negozio, più dei colori. Una finestra al centro chiede attenzione; un cassetto lascia continuare a leggere."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:211"
+  ],
+  "msgid": "Forma della finestra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:223"
+  ],
+  "msgid": "Sul telefono «al centro» e «a lato» diventano schermo pieno: un cassetto largo quanto lo schermo è lo schermo. «Dal basso» invece resta dal basso, perché è lì che arriva il pollice."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:227"
+  ],
+  "msgid": "Quanto è grande"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:230"
+  ],
+  "msgid": "Larghezza"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:233"
+  ],
+  "msgid": "decimi di rem — 680 fa 68rem, circa 1088 px"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:236"
+  ],
+  "msgid": "Altezza"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:240"
+  ],
+  "msgid": "Sono massimi: su uno schermo più stretto la finestra si adatta da sola e non esce mai dai bordi."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:244"
+  ],
+  "msgid": "Il comando che apre"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:256"
+  ],
+  "msgid": "Distanza dal bordo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:259"
+  ],
+  "msgid": "alzalo se il sito ha già un comando in basso"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:265"
+  ],
+  "msgid": "Come si legge"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:269"
+  ],
+  "msgid": "Densità"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:283"
+  ],
+  "msgid": "Larghezza minima di una scheda"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:287"
+  ],
+  "msgid": "Da qui si decidono le colonne: più stretta, più prodotti in riga. Non serve indicare un numero di colonne, che sarebbe sbagliato a ogni altra larghezza di schermo."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:291"
+  ],
+  "msgid": "Carattere dei titoli"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:298"
+  ],
+  "msgid": "Nessun carattere si scarica da fuori: sono quelli già presenti nei dispositivi. Non fanno attendere il testo e non mandano l’indirizzo di chi visita a servizi di terze parti."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:302"
+  ],
+  "msgid": "Dietro la finestra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:305"
+  ],
+  "msgid": "Quanto si copre la pagina"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:311"
+  ],
+  "msgid": "Sfoca quello che sta dietro"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:313"
+  ],
+  "msgid": "La finestra entra con un’animazione"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/aspetto.php:314"
+  ],
+  "msgid": "Chi ha chiesto meno animazioni al proprio dispositivo non le vede comunque: è una richiesta di accessibilità, non una preferenza."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:27"
+  ],
+  "msgid": "Indirizzo del servizio"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:36"
+  ],
+  "msgid": "Gli indirizzi ufficiali sono già nell’elenco. Cambialo solo se Storegentic te ne ha dato un altro: tutti gli altri indirizzi li dichiara il servizio."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:37"
+  ],
+  "msgid": "Prima di salvarlo viene provato: se non risponde, resta quello di prima e te lo diciamo, invece di spegnere la ricerca sul sito."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:41"
+  ],
+  "msgid": "Chiave"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:45"
+  ],
+  "msgid": "Lascia vuoto per non cambiarla. La chiave resta sul server: non viene mai stampata nelle pagine pubbliche."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:49"
+  ],
+  "msgid": "Attivo sul sito"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:52"
+  ],
+  "msgid": "Mostra la ricerca Storegentic ai visitatori"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:53"
+  ],
+  "msgid": "Spegnendolo il servizio resta collegato e il catalogo resta sincronizzato, ma sul sito non compare nulla."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:63"
+  ],
+  "msgid": "Cosa dichiara il servizio"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:66"
+  ],
+  "msgid": "Il plugin non conosce nessun indirizzo oltre a questo: quali funzioni esistono e dove stanno lo dichiara il servizio a ogni collegamento. Se qui manca qualcosa, manca sul servizio, non nel plugin."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:72"
+  ],
+  "msgid": "Funzioni accese"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:79"
+  ],
+  "msgid": "Il servizio non dichiara alcuna funzione per questa chiave."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:84"
+  ],
+  "msgid": "Indirizzi dichiarati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:90"
+  ],
+  "msgid": "Nessuno."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:103"
+  ],
+  "msgid": "Identificativo di questa installazione"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:106"
+  ],
+  "msgid": "Serve a Storegentic per riconoscere questo sito. Non cambia se il sito cambia indirizzo."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/collegamento.php:112",
+   "src/Admin/viste/panoramica.php:117"
+  ],
+  "msgid": "Verifica il collegamento"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:33"
+  ],
+  "msgid": "I contenuti si sincronizzano a servizio collegato."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:43",
+   "src/Admin/viste/contenuti.php:123"
+  ],
+  "msgid": "Cosa mandare"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:46"
+  ],
+  "msgid": "Su questo sito non c’è WooCommerce, quindi Storegentic non indicizza prodotti: legge i contenuti che scegli qui e risponde su quelli. È il modo di usarlo come base di conoscenza del sito."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:51"
+  ],
+  "msgid": "Tipi di contenuto"
+ },
+ {
+  "commento": [
+   "translators: %s: quanti contenuti pubblicati ci sono di questo tipo."
+  ],
+  "dove": [
+   "src/Admin/viste/contenuti.php:72"
+  ],
+  "msgid": "— %s pubblicati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:80"
+  ],
+  "msgid": "Solo i contenuti pubblici: mandare un tipo interno vorrebbe dire farlo comparire nei risultati con un indirizzo che non porta da nessuna parte."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:86",
+   "src/Admin/viste/panoramica.php:91"
+  ],
+  "msgid": "Sincronizzazione"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:90"
+  ],
+  "msgid": "Da sola"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:93"
+  ],
+  "msgid": "Sincronizza a intervalli regolari"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:95"
+  ],
+  "msgid": "Ogni"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:107"
+  ],
+  "msgid": "Quanti per volta"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:115"
+  ],
+  "msgid": "Non si cambia a sincronizzazione avviata: le pagine sono già calcolate sul valore attuale."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:116"
+  ],
+  "msgid": "Abbassalo se l’hosting interrompe le sincronizzazioni a metà."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:126"
+  ],
+  "msgid": "Includi i prodotti esauriti"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:128"
+  ],
+  "msgid": "Includi i prodotti privati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:130"
+  ],
+  "msgid": "Manda anche le categorie, con le loro descrizioni"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:135"
+  ],
+  "msgid": "A fine sincronizzazione"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:138"
+  ],
+  "msgid": "Togli dall’indice quello che non c’è più sul sito"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:139"
+  ],
+  "msgid": "Se una sincronizzazione si interrompe a metà, questa operazione resta sospesa e chiede conferma invece di svuotare l’indice."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:144"
+  ],
+  "msgid": "Analisi e statistiche"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:148"
+  ],
+  "msgid": "Cosa se ne fa"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:152"
+  ],
+  "msgid": "Manda a Storegentic cosa viene cercato e cosa viene aperto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:156"
+  ],
+  "msgid": "Tieni il conto anche qui, per le statistiche di questo pannello"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:158"
+  ],
+  "msgid": "Sono due cose separate. La prima serve al servizio per migliorare le risposte. La seconda resta nel tuo database: Storegentic non offre un modo per rileggere quello che gli mandi."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:168"
+  ],
+  "msgid": "Adesso"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:172"
+  ],
+  "msgid": "Esegui il passo successivo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:174",
+   "src/Admin/viste/panoramica.php:119"
+  ],
+  "msgid": "Sincronizza ora"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/contenuti.php:183"
+  ],
+  "msgid": "Annulla e azzera lo stato"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:53"
+  ],
+  "msgid": "Sezioni di Storegentic"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:64"
+  ],
+  "msgid": "Impostazioni salvate."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:85"
+  ],
+  "msgid": "Inserisci la chiave del servizio per collegare Storegentic."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:86"
+  ],
+  "msgid": "Vai al collegamento"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:92"
+  ],
+  "msgid": "Non collegato."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:100"
+  ],
+  "msgid": "Il piano ha finito."
+ },
+ {
+  "commento": [
+   "translators: 1: quanti se ne sono usati, 2: quanti ne consente il piano."
+  ],
+  "dove": [
+   "src/Admin/viste/cornice.php:108"
+  ],
+  "msgid": "usate %1$s su %2$s."
+ },
+ {
+  "commento": [
+   "translators: %s: la data che il servizio dichiara per il rinnovo."
+  ],
+  "dove": [
+   "src/Admin/viste/cornice.php:124"
+  ],
+  "msgid": "Il servizio dichiara che i contatori si rinnovano il %s, cioè una data già passata: aspettare non li rimette a zero. Scrivi a Storegentic."
+ },
+ {
+  "commento": [
+   "translators: %s: data del rinnovo dei contatori."
+  ],
+  "dove": [
+   "src/Admin/viste/cornice.php:134"
+  ],
+  "msgid": "I contatori si rinnovano il %s."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:143"
+  ],
+  "msgid": "Nel frattempo la ricerca del sito continua a funzionare sui contenuti del sito: trova le parole nei nomi e nelle descrizioni, non i concetti."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:145"
+  ],
+  "msgid": "La ricerca del sito mostra un errore ai visitatori."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/cornice.php:146"
+  ],
+  "msgid": "Accendi il ripiego"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:32"
+  ],
+  "msgid": "Ferma"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:33"
+  ],
+  "msgid": "In corso"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:34"
+  ],
+  "msgid": "Inviato tutto, manca la chiusura"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:35"
+  ],
+  "msgid": "Fallita"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:47"
+  ],
+  "msgid": "Attivo"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:47"
+  ],
+  "msgid": "Non collegato"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:55"
+  ],
+  "msgid": "Visibile sul sito"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:57"
+  ],
+  "msgid": "Sì"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:57"
+  ],
+  "msgid": "No"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:65"
+  ],
+  "msgid": "nessuna modalità attiva"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:71"
+  ],
+  "msgid": "Prodotti"
+ },
+ {
+  "commento": [
+   "translators: %s: quanto tempo fa."
+  ],
+  "dove": [
+   "src/Admin/viste/panoramica.php:81"
+  ],
+  "msgid": "sincronizzati %s fa"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:85"
+  ],
+  "msgid": "mai sincronizzati"
+ },
+ {
+  "commento": [
+   "translators: 1: pagina corrente, 2: pagine totali."
+  ],
+  "dove": [
+   "src/Admin/viste/panoramica.php:100"
+  ],
+  "msgid": "pagina %1$d di %2$d"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:105"
+  ],
+  "msgid": "ogni giorno"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:113"
+  ],
+  "msgid": "Ultimo errore di sincronizzazione:"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:125"
+  ],
+  "msgid": "Questo mese"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:141"
+  ],
+  "msgid": "Ancora nessuna ricerca da mostrare. Le prime compaiono qui: cosa cercano i visitatori, cosa non trovano, e quanto ci mette il servizio a rispondere."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:154",
+   "src/Admin/viste/statistiche.php:85"
+  ],
+  "msgid": "Servizio muto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/panoramica.php:183"
+  ],
+  "msgid": "Vedi tutte le statistiche"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:26"
+  ],
+  "msgid": "Piano e consumi"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:33"
+  ],
+  "msgid": "Questi numeri li dichiara Storegentic a ogni collegamento. Nelle statistiche c’è invece com’è andata davvero: le due cose possono non coincidere."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:40"
+  ],
+  "msgid": "Cosa"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:41"
+  ],
+  "msgid": "Usato"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:42"
+  ],
+  "msgid": "Restano"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:43"
+  ],
+  "msgid": "Quanto ne resta"
+ },
+ {
+  "commento": [
+   "translators: 1: quanti usati, 2: quanti ne consente il piano."
+  ],
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:59"
+  ],
+  "msgid": "%1$s di %2$s"
+ },
+ {
+  "commento": [
+   "translators: %d: percentuale rimasta."
+  ],
+  "dove": [
+   "src/Admin/viste/parti/consumi.php:84"
+  ],
+  "msgid": "%d%%"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/sincronizzazione.php:28"
+  ],
+  "msgid": "Riconciliazione sospesa."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/sincronizzazione.php:31"
+  ],
+  "msgid": "La verifica non ha riportato quanti elementi ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. Conferma solo se sei sicuro che tutto sia stato spedito."
+ },
+ {
+  "commento": [
+   "translators: 1: elementi che verrebbero rimossi, 2: elementi in indice."
+  ],
+  "dove": [
+   "src/Admin/viste/parti/sincronizzazione.php:35"
+  ],
+  "msgid": "Toglierebbe %1$d elementi su %2$d dall’indice. Se si sono davvero ridotti tanto, conferma; altrimenti controlla la sincronizzazione."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/sincronizzazione.php:42"
+  ],
+  "msgid": "Confermo, procedi"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/parti/sincronizzazione.php:49"
+  ],
+  "msgid": "Ultime operazioni"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:35"
+  ],
+  "msgid": "La ricerca si configura a servizio collegato: quanto si può chiedere lo dichiara il servizio."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:46"
+  ],
+  "msgid": "Dove vanno i risultati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:50"
+  ],
+  "msgid": "Risultati della ricerca a parole"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:55"
+  ],
+  "msgid": "Nella pagina dei risultati"
+ },
+ {
+  "commento": [
+   "translators: %s: l'indirizzo della pagina dei risultati."
+  ],
+  "dove": [
+   "src/Admin/viste/ricerca.php:56"
+  ],
+  "msgid": "un indirizzo vero (%s): si condivide, il tasto Indietro funziona, c’è spazio per i filtri."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:60"
+  ],
+  "msgid": "Dentro la finestra"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:61"
+  ],
+  "msgid": "niente pagine in più nel sito: il widget basta a sé stesso."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:64"
+  ],
+  "msgid": "La ricerca con la foto e l’assistente restano sempre nella finestra: una foto non si può mettere in un indirizzo, e una conversazione non è una pagina."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:68"
+  ],
+  "msgid": "Ricerca del sito"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:71"
+  ],
+  "msgid": "Sostituisci la ricerca del tema con quella di Storegentic"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:72"
+  ],
+  "msgid": "La lente e il campo di ricerca del tema apriranno la ricerca di Storegentic invece di quella di WordPress. Se il tema usa un markup particolare, il filtro storegentic_inneschi_ricerca permette di indicarlo."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:76"
+  ],
+  "msgid": "Dove compare"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:81"
+  ],
+  "msgid": "Home"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:82"
+  ],
+  "msgid": "Catalogo e categorie"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:83"
+  ],
+  "msgid": "Schede prodotto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:84"
+  ],
+  "msgid": "Carrello"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:96"
+  ],
+  "msgid": "Nessuna scelta significa: ovunque."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:101"
+  ],
+  "msgid": "Come cerca"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:104"
+  ],
+  "msgid": "Questi sono i parametri che il servizio accetta a ogni richiesta, con i valori che applica di suo. Lasciando un campo vuoto si continua a seguire il servizio: se un giorno cambia il proprio valore, questo sito lo segue senza che nessuno tocchi niente."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:109"
+  ],
+  "msgid": "Quanti risultati al massimo"
+ },
+ {
+  "commento": [
+   "translators: 1: quanti ne chiede il servizio di suo, 2: il tetto dichiarato."
+  ],
+  "dove": [
+   "src/Admin/viste/ricerca.php:119"
+  ],
+  "msgid": "Il servizio ne manda %1$d di suo, e ne accetta al massimo %2$d. Abbassarlo rende la ricerca più veloce e i filtri meno utili."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:130"
+  ],
+  "msgid": "Quanto devono somigliare"
+ },
+ {
+  "commento": [
+   "translators: %s: la soglia che il servizio applica di suo."
+  ],
+  "dove": [
+   "src/Admin/viste/ricerca.php:139"
+  ],
+  "msgid": "Da 0 a 1. Il servizio usa %s. Un numero più basso allarga la rete e trova di più, anche cose meno pertinenti; più alto stringe, e certe domande tornano vuote."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:150"
+  ],
+  "msgid": "Con la foto: quanti risultati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:161"
+  ],
+  "msgid": "Con la foto: quanto devono somigliare"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:166"
+  ],
+  "msgid": "Per le foto il servizio tiene una soglia più bassa che per le parole: due oggetti si somigliano in modo meno netto di due frasi."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:173"
+  ],
+  "msgid": "Mentre si scrive"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:177"
+  ],
+  "msgid": "Suggerimenti immediati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:182"
+  ],
+  "msgid": "Chiedi i suggerimenti anche al servizio, non solo al sito"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:185"
+  ],
+  "msgid": "Il sito conosce i titoli e le categorie; il servizio conosce anche i marchi. Insieme rispondono in un decimo di secondo e non consumano il piano."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:187"
+  ],
+  "msgid": "Il servizio non dichiara questa funzione: i suggerimenti arrivano solo dal sito. Non c’è niente da sistemare qui."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:193"
+  ],
+  "msgid": "Se il servizio non risponde"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:197"
+  ],
+  "msgid": "Ripiego"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:200"
+  ],
+  "msgid": "Cerca nei contenuti del sito quando il servizio non risponde"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:201"
+  ],
+  "msgid": "Succede a piano finito, durante una manutenzione o se la rete cade. Il ripiego cerca le parole nei nomi e nelle descrizioni brevi: trova meno cose della ricerca intelligente, ma il visitatore vede dei risultati invece di un errore."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/ricerca.php:202"
+  ],
+  "msgid": "Quando entra in funzione lo dichiara a schermo: i risultati dicono che arrivano dai contenuti del sito."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:54"
+  ],
+  "msgid": "Le statistiche sono spente: non si sta contando niente."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:55"
+  ],
+  "msgid": "Accendile"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:60"
+  ],
+  "msgid": "Ancora niente da mostrare. Le prime ricerche dei clienti compaiono qui: cosa cercano, cosa non trovano, e quanto ci mette il servizio a rispondere."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:82"
+  ],
+  "msgid": "Funzione"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:86"
+  ],
+  "msgid": "Tempo medio"
+ },
+ {
+  "commento": [
+   "translators: 1: data e ora, 2: il messaggio del servizio."
+  ],
+  "dove": [
+   "src/Admin/viste/statistiche.php:100"
+  ],
+  "msgid": "Ultimo errore il %1$s: %2$s"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:129"
+  ],
+  "msgid": "«Senza risultati» conta le domande a cui il cliente non ha visto nulla. «Servizio muto» conta le volte in cui Storegentic non ha risposto: le due colonne possono non coincidere, perché con il ripiego acceso il cliente vede lo stesso i prodotti del catalogo. Il tempo medio non conta le risposte già in cache, che arrivano subito."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:133"
+  ],
+  "msgid": "Cosa cercano e non trovano"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:135"
+  ],
+  "msgid": "È l’elenco più utile di questa pagina. Ogni riga è un cliente che ha cercato e non ha avuto niente: a volte manca il prodotto, più spesso c’è ma si chiama in un altro modo."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:141",
+   "src/Admin/viste/statistiche.php:163"
+  ],
+  "msgid": "Cercato"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:142"
+  ],
+  "msgid": "Volte a vuoto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:158"
+  ],
+  "msgid": "Cosa cercano di più"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:164"
+  ],
+  "msgid": "Volte"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:165"
+  ],
+  "msgid": "Di cui a vuoto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:184"
+  ],
+  "msgid": "Cosa si apre dai risultati"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:189"
+  ],
+  "msgid": "Prodotto"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:190"
+  ],
+  "msgid": "Aperture"
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:212"
+  ],
+  "msgid": "(non più a catalogo)"
+ },
+ {
+  "commento": [
+   "translators: %s: quante domande non sono state contate."
+  ],
+  "dove": [
+   "src/Admin/viste/statistiche.php:234"
+  ],
+  "msgid": "%s domande cercate una volta sola non sono nell’elenco: lo spazio riservato al mese era pieno."
+ },
+ {
+  "commento": [
+   "translators: %s: quante ricerche sono state contate ma non trascritte."
+  ],
+  "dove": [
+   "src/Admin/viste/statistiche.php:242"
+  ],
+  "msgid": "%s ricerche contengono un indirizzo di posta o un numero lungo: sono contate, ma il testo non viene conservato."
+ },
+ {
+  "dove": [
+   "src/Admin/viste/statistiche.php:253"
+  ],
+  "msgid": "Cancella le statistiche"
+ },
+ {
+  "commento": [
+   "translators: %d: per quanti mesi si conservano le statistiche."
+  ],
+  "dove": [
+   "src/Admin/viste/statistiche.php:258"
+  ],
+  "msgid": "Si conservano %d mesi; il più vecchio se ne va da solo."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:93"
+  ],
+  "msgid": "Manca la chiave del negozio."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:97"
+  ],
+  "msgid": "Questo server non può leggere risposte in streaming."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:162"
+  ],
+  "msgid": "La risposta si è interrotta."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:189"
+  ],
+  "msgid": "Manca la chiave del negozio. Inseriscila nelle impostazioni di Storegentic."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:262"
+  ],
+  "msgid": "Storegentic non risponde."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:321"
+  ],
+  "msgid": "Chiave rifiutata: controlla la chiave del negozio."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:323"
+  ],
+  "msgid": "Questa chiave non ha i permessi per questa operazione."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:325"
+  ],
+  "msgid": "Indirizzo non trovato sul servizio."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:327"
+  ],
+  "msgid": "Limite del piano raggiunto: riprova più tardi."
+ },
+ {
+  "commento": [
+   "translators: %d: codice di stato HTTP."
+  ],
+  "dove": [
+   "src/Api/Client.php:330"
+  ],
+  "msgid": "Storegentic ha risposto con un errore (%d)."
+ },
+ {
+  "dove": [
+   "src/Api/Client.php:348"
+  ],
+  "msgid": "Storegentic ha risposto in un formato non atteso."
+ },
+ {
+  "dove": [
+   "src/Api/Contratto.php:70"
+  ],
+  "msgid": "Inserisci la chiave del negozio per collegare Storegentic."
+ },
+ {
+  "dove": [
+   "src/Api/Contratto.php:88"
+  ],
+  "msgid": "Storegentic non risponde. Il collegamento verrà ritentato fra qualche minuto."
+ },
+ {
+  "dove": [
+   "src/Api/Contratto.php:151",
+   "src/Api/Contratto.php:162"
+  ],
+  "msgid": "Il servizio ha risposto senza dichiarare capacità né indirizzi."
+ },
+ {
+  "commento": [
+   "translators: 1: tipo di contenuto, 2: identificativo."
+  ],
+  "dove": [
+   "src/Catalogo/Contenuti.php:165"
+  ],
+  "msgid": "%1$s numero %2$d"
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:123"
+  ],
+  "msgid": "Inserisci la chiave del negozio."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:127"
+  ],
+  "msgid": "Una sincronizzazione è già in corso."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:133"
+  ],
+  "msgid": "Il servizio non dichiara il caricamento del catalogo per questo negozio."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:140"
+  ],
+  "msgid": "Non ci sono prodotti da sincronizzare."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:201"
+  ],
+  "msgid": "Nessuna sincronizzazione in corso."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:213"
+  ],
+  "msgid": "Il servizio non dichiara l'indirizzo per il caricamento del catalogo."
+ },
+ {
+  "commento": [
+   "translators: 1: numero di pagina, 2: messaggio d'errore."
+  ],
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:279"
+  ],
+  "msgid": "Pagina %1$d non accettata: %2$s"
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:323"
+  ],
+  "msgid": "La riconciliazione si esegue solo dopo che tutte le pagine sono state accettate."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:335"
+  ],
+  "msgid": "Catalogo caricato. Il servizio non dichiara la riconciliazione: gli articoli rimossi restano in indice."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:340"
+  ],
+  "msgid": "Catalogo caricato. Potatura disattivata nelle impostazioni."
+ },
+ {
+  "commento": [
+   "translators: %s: messaggio d'errore."
+  ],
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:365"
+  ],
+  "msgid": "Verifica della riconciliazione fallita: %s"
+ },
+ {
+  "commento": [
+   "translators: 1: SKU da cancellare, 2: SKU in catalogo."
+  ],
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:414"
+  ],
+  "msgid": "La riconciliazione cancellerebbe %1$d prodotti su %2$d. Controlla la sincronizzazione prima di confermare."
+ },
+ {
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:418"
+  ],
+  "msgid": "La verifica non ha riportato quanti prodotti ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. La potatura resta sospesa."
+ },
+ {
+  "commento": [
+   "translators: %s: messaggio d'errore."
+  ],
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:436"
+  ],
+  "msgid": "Riconciliazione fallita: %s"
+ },
+ {
+  "commento": [
+   "translators: 1: prodotti inviati, 2: prodotti rimossi dall'indice."
+  ],
+  "dove": [
+   "src/Catalogo/Sincronizzazione.php:445"
+  ],
+  "msgid": "Sincronizzazione completata: %1$d prodotti inviati, %2$d rimossi dall'indice."
+ },
+ {
+  "dove": [
+   "src/Frontend/Assistente.php:71"
+  ],
+  "msgid": "Scrivi una domanda."
+ },
+ {
+  "dove": [
+   "src/Frontend/Assistente.php:78"
+  ],
+  "msgid": "L’assistente non è disponibile su questo negozio."
+ },
+ {
+  "dove": [
+   "src/Frontend/Assistente.php:96"
+  ],
+  "msgid": "La risposta si è interrotta. Riprova."
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:56",
+   "src/Frontend/Finestra.php:109",
+   "src/Frontend/Finestra.php:268",
+   "src/Frontend/Interfaccia.php:230",
+   "src/Frontend/vista-ricerca.php:90"
+  ],
+  "msgid": "Cerca"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:60",
+   "src/Frontend/vista-ricerca.php:87"
+  ],
+  "msgid": "Foto"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:104",
+   "src/Frontend/Pagina.php:190",
+   "src/Frontend/vista-ricerca.php:68"
+  ],
+  "msgid": "Cerca nel catalogo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:108"
+  ],
+  "msgid": "Ti aiuto a scegliere"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:167"
+  ],
+  "msgid": "Come vuoi cercare"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:192"
+  ],
+  "msgid": "Ricomincia la conversazione"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:200",
+   "src/Frontend/Interfaccia.php:229"
+  ],
+  "msgid": "Chiudi"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:251",
+   "src/Frontend/vista-ricerca.php:74"
+  ],
+  "msgid": "Che cosa cerchi"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:261",
+   "src/Frontend/Interfaccia.php:247"
+  ],
+  "msgid": "Cancella"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:277",
+   "src/Frontend/Finestra.php:284"
+  ],
+  "msgid": "Scegli una foto"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:293"
+  ],
+  "msgid": "Scrivi la tua domanda"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:295"
+  ],
+  "msgid": "Scrivi qui…"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:298"
+  ],
+  "msgid": "Invia"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:305"
+  ],
+  "msgid": "Ferma la risposta"
+ },
+ {
+  "dove": [
+   "src/Frontend/Finestra.php:311"
+  ],
+  "msgid": "Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:65"
+  ],
+  "msgid": "Al centro"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:66"
+  ],
+  "msgid": "Un foglio in mezzo allo schermo, sopra la pagina. Chiede attenzione: chi lo apre sta cercando, non leggendo."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:69"
+  ],
+  "msgid": "A lato"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:70"
+  ],
+  "msgid": "Un cassetto che entra dal bordo e lascia vedere la pagina. Adatto a chi vuole che si continui a leggere mentre si cerca."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:73"
+  ],
+  "msgid": "Dal basso"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:74"
+  ],
+  "msgid": "Sale dal fondo, come nelle applicazioni. Sul telefono è il gesto più naturale, e il pollice arriva ai comandi."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:77"
+  ],
+  "msgid": "A tutto schermo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:78"
+  ],
+  "msgid": "Occupa tutto, su ogni dispositivo. Massimo spazio per le fotografie, nessuna distrazione intorno."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:91"
+  ],
+  "msgid": "Pillola con scritta"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:92"
+  ],
+  "msgid": "Dice a parole cosa fa. Chi non ha mai visto un assistente su un sito capisce che può parlarci."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:95"
+  ],
+  "msgid": "Tondo, solo icona"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:96"
+  ],
+  "msgid": "Occupa pochissimo. Si sceglie quando la pagina ha già altri comandi in basso."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:99"
+  ],
+  "msgid": "Barra in fondo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:100"
+  ],
+  "msgid": "Una fascia larga quanto lo schermo. Difficile non vederla, e sul telefono si tocca senza mirare."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:117"
+  ],
+  "msgid": "Comoda"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:118"
+  ],
+  "msgid": "Più aria intorno a ogni cosa. Si legge meglio, e su uno schermo grande non sembra vuoto."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:122"
+  ],
+  "msgid": "Compatta"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:123"
+  ],
+  "msgid": "Meno spazi. Sullo stesso schermo ci stanno più prodotti, e si scorre di meno."
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:146",
+   "src/Frontend/Palette.php:65"
+  ],
+  "msgid": "Dal tema del sito"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:150"
+  ],
+  "msgid": "Senza grazie"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:154"
+  ],
+  "msgid": "Con grazie"
+ },
+ {
+  "dove": [
+   "src/Frontend/Forma.php:158"
+  ],
+  "msgid": "Stretto"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:200",
+   "src/Frontend/vista-ricerca.php:129"
+  ],
+  "msgid": "una cosa che regge il freddo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:201",
+   "src/Frontend/vista-ricerca.php:130"
+  ],
+  "msgid": "qualcosa di leggero per l’estate"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:202",
+   "src/Frontend/vista-ricerca.php:131"
+  ],
+  "msgid": "un regalo sotto i 50 euro"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:203",
+   "src/Frontend/vista-ricerca.php:132"
+  ],
+  "msgid": "come questa, ma di un altro colore"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:218"
+  ],
+  "msgid": "Un regalo sotto i 60 €, per mia madre"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:219"
+  ],
+  "msgid": "Che cosa mi consigliate per un matrimonio?"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:220"
+  ],
+  "msgid": "Qual è la differenza fra questi due?"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:231"
+  ],
+  "msgid": "Sto cercando…"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:232"
+  ],
+  "msgid": "Nessun risultato. Prova con parole diverse."
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:233"
+  ],
+  "msgid": "La ricerca non ha risposto. Riprova fra poco."
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:240",
+   "src/Frontend/vista-ricerca.php:113"
+  ],
+  "msgid": "La ricerca intelligente non risponde in questo momento: questi risultati arrivano dal catalogo del negozio, cercando le parole che hai scritto."
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:241"
+  ],
+  "msgid": "Le tue ultime ricerche"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:242"
+  ],
+  "msgid": "Prova con"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:243"
+  ],
+  "msgid": "Oppure sfoglia"
+ },
+ {
+  "commento": [
+   "translators: %s: le parole scritte da chi cerca."
+  ],
+  "dove": [
+   "src/Frontend/Interfaccia.php:245"
+  ],
+  "msgid": "Cerca «%s» nel catalogo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:246"
+  ],
+  "msgid": "Apri la pagina dei risultati"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:249"
+  ],
+  "msgid": "Ordina i risultati"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:250",
+   "src/Frontend/vista-ricerca.php:216"
+  ],
+  "msgid": "Più pertinenti"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:251",
+   "src/Frontend/vista-ricerca.php:217"
+  ],
+  "msgid": "Prezzo crescente"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:252",
+   "src/Frontend/vista-ricerca.php:218"
+  ],
+  "msgid": "Prezzo decrescente"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:253"
+  ],
+  "msgid": "1 risultato"
+ },
+ {
+  "commento": [
+   "translators: %d: quanti risultati."
+  ],
+  "dove": [
+   "src/Frontend/Interfaccia.php:255"
+  ],
+  "msgid": "%d risultati"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:257",
+   "src/Frontend/vista-ricerca.php:81"
+  ],
+  "msgid": "Cerca con una foto"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:258"
+  ],
+  "msgid": "Scegli una foto o trascinala qui: ti mostro i prodotti che le somigliano di più."
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:259"
+  ],
+  "msgid": "Sto guardando la foto…"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:260"
+  ],
+  "msgid": "Non riesco a leggere questa foto. Prova con un altro file."
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:261"
+  ],
+  "msgid": "I più simili alla tua foto"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:262"
+  ],
+  "msgid": "Cambia foto"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:264"
+  ],
+  "msgid": "Sto pensando…"
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:265"
+  ],
+  "msgid": "Va bene, ho smesso."
+ },
+ {
+  "dove": [
+   "src/Frontend/Interfaccia.php:266"
+  ],
+  "msgid": "Non riesco a rispondere adesso. Riprova fra poco."
+ },
+ {
+  "commento": [
+   "translators: %s: le parole cercate."
+  ],
+  "dove": [
+   "src/Frontend/Pagina.php:189"
+  ],
+  "msgid": "Ricerca: %s"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:66"
+  ],
+  "msgid": "Prende i colori dal tema, se il tema li dichiara. Altrimenti usa il neutro."
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:71"
+  ],
+  "msgid": "Neutro"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:72"
+  ],
+  "msgid": "Grigi caldi e un nero pieno. Sta bene su quasi tutto."
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:76"
+  ],
+  "msgid": "Inchiostro e oro"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:77"
+  ],
+  "msgid": "Fondo chiaro, testo quasi nero, accento dorato. Per chi vende oggetti."
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:104"
+  ],
+  "msgid": "Notte"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:105"
+  ],
+  "msgid": "Fondo scuro e accento chiaro. Per i negozi con vetrina scura."
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:117"
+  ],
+  "msgid": "Bosco"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:118"
+  ],
+  "msgid": "Verdi profondi su carta chiara."
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:130"
+  ],
+  "msgid": "Elettrico"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:131"
+  ],
+  "msgid": "Grigi freddi e un blu deciso."
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:143"
+  ],
+  "msgid": "Personalizzata"
+ },
+ {
+  "dove": [
+   "src/Frontend/Palette.php:144"
+  ],
+  "msgid": "Scegli tu i sette colori."
+ },
+ {
+  "dove": [
+   "src/Frontend/Ponte.php:207"
+  ],
+  "msgid": "Storegentic non è attivo su questo negozio."
+ },
+ {
+  "dove": [
+   "src/Frontend/Ponte.php:226"
+  ],
+  "msgid": "Troppe richieste. Riprova fra qualche istante."
+ },
+ {
+  "dove": [
+   "src/Frontend/Ponte.php:356"
+  ],
+  "msgid": "Evento senza tipo."
+ },
+ {
+  "dove": [
+   "src/Frontend/Ricerca.php:78"
+  ],
+  "msgid": "Scrivi che cosa cerchi."
+ },
+ {
+  "dove": [
+   "src/Frontend/Ricerca.php:98"
+  ],
+  "msgid": "La foto non è leggibile. Riprova con un altro file."
+ },
+ {
+  "dove": [
+   "src/Frontend/Ricerca.php:166"
+  ],
+  "msgid": "La ricerca non è disponibile per questo negozio."
+ },
+ {
+  "dove": [
+   "src/Frontend/Scheda.php:105",
+   "src/Frontend/Scheda.php:146"
+  ],
+  "msgid": "Esaurito"
+ },
+ {
+  "dove": [
+   "src/Frontend/Scheda.php:111"
+  ],
+  "msgid": "Su richiesta"
+ },
+ {
+  "dove": [
+   "src/Frontend/Scheda.php:150"
+  ],
+  "msgid": "In saldo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Scheda.php:154"
+  ],
+  "msgid": "Ultimo pezzo"
+ },
+ {
+  "dove": [
+   "src/Frontend/Scheda.php:171"
+  ],
+  "msgid": "Prezzo su richiesta"
+ },
+ {
+  "commento": [
+   "translators: %s: nome del prodotto."
+  ],
+  "dove": [
+   "src/Frontend/Scheda.php:216"
+  ],
+  "msgid": "Aggiungi %s al carrello"
+ },
+ {
+  "dove": [
+   "src/Frontend/Scheda.php:217"
+  ],
+  "msgid": "Aggiungi"
+ },
+ {
+  "commento": [
+   "translators: %d: quanti risultati."
+  ],
+  "dove": [
+   "src/Frontend/Suggerimenti.php:274",
+   "src/Frontend/vista-ricerca.php:207"
+  ],
+  "msgid": "%d risultato",
+  "plurale": "%d risultati"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:29"
+  ],
+  "msgid": "La ricerca non è disponibile in questo momento."
+ },
+ {
+  "commento": [
+   "translators: %s: le parole cercate."
+  ],
+  "dove": [
+   "src/Frontend/vista-ricerca.php:67"
+  ],
+  "msgid": "Risultati per «%s»"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:94"
+  ],
+  "msgid": "Scegli una foto dal dispositivo"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:102"
+  ],
+  "msgid": "Togli la foto"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:124"
+  ],
+  "msgid": "Scrivi che cosa cerchi, con parole tue. Puoi anche caricare una foto e trovare quello che le somiglia."
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:146"
+  ],
+  "msgid": "Nessun risultato per questa ricerca."
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:147"
+  ],
+  "msgid": "Prova con meno parole, oppure descrivi quello che cerchi: colore, materiale, occasione."
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:148"
+  ],
+  "msgid": "Vedi tutto il catalogo"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:156"
+  ],
+  "msgid": "Affina"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:176"
+  ],
+  "msgid": "Prezzo"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:179"
+  ],
+  "msgid": "Prezzo minimo"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:180"
+  ],
+  "msgid": "da"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:184"
+  ],
+  "msgid": "Prezzo massimo"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:185"
+  ],
+  "msgid": "a"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:191"
+  ],
+  "msgid": "Disponibilità"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:194"
+  ],
+  "msgid": "Solo quelli disponibili"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:198",
+   "src/Frontend/vista-ricerca.php:240"
+  ],
+  "msgid": "Togli i filtri"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:214"
+  ],
+  "msgid": "Ordina"
+ },
+ {
+  "dove": [
+   "src/Frontend/vista-ricerca.php:239"
+  ],
+  "msgid": "Nessun risultato con questi filtri."
+ },
+ {
+  "dove": [
+   "src/Impostazioni.php:499"
+  ],
+  "msgid": "L’indirizzo risponde, ma non con una risposta del servizio: probabilmente c’è un filtro davanti."
+ },
+ {
+  "commento": [
+   "translators: %d: codice di stato HTTP."
+  ],
+  "dove": [
+   "src/Impostazioni.php:503"
+  ],
+  "msgid": "L’indirizzo risponde con un errore (%d): il servizio non è raggiungibile lì."
+ }
+]

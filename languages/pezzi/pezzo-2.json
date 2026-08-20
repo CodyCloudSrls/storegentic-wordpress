@@ -1,0 +1,409 @@
+[
+ {
+  "msgid": "Manda a Storegentic cosa viene cercato e cosa viene aperto"
+ },
+ {
+  "msgid": "Tieni il conto anche qui, per le statistiche di questo pannello"
+ },
+ {
+  "msgid": "Sono due cose separate. La prima serve al servizio per migliorare le risposte. La seconda resta nel tuo database: Storegentic non offre un modo per rileggere quello che gli mandi."
+ },
+ {
+  "msgid": "Adesso"
+ },
+ {
+  "msgid": "Esegui il passo successivo"
+ },
+ {
+  "msgid": "Sincronizza ora"
+ },
+ {
+  "msgid": "Annulla e azzera lo stato"
+ },
+ {
+  "msgid": "Sezioni di Storegentic"
+ },
+ {
+  "msgid": "Impostazioni salvate."
+ },
+ {
+  "msgid": "Inserisci la chiave del servizio per collegare Storegentic."
+ },
+ {
+  "msgid": "Vai al collegamento"
+ },
+ {
+  "msgid": "Non collegato."
+ },
+ {
+  "msgid": "Il piano ha finito."
+ },
+ {
+  "msgid": "usate %1$s su %2$s.",
+  "nota": "translators: 1: quanti se ne sono usati, 2: quanti ne consente il piano."
+ },
+ {
+  "msgid": "Il servizio dichiara che i contatori si rinnovano il %s, cioè una data già passata: aspettare non li rimette a zero. Scrivi a Storegentic.",
+  "nota": "translators: %s: la data che il servizio dichiara per il rinnovo."
+ },
+ {
+  "msgid": "I contatori si rinnovano il %s.",
+  "nota": "translators: %s: data del rinnovo dei contatori."
+ },
+ {
+  "msgid": "Nel frattempo la ricerca del sito continua a funzionare sui contenuti del sito: trova le parole nei nomi e nelle descrizioni, non i concetti."
+ },
+ {
+  "msgid": "La ricerca del sito mostra un errore ai visitatori."
+ },
+ {
+  "msgid": "Accendi il ripiego"
+ },
+ {
+  "msgid": "Ferma"
+ },
+ {
+  "msgid": "In corso"
+ },
+ {
+  "msgid": "Inviato tutto, manca la chiusura"
+ },
+ {
+  "msgid": "Fallita"
+ },
+ {
+  "msgid": "Attivo"
+ },
+ {
+  "msgid": "Non collegato"
+ },
+ {
+  "msgid": "Visibile sul sito"
+ },
+ {
+  "msgid": "Sì"
+ },
+ {
+  "msgid": "No"
+ },
+ {
+  "msgid": "nessuna modalità attiva"
+ },
+ {
+  "msgid": "Prodotti"
+ },
+ {
+  "msgid": "sincronizzati %s fa",
+  "nota": "translators: %s: quanto tempo fa."
+ },
+ {
+  "msgid": "mai sincronizzati"
+ },
+ {
+  "msgid": "pagina %1$d di %2$d",
+  "nota": "translators: 1: pagina corrente, 2: pagine totali."
+ },
+ {
+  "msgid": "ogni giorno"
+ },
+ {
+  "msgid": "Ultimo errore di sincronizzazione:"
+ },
+ {
+  "msgid": "Questo mese"
+ },
+ {
+  "msgid": "Ancora nessuna ricerca da mostrare. Le prime compaiono qui: cosa cercano i visitatori, cosa non trovano, e quanto ci mette il servizio a rispondere."
+ },
+ {
+  "msgid": "Servizio muto"
+ },
+ {
+  "msgid": "Vedi tutte le statistiche"
+ },
+ {
+  "msgid": "Piano e consumi"
+ },
+ {
+  "msgid": "Questi numeri li dichiara Storegentic a ogni collegamento. Nelle statistiche c’è invece com’è andata davvero: le due cose possono non coincidere."
+ },
+ {
+  "msgid": "Cosa"
+ },
+ {
+  "msgid": "Usato"
+ },
+ {
+  "msgid": "Restano"
+ },
+ {
+  "msgid": "Quanto ne resta"
+ },
+ {
+  "msgid": "%1$s di %2$s",
+  "nota": "translators: 1: quanti usati, 2: quanti ne consente il piano."
+ },
+ {
+  "msgid": "%d%%",
+  "nota": "translators: %d: percentuale rimasta."
+ },
+ {
+  "msgid": "Riconciliazione sospesa."
+ },
+ {
+  "msgid": "La verifica non ha riportato quanti elementi ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. Conferma solo se sei sicuro che tutto sia stato spedito."
+ },
+ {
+  "msgid": "Toglierebbe %1$d elementi su %2$d dall’indice. Se si sono davvero ridotti tanto, conferma; altrimenti controlla la sincronizzazione.",
+  "nota": "translators: 1: elementi che verrebbero rimossi, 2: elementi in indice."
+ },
+ {
+  "msgid": "Confermo, procedi"
+ },
+ {
+  "msgid": "Ultime operazioni"
+ },
+ {
+  "msgid": "La ricerca si configura a servizio collegato: quanto si può chiedere lo dichiara il servizio."
+ },
+ {
+  "msgid": "Dove vanno i risultati"
+ },
+ {
+  "msgid": "Risultati della ricerca a parole"
+ },
+ {
+  "msgid": "Nella pagina dei risultati"
+ },
+ {
+  "msgid": "un indirizzo vero (%s): si condivide, il tasto Indietro funziona, c’è spazio per i filtri.",
+  "nota": "translators: %s: l'indirizzo della pagina dei risultati."
+ },
+ {
+  "msgid": "Dentro la finestra"
+ },
+ {
+  "msgid": "niente pagine in più nel sito: il widget basta a sé stesso."
+ },
+ {
+  "msgid": "La ricerca con la foto e l’assistente restano sempre nella finestra: una foto non si può mettere in un indirizzo, e una conversazione non è una pagina."
+ },
+ {
+  "msgid": "Ricerca del sito"
+ },
+ {
+  "msgid": "Sostituisci la ricerca del tema con quella di Storegentic"
+ },
+ {
+  "msgid": "La lente e il campo di ricerca del tema apriranno la ricerca di Storegentic invece di quella di WordPress. Se il tema usa un markup particolare, il filtro storegentic_inneschi_ricerca permette di indicarlo."
+ },
+ {
+  "msgid": "Dove compare"
+ },
+ {
+  "msgid": "Home"
+ },
+ {
+  "msgid": "Catalogo e categorie"
+ },
+ {
+  "msgid": "Schede prodotto"
+ },
+ {
+  "msgid": "Carrello"
+ },
+ {
+  "msgid": "Nessuna scelta significa: ovunque."
+ },
+ {
+  "msgid": "Come cerca"
+ },
+ {
+  "msgid": "Questi sono i parametri che il servizio accetta a ogni richiesta, con i valori che applica di suo. Lasciando un campo vuoto si continua a seguire il servizio: se un giorno cambia il proprio valore, questo sito lo segue senza che nessuno tocchi niente."
+ },
+ {
+  "msgid": "Quanti risultati al massimo"
+ },
+ {
+  "msgid": "Il servizio ne manda %1$d di suo, e ne accetta al massimo %2$d. Abbassarlo rende la ricerca più veloce e i filtri meno utili.",
+  "nota": "translators: 1: quanti ne chiede il servizio di suo, 2: il tetto dichiarato."
+ },
+ {
+  "msgid": "Quanto devono somigliare"
+ },
+ {
+  "msgid": "Da 0 a 1. Il servizio usa %s. Un numero più basso allarga la rete e trova di più, anche cose meno pertinenti; più alto stringe, e certe domande tornano vuote.",
+  "nota": "translators: %s: la soglia che il servizio applica di suo."
+ },
+ {
+  "msgid": "Con la foto: quanti risultati"
+ },
+ {
+  "msgid": "Con la foto: quanto devono somigliare"
+ },
+ {
+  "msgid": "Per le foto il servizio tiene una soglia più bassa che per le parole: due oggetti si somigliano in modo meno netto di due frasi."
+ },
+ {
+  "msgid": "Mentre si scrive"
+ },
+ {
+  "msgid": "Suggerimenti immediati"
+ },
+ {
+  "msgid": "Chiedi i suggerimenti anche al servizio, non solo al sito"
+ },
+ {
+  "msgid": "Il sito conosce i titoli e le categorie; il servizio conosce anche i marchi. Insieme rispondono in un decimo di secondo e non consumano il piano."
+ },
+ {
+  "msgid": "Il servizio non dichiara questa funzione: i suggerimenti arrivano solo dal sito. Non c’è niente da sistemare qui."
+ },
+ {
+  "msgid": "Se il servizio non risponde"
+ },
+ {
+  "msgid": "Ripiego"
+ },
+ {
+  "msgid": "Cerca nei contenuti del sito quando il servizio non risponde"
+ },
+ {
+  "msgid": "Succede a piano finito, durante una manutenzione o se la rete cade. Il ripiego cerca le parole nei nomi e nelle descrizioni brevi: trova meno cose della ricerca intelligente, ma il visitatore vede dei risultati invece di un errore."
+ },
+ {
+  "msgid": "Quando entra in funzione lo dichiara a schermo: i risultati dicono che arrivano dai contenuti del sito."
+ },
+ {
+  "msgid": "Le statistiche sono spente: non si sta contando niente."
+ },
+ {
+  "msgid": "Accendile"
+ },
+ {
+  "msgid": "Ancora niente da mostrare. Le prime ricerche dei clienti compaiono qui: cosa cercano, cosa non trovano, e quanto ci mette il servizio a rispondere."
+ },
+ {
+  "msgid": "Funzione"
+ },
+ {
+  "msgid": "Tempo medio"
+ },
+ {
+  "msgid": "Ultimo errore il %1$s: %2$s",
+  "nota": "translators: 1: data e ora, 2: il messaggio del servizio."
+ },
+ {
+  "msgid": "«Senza risultati» conta le domande a cui il cliente non ha visto nulla. «Servizio muto» conta le volte in cui Storegentic non ha risposto: le due colonne possono non coincidere, perché con il ripiego acceso il cliente vede lo stesso i prodotti del catalogo. Il tempo medio non conta le risposte già in cache, che arrivano subito."
+ },
+ {
+  "msgid": "Cosa cercano e non trovano"
+ },
+ {
+  "msgid": "È l’elenco più utile di questa pagina. Ogni riga è un cliente che ha cercato e non ha avuto niente: a volte manca il prodotto, più spesso c’è ma si chiama in un altro modo."
+ },
+ {
+  "msgid": "Cercato"
+ },
+ {
+  "msgid": "Volte a vuoto"
+ },
+ {
+  "msgid": "Cosa cercano di più"
+ },
+ {
+  "msgid": "Volte"
+ },
+ {
+  "msgid": "Di cui a vuoto"
+ },
+ {
+  "msgid": "Cosa si apre dai risultati"
+ },
+ {
+  "msgid": "Prodotto"
+ },
+ {
+  "msgid": "Aperture"
+ },
+ {
+  "msgid": "(non più a catalogo)"
+ },
+ {
+  "msgid": "%s domande cercate una volta sola non sono nell’elenco: lo spazio riservato al mese era pieno.",
+  "nota": "translators: %s: quante domande non sono state contate."
+ },
+ {
+  "msgid": "%s ricerche contengono un indirizzo di posta o un numero lungo: sono contate, ma il testo non viene conservato.",
+  "nota": "translators: %s: quante ricerche sono state contate ma non trascritte."
+ },
+ {
+  "msgid": "Cancella le statistiche"
+ },
+ {
+  "msgid": "Si conservano %d mesi; il più vecchio se ne va da solo.",
+  "nota": "translators: %d: per quanti mesi si conservano le statistiche."
+ },
+ {
+  "msgid": "Manca la chiave del negozio."
+ },
+ {
+  "msgid": "Questo server non può leggere risposte in streaming."
+ },
+ {
+  "msgid": "La risposta si è interrotta."
+ },
+ {
+  "msgid": "Manca la chiave del negozio. Inseriscila nelle impostazioni di Storegentic."
+ },
+ {
+  "msgid": "Storegentic non risponde."
+ },
+ {
+  "msgid": "Chiave rifiutata: controlla la chiave del negozio."
+ },
+ {
+  "msgid": "Questa chiave non ha i permessi per questa operazione."
+ },
+ {
+  "msgid": "Indirizzo non trovato sul servizio."
+ },
+ {
+  "msgid": "Limite del piano raggiunto: riprova più tardi."
+ },
+ {
+  "msgid": "Storegentic ha risposto con un errore (%d).",
+  "nota": "translators: %d: codice di stato HTTP."
+ },
+ {
+  "msgid": "Storegentic ha risposto in un formato non atteso."
+ },
+ {
+  "msgid": "Inserisci la chiave del negozio per collegare Storegentic."
+ },
+ {
+  "msgid": "Storegentic non risponde. Il collegamento verrà ritentato fra qualche minuto."
+ },
+ {
+  "msgid": "Il servizio ha risposto senza dichiarare capacità né indirizzi."
+ },
+ {
+  "msgid": "%1$s numero %2$d",
+  "nota": "translators: 1: tipo di contenuto, 2: identificativo."
+ },
+ {
+  "msgid": "Inserisci la chiave del negozio."
+ },
+ {
+  "msgid": "Una sincronizzazione è già in corso."
+ },
+ {
+  "msgid": "Il servizio non dichiara il caricamento del catalogo per questo negozio."
+ },
+ {
+  "msgid": "Non ci sono prodotti da sincronizzare."
+ },
+ {
+  "msgid": "Nessuna sincronizzazione in corso."
+ }
+]
