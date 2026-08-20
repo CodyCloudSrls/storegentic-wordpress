@@ -73,7 +73,7 @@ get_header();
 			<div class="sg-cerca__riga">
 				<label class="sg-fuori-schermo" for="sg-q"><?php esc_html_e( 'Che cosa cerchi', 'storegentic' ); ?></label>
 				<input type="search" id="sg-q" name="q" class="sg-cerca__campo" value="<?php echo esc_attr( $sg_domanda ); ?>"
-				       placeholder="<?php esc_attr_e( 'collana di perle per un regalo…', 'storegentic' ); ?>"
+				       placeholder="<?php esc_attr_e( 'Che cosa stai cercando?', 'storegentic' ); ?>"
 				       autocomplete="off" enterkeyhint="search">
 
 				<?php /* Il campo per la foto sta fuori dal flusso: lo apre il pulsante. */ ?>
@@ -121,15 +121,15 @@ get_header();
 	<?php elseif ( '' === $sg_domanda ) : ?>
 
 		<div class="sg-vuoto">
-			<p class="sg-vuoto__testo"><?php esc_html_e( 'Scrivi che cosa cerchi, con parole tue. Puoi anche caricare una foto e trovare i gioielli che le somigliano.', 'storegentic' ); ?></p>
+			<p class="sg-vuoto__testo"><?php esc_html_e( 'Scrivi che cosa cerchi, con parole tue. Puoi anche caricare una foto e trovare quello che le somiglia.', 'storegentic' ); ?></p>
 			<?php
 			$sg_esempi = (array) apply_filters(
 				'storegentic_esempi_ricerca',
 				array(
-					__( 'collana di perle bianche', 'storegentic' ),
-					__( 'orecchini piccoli da tutti i giorni', 'storegentic' ),
-					__( 'regalo per una laurea sotto i 50 euro', 'storegentic' ),
-					__( 'bracciale con pietre verdi', 'storegentic' ),
+					__( 'una cosa che regge il freddo', 'storegentic' ),
+					__( 'qualcosa di leggero per l’estate', 'storegentic' ),
+					__( 'un regalo sotto i 50 euro', 'storegentic' ),
+					__( 'come questa, ma di un altro colore', 'storegentic' ),
 				)
 			);
 			?>
@@ -143,8 +143,8 @@ get_header();
 	<?php elseif ( empty( $sg_risultati ) ) : ?>
 
 		<div class="sg-vuoto">
-			<p class="sg-vuoto__testo"><?php esc_html_e( 'Nessun gioiello corrisponde a questa ricerca.', 'storegentic' ); ?></p>
-			<p class="sg-vuoto__aiuto"><?php esc_html_e( 'Prova con meno parole, oppure descrivi il gioiello: colore, materiale, occasione.', 'storegentic' ); ?></p>
+			<p class="sg-vuoto__testo"><?php esc_html_e( 'Nessun risultato per questa ricerca.', 'storegentic' ); ?></p>
+			<p class="sg-vuoto__aiuto"><?php esc_html_e( 'Prova con meno parole, oppure descrivi quello che cerchi: colore, materiale, occasione.', 'storegentic' ); ?></p>
 			<p><a class="sg-pastiglia" href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? (string) wc_get_page_permalink( 'shop' ) : home_url( '/' ) ); ?>"><?php esc_html_e( 'Vedi tutto il catalogo', 'storegentic' ); ?></a></p>
 		</div>
 
@@ -203,8 +203,8 @@ get_header();
 					<p class="sg-esiti__conto" data-sg-conto aria-live="polite">
 						<?php
 						printf(
-							/* translators: %d: quanti gioielli. */
-							esc_html( _n( '%d gioiello', '%d gioielli', count( $sg_risultati ), 'storegentic' ) ),
+							/* translators: %d: quanti risultati. */
+							esc_html( _n( '%d risultato', '%d risultati', count( $sg_risultati ), 'storegentic' ) ),
 							count( $sg_risultati )
 						);
 						?>
@@ -236,7 +236,7 @@ get_header();
 				</div>
 
 				<p class="sg-niente-filtri" data-sg-niente hidden>
-					<?php esc_html_e( 'Nessun gioiello con questi filtri.', 'storegentic' ); ?>
+					<?php esc_html_e( 'Nessun risultato con questi filtri.', 'storegentic' ); ?>
 					<button type="button" class="sg-collegamento" data-sg-azzera><?php esc_html_e( 'Togli i filtri', 'storegentic' ); ?></button>
 				</p>
 			</div>

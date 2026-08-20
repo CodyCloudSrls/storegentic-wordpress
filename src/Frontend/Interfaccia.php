@@ -186,9 +186,9 @@ final class Interfaccia {
 				 * Ne avevo usato uno solo, e i suggerimenti del pannello di
 				 * ricerca erano domande da assistente. Chi ne toccava una
 				 * lanciava una ricerca su "Che cosa abbinate a un vestito nero?"
-				 * e finiva su una pagina che diceva "nessun gioiello
-				 * corrisponde". Misurato sul servizio: quella domanda torna 0
-				 * risultati, mentre "gioielli per un vestito nero" ne torna 48.
+				 * e finiva su una pagina che diceva "nessun risultato". Misurato
+				 * sul servizio: quella domanda torna 0 risultati, mentre
+				 * "gioielli per un vestito nero" ne torna 48.
 				 * Non e' un difetto della ricerca — la forma interrogativa non
 				 * e' una descrizione di prodotto — ed era il suggerimento a
 				 * mandare le persone nel posto sbagliato.
@@ -197,10 +197,10 @@ final class Interfaccia {
 				 * cose da chiedere.
 				 */
 				'esempi'      => array_values( (array) apply_filters( 'storegentic_esempi_ricerca', array(
-					__( 'collana di perle bianche', 'storegentic' ),
-					__( 'orecchini piccoli da tutti i giorni', 'storegentic' ),
-					__( 'regalo per una laurea sotto i 50 euro', 'storegentic' ),
-					__( 'bracciale con pietre verdi', 'storegentic' ),
+					__( 'una cosa che regge il freddo', 'storegentic' ),
+					__( 'qualcosa di leggero per l’estate', 'storegentic' ),
+					__( 'un regalo sotto i 50 euro', 'storegentic' ),
+					__( 'come questa, ma di un altro colore', 'storegentic' ),
 				) ) ),
 				/*
 				 * LE CATEGORIE DEL NEGOZIO, per lo stato d'apertura.
@@ -215,9 +215,9 @@ final class Interfaccia {
 				 */
 				'categorie'   => self::categorie_in_vetrina(),
 				'esempiChat'  => array_values( (array) apply_filters( 'storegentic_esempi_assistente', array(
-					__( 'Un regalo per mia madre sotto i 60 €', 'storegentic' ),
-					__( 'Che cosa abbinate a un vestito nero?', 'storegentic' ),
-					__( 'Avete orecchini con perle?', 'storegentic' ),
+					__( 'Un regalo sotto i 60 €, per mia madre', 'storegentic' ),
+					__( 'Che cosa mi consigliate per un matrimonio?', 'storegentic' ),
+					__( 'Qual è la differenza fra questi due?', 'storegentic' ),
 				) ) ),
 				/*
 				 * Tutti i testi passano da qui, tradotti: il JavaScript non ne

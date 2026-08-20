@@ -17,8 +17,6 @@
  * La ricerca istantanea del servizio conosce l'indice, e soprattutto i
  * MARCHI. Misurato: "klk" e' un marchio di questo catalogo, il database non lo
  * trova — nessun titolo lo contiene — e il servizio restituisce tre prodotti.
- * Riconosce pero' solo l'INIZIO del nome: "perle" e "zirconi", che stanno in
- * mezzo, per lui non esistono.
  *
  * Nessuna delle due basta da sola, e insieme costano un decimo di secondo. Se
  * il servizio tarda, i risultati locali sono gia' pronti e si mostrano quelli:
@@ -107,16 +105,21 @@ final class Suggerimenti {
 	/**
 	 * I suggerimenti che arrivano dalla ricerca istantanea del servizio.
 	 *
-	 * COSA AGGIUNGE, E COSA NO. Misurato sul catalogo di questo negozio: la
-	 * modalita' `prefix` risponde in un decimo di secondo, ma riconosce solo
-	 * l'INIZIO del nome o del marchio. "col" trova le collane; "perle",
-	 * "zirconi" e "maiorca" — parole che stanno in mezzo ai nomi — tornano
-	 * zero risultati. La ricerca sul database del negozio, che guarda l'inizio
-	 * di ogni parola, quelle le trova.
+	 * COSA AGGIUNGE. La modalita' `prefix` risponde in un decimo di secondo e
+	 * non consuma il piano: misurate cento chiamate, il contatore delle ricerche
+	 * non si e' mosso.
 	 *
-	 * Quindi non sostituisce: si aggiunge. Il servizio conosce i marchi e
-	 * l'indice, il database conosce i titoli e le categorie, e chi scrive vede
-	 * l'unione senza doppioni.
+	 * ATTENZIONE A QUESTO PARAGRAFO, PERCHE' E' GIA' INVECCHIATO UNA VOLTA. Al
+	 * primo collaudo, il 2026-08-03, questa ricerca riconosceva solo l'INIZIO
+	 * del nome: "perle" e "zirconi", che nei titoli stanno in mezzo, tornavano
+	 * zero. Il 2026-08-20 le stesse domande tornano sette risultati ciascuna: il
+	 * servizio e' cambiato senza che lo swagger cambiasse. Quindi non si dia per
+	 * buono quello che c'e' scritto qui: si rimisuri.
+	 *
+	 * Quello che NON cambia e' il motivo per cui le due sorgenti si sommano
+	 * invece di sostituirsi: il servizio conosce i marchi, il database conosce
+	 * i titoli e le categorie, e chi scrive vede l'unione senza doppioni. Se
+	 * l'una tace, l'altra risponde lo stesso.
 	 *
 	 * SI USA SOLO SE IL CONTRATTO LA DICHIARA. Oggi l'handshake non la nomina,
 	 * anche se l'indirizzo esiste ed e' documentato: chi vuole accenderla
@@ -267,8 +270,8 @@ final class Suggerimenti {
 				'tipo'      => 'categoria',
 				'etichetta' => (string) $t->name,
 				'nota'      => sprintf(
-					/* translators: %d: quanti prodotti ci sono nella categoria. */
-					_n( '%d gioiello', '%d gioielli', (int) $t->count, 'storegentic' ),
+					/* translators: %d: quanti risultati. */
+					_n( '%d risultato', '%d risultati', (int) $t->count, 'storegentic' ),
 					(int) $t->count
 				),
 				'url'       => (string) $url,
