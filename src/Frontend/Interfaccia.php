@@ -231,6 +231,13 @@ final class Interfaccia {
 					'inCorso'       => __( 'Sto cercando…', 'storegentic' ),
 					'nessuno'       => __( 'Nessun risultato. Prova con parole diverse.', 'storegentic' ),
 					'errore'        => __( 'La ricerca non ha risposto. Riprova fra poco.', 'storegentic' ),
+					/*
+					 * Si dice cosa e' successo e cosa si sta guardando, senza
+					 * scuse e senza gergo: chi legge deve capire in una riga
+					 * perche' i risultati potrebbero essere meno precisi del
+					 * solito. Vedi Frontend\Ripiego.
+					 */
+					'ripiego'       => __( 'La ricerca intelligente non risponde in questo momento: questi risultati arrivano dal catalogo del negozio, cercando le parole che hai scritto.', 'storegentic' ),
 					'recenti'       => __( 'Le tue ultime ricerche', 'storegentic' ),
 					'suggeriti'     => __( 'Prova con', 'storegentic' ),
 					'sfoglia'       => __( 'Oppure sfoglia', 'storegentic' ),

@@ -58,7 +58,6 @@ final class Impostazioni {
 		return array(
 			'base'                => 'https://api.storegentic.eu',
 			'chiave'              => '',
-			'workspace'           => '',
 			'attivo'              => false,
 
 			// Presentazione
@@ -98,11 +97,19 @@ final class Impostazioni {
 			 * pagina.
 			 */
 			'risultati'           => 'pagina',
-			'etichetta'           => '',
 			'segnaposto'          => '',
 			'saluto'              => '',
 			'solo_su'             => array(),   // vuoto = ovunque
 			'sostituisci_ricerca' => false,
+
+			/*
+			 * Quando il servizio non risponde, si cerca nel catalogo del negozio.
+			 *
+			 * Acceso di serie perche' l'alternativa e' una schermata d'errore su
+			 * una vetrina: succede a quota finita, a servizio in manutenzione e a
+			 * rete dell'hosting ballerina. Vedi Frontend\Ripiego.
+			 */
+			'ripiego'             => true,
 
 			// Catalogo
 			'sincro_automatica'   => true,
@@ -113,15 +120,45 @@ final class Impostazioni {
 			'invia_categorie'     => true,
 			'pota_mancanti'       => true,
 
-			// Analisi
+			/*
+			 * Due interruttori, due domande diverse.
+			 *
+			 *   analitica    manda a Storegentic cosa si cerca. Serve al servizio
+			 *                per migliorare le risposte.
+			 *   statistiche  tiene il conto qui dentro, per il pannello. Serve a
+			 *                chi gestisce il negozio per sapere cosa cercano i
+			 *                clienti e cosa non trovano.
+			 *
+			 * Sono separati perche' un negozio puo' volere la seconda senza la
+			 * prima: i propri dati li vuole vedere, ma non li vuole spedire.
+			 * Vedi Analitica\Registratore e Analitica\Misure.
+			 */
 			'analitica'           => true,
+			'statistiche'         => true,
 		);
 	}
 
-	/** @return array<string,mixed> */
+	/**
+	 * @return array<string,mixed>
+	 */
 	public static function tutte(): array {
 		$salvate = get_option( self::CHIAVE, array() );
-		return array_merge( self::predefinite(), is_array( $salvate ) ? $salvate : array() );
+		$salvate = is_array( $salvate ) ? $salvate : array();
+
+		/*
+		 * LE CHIAVI CHE NON ESISTONO PIU' NON TORNANO INDIETRO.
+		 *
+		 * Con un semplice array_merge, un'impostazione tolta dal plugin restava
+		 * nell'opzione per sempre: continuava a essere letta, a essere
+		 * scrivibile da salva() — che accetta le chiavi presenti in tutte() — e
+		 * a comparire in ogni esportazione del database. Su questo negozio erano
+		 * rimaste quattro voci di due versioni prima: `modalita`, `assistente`,
+		 * `colore` e `colore_testo`, tutte senza piu' un solo lettore nel codice.
+		 *
+		 * L'intersezione le lascia fuori alla lettura; il primo salvataggio
+		 * riscrive l'opzione senza di loro, e spariscono davvero.
+		 */
+		return array_merge( self::predefinite(), array_intersect_key( $salvate, self::predefinite() ) );
 	}
 
 	/**
@@ -166,8 +203,6 @@ final class Impostazioni {
 				return self::base_ammessa( (string) $valore );
 
 			case 'chiave':
-			case 'workspace':
-			case 'etichetta':
 			case 'etichetta_avvio':
 			case 'segnaposto':
 			case 'saluto':

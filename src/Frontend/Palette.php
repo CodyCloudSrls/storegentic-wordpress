@@ -24,8 +24,17 @@
  *
  * PERCHE' I PREPARATI. Scegliere sette colori che stiano insieme e' un lavoro
  * da progettista. Chi gestisce un negozio sceglie da un elenco e, se vuole,
- * ritocca. I preparati qui sotto rispettano tutti il contrasto richiesto fra
- * testo e fondo.
+ * ritocca.
+ *
+ * I preparati rispettano tutti il contrasto richiesto fra testo e fondo, e non
+ * e' una promessa scritta a parole: la difende `collaudo/palette.php`, che li
+ * misura tutti a ogni giro. La promessa da sola non basta — era scritta anche
+ * quando "Inchiostro e oro" stava a 3,78:1, sotto la soglia, per settimane.
+ *
+ * Chi sceglie i propri sette colori riceve lo stesso controllo: il rapporto si
+ * vede accanto all'anteprima mentre si sceglie, e al salvataggio il pannello lo
+ * dice. Non si impedisce di salvare — i colori di un negozio sono una scelta
+ * sua — ma nessuno li sbaglia senza saperlo.
  *
  * @package Storegentic
  */
@@ -72,7 +81,22 @@ final class Palette {
 					'testo'       => '#1A1815',
 					'testo_tenue' => '#6A635B',
 					'bordo'       => '#E5DED4',
-					'accento'     => '#A57C3E',
+					/*
+					 * L'ORO ERA #A57C3E, ED ERA TROPPO CHIARO.
+					 *
+					 * Misurato: bianco su quell'oro dava 3,78:1, sotto il 4,5:1
+					 * che serve per il testo normale. Non e' un dettaglio da
+					 * pignoli: l'accento tinge i pulsanti, i cartellini del
+					 * prezzo e le bolle di chi scrive nella conversazione — cioe'
+					 * testo piccolo, quello che si legge peggio. E questa e'
+					 * proprio la combinazione consigliata a chi vende oggetti,
+					 * quindi il difetto sarebbe finito addosso ai negozi che
+					 * seguono il consiglio.
+					 *
+					 * Sceso a #8A6A2F l'oro resta oro — un bronzo caldo, non un
+					 * marrone — e il bianco sopra arriva a 5,02:1.
+					 */
+					'accento'     => '#8A6A2F',
 					'su_accento'  => '#FFFFFF',
 				),
 			),
@@ -221,6 +245,94 @@ final class Palette {
 		$righe[] = '--sg-raggio-l:' . ( $raggio + 6 ) . 'px';
 
 		return ':root{' . implode( ';', $righe ) . '}';
+	}
+
+	/**
+	 * Le coppie di colori che devono potersi leggere una sull'altra.
+	 *
+	 * Non sono tutte le combinazioni possibili: sono quelle che l'interfaccia
+	 * accosta davvero. Il testo tenue non compare mai sull'accento, per dire, e
+	 * pretenderlo restringerebbe le palette possibili senza motivo.
+	 *
+	 * @var array<int,array{0:string,1:string,2:string}>
+	 */
+	private const ACCOSTAMENTI = array(
+		array( 'testo', 'superficie', 'Il testo sulle schede e sui fogli' ),
+		array( 'testo', 'sfondo', 'Il testo sul fondo della finestra' ),
+		array( 'testo_tenue', 'superficie', 'Le note e le categorie sulle schede' ),
+		array( 'su_accento', 'accento', 'Il testo dentro i pulsanti e i cartellini del prezzo' ),
+	);
+
+	/**
+	 * Il rapporto di contrasto fra due colori, come lo definisce il WCAG.
+	 *
+	 * QUESTA E' LA DEFINIZIONE BUONA, e sta qui perche' serve in tre posti: il
+	 * collaudo che difende i preparati, il controllo al salvataggio e
+	 * l'anteprima. Lo script dell'amministrazione ne tiene una copia in
+	 * JavaScript — l'anteprima cambia senza ricaricare la pagina, e non puo'
+	 * chiedere al server a ogni tocco del selettore — ma quella copia segue
+	 * questa, non il contrario.
+	 *
+	 * Serve 4,5:1 per il testo normale (WCAG 1.4.3). Sotto quella soglia il
+	 * testo non e' leggibile da chi ha una vista anche solo un po' ridotta, e
+	 * su un telefono al sole non lo legge nessuno.
+	 */
+	public static function contrasto( string $primo, string $secondo ): float {
+		$luce = static function ( string $esadecimale ): float {
+			$pulito = ltrim( trim( $esadecimale ), '#' );
+
+			if ( 3 === strlen( $pulito ) ) {
+				$pulito = $pulito[0] . $pulito[0] . $pulito[1] . $pulito[1] . $pulito[2] . $pulito[2];
+			}
+
+			if ( ! preg_match( '/^[0-9a-f]{6}$/i', $pulito ) ) {
+				return 0.0;
+			}
+
+			$canali = array();
+
+			foreach ( array( 0, 2, 4 ) as $posto ) {
+				$v = hexdec( substr( $pulito, $posto, 2 ) ) / 255;
+
+				$canali[] = $v <= 0.03928 ? $v / 12.92 : ( ( $v + 0.055 ) / 1.055 ) ** 2.4;
+			}
+
+			return 0.2126 * $canali[0] + 0.7152 * $canali[1] + 0.0722 * $canali[2];
+		};
+
+		$a = $luce( $primo );
+		$b = $luce( $secondo );
+
+		return round( ( max( $a, $b ) + 0.05 ) / ( min( $a, $b ) + 0.05 ), 2 );
+	}
+
+	/**
+	 * Gli accostamenti di una combinazione che non si leggono.
+	 *
+	 * Torna un elenco vuoto quando va tutto bene, cosi' chi chiama scrive
+	 * `if ( empty( ... ) )` e non deve interpretare un booleano.
+	 *
+	 * @param array<string,string> $colori
+	 * @return array<int,array{cosa:string,rapporto:float}>
+	 */
+	public static function verifica( array $colori ): array {
+		$guai = array();
+
+		foreach ( self::ACCOSTAMENTI as $coppia ) {
+			list( $primo, $secondo, $cosa ) = $coppia;
+
+			if ( empty( $colori[ $primo ] ) || empty( $colori[ $secondo ] ) ) {
+				continue;
+			}
+
+			$rapporto = self::contrasto( (string) $colori[ $primo ], (string) $colori[ $secondo ] );
+
+			if ( $rapporto < 4.5 ) {
+				$guai[] = array( 'cosa' => $cosa, 'rapporto' => $rapporto );
+			}
+		}
+
+		return $guai;
 	}
 
 	/**

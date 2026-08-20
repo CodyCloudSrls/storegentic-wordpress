@@ -20,6 +20,8 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Admin;
 
+use Storegentic\Analitica\Misure;
+use Storegentic\Api\Consumi;
 use Storegentic\Api\Contratto;
 use Storegentic\Catalogo\Pianificatore;
 use Storegentic\Catalogo\Sincronizzazione;
@@ -139,14 +141,13 @@ final class Pagina {
 
 		if ( in_array( 'aspetto', $gruppi, true ) ) {
 			$nuove += array(
-				'posizione'  => $inviate['posizione'] ?? 'destra',
-				'palette'    => $inviate['palette'] ?? 'tema',
-				'colori'     => (array) ( $inviate['colori'] ?? array() ),
-				'raggio'     => $inviate['raggio'] ?? 10,
-				'etichetta'  => $inviate['etichetta'] ?? '',
-				'segnaposto' => $inviate['segnaposto'] ?? '',
-				'saluto'     => $inviate['saluto'] ?? '',
-				'solo_su'    => $inviate['solo_su'] ?? array(),
+				'posizione'           => $inviate['posizione'] ?? 'destra',
+				'palette'             => $inviate['palette'] ?? 'tema',
+				'colori'              => (array) ( $inviate['colori'] ?? array() ),
+				'raggio'              => $inviate['raggio'] ?? 10,
+				'segnaposto'          => $inviate['segnaposto'] ?? '',
+				'saluto'              => $inviate['saluto'] ?? '',
+				'solo_su'             => $inviate['solo_su'] ?? array(),
 				'sostituisci_ricerca' => isset( $inviate['sostituisci_ricerca'] ),
 				'modi'                => (array) ( $inviate['modi'] ?? array() ),
 				'risultati'           => $inviate['risultati'] ?? 'pagina',
@@ -163,6 +164,8 @@ final class Pagina {
 				'invia_categorie'   => isset( $inviate['invia_categorie'] ),
 				'pota_mancanti'     => isset( $inviate['pota_mancanti'] ),
 				'analitica'         => isset( $inviate['analitica'] ),
+				'statistiche'       => isset( $inviate['statistiche'] ),
+				'ripiego'           => isset( $inviate['ripiego'] ),
 			);
 
 			/*
@@ -209,6 +212,36 @@ final class Pagina {
 		}
 
 		Impostazioni::salva( $nuove );
+
+		/*
+		 * I COLORI SI SALVANO COMUNQUE, MA NON IN SILENZIO.
+		 *
+		 * Sette colori scelti a occhio possono benissimo produrre un testo che
+		 * non si legge, e un contrasto non si vede guardando: si misura. Qui non
+		 * si impedisce di salvare — i colori di un negozio sono una scelta di
+		 * chi lo gestisce, e ci sono ragioni di marchio che un plugin non
+		 * conosce — ma nessuno li sbaglia senza che glielo si dica.
+		 *
+		 * Il controllo sta dopo il salvataggio perche' guarda i colori come sono
+		 * stati sanificati, non come sono arrivati.
+		 */
+		if ( '' === $avviso && 'propria' === (string) Impostazioni::leggi( 'palette' ) ) {
+			$guai = \Storegentic\Frontend\Palette::verifica( \Storegentic\Frontend\Palette::colori() );
+
+			if ( ! empty( $guai ) ) {
+				$pezzi = array();
+
+				foreach ( $guai as $g ) {
+					$pezzi[] = sprintf( '%s (%s:1)', $g['cosa'], number_format_i18n( $g['rapporto'], 1 ) );
+				}
+
+				$avviso = sprintf(
+					/* translators: %s: l'elenco degli accostamenti che non si leggono, con il loro rapporto. */
+					__( 'Colori salvati, ma questi accostamenti sono sotto il 4,5:1 richiesto e non si leggono bene: %s.', 'storegentic' ),
+					implode( '; ', $pezzi )
+				);
+			}
+		}
 
 		/*
 		 * Il cron segue lo stato. `spegni_periodica()` toglie anche il passo
@@ -269,6 +302,10 @@ final class Pagina {
 			case 'azzera':
 				Sincronizzazione::azzera();
 				break;
+
+			case 'azzera_misure':
+				Misure::azzera();
+				break;
 		}
 
 		$messaggio = is_wp_error( $esito ) ? $esito->get_error_message() : '';
@@ -322,6 +359,18 @@ final class Pagina {
 		$contratto  = $configurato ? Contratto::ottieni() : null;
 		$collegato  = is_array( $contratto );
 		$stato      = Sincronizzazione::stato();
+
+		/*
+		 * Il mese da guardare lo sceglie chi legge. Si accetta solo la forma
+		 * "2026_08" e solo fra i mesi che esistono davvero: una stringa
+		 * qualunque diventerebbe il nome di un'opzione da leggere.
+		 */
+		$mesi = Misure::mesi();
+		$mese = sanitize_key( (string) ( $_GET['mese'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification -- sola lettura, nessuna modifica.
+		$mese = in_array( $mese, $mesi, true ) ? $mese : ( $mesi[0] ?? null );
+
+		$consumi   = $collegato ? Consumi::contatori() : array();
+		$riepilogo = Misure::riepilogo( $mese );
 
 		require __DIR__ . '/vista-pagina.php';
 	}

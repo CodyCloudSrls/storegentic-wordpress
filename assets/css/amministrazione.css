@@ -1,10 +1,57 @@
 /* =============================================================================
-   La scelta dei colori, nell'amministrazione.
+   La pagina di Storegentic nell'amministrazione.
 
-   Serve a una cosa sola: far vedere il risultato mentre lo si sceglie. Sette
-   colori scritti come numeri non dicono niente finche' non stanno uno accanto
-   all'altro — e' guardando la bolla sopra la carta che ci si accorge che il
-   testo non si legge.
+   Due mestieri: la scelta dei colori, che deve far vedere il risultato mentre
+   lo si sceglie, e i numeri — consumi e statistiche — che devono farsi leggere
+   in fretta e gridare quando c'e' qualcosa che non va.
+
+   I colori di stato sono quelli di WordPress e non di questo plugin: chi
+   amministra li riconosce gia' dal resto del pannello.
+   ========================================================================== */
+
+.sg-allarme { color: #b32d2e; }
+.sg-attenzione { color: #8a6100; }
+
+/* --- piano e consumi --- */
+
+.sg-piano {
+  display: inline-block;
+  margin-inline-start: .5rem;
+  padding: .1rem .55rem;
+  font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: #1d2327; background: #f0f0f1;
+  border: 1px solid #dcdcde; border-radius: 999px;
+  vertical-align: middle;
+}
+
+/*
+   La barra dice quanto RESTA. Il numero le sta accanto: una barra senza
+   numero si legge a occhio e si sbaglia, e chi usa uno screen reader non la
+   vede affatto.
+*/
+.sg-barra {
+  display: inline-block; vertical-align: middle;
+  inline-size: 6rem; block-size: .5rem;
+  margin-inline-end: .5rem;
+  background: #e0e0e1; border-radius: 999px; overflow: hidden;
+}
+
+.sg-barra > span { display: block; block-size: 100%; background: #2271b1; border-radius: 999px; }
+.sg-barra--stretta > span { background: #dba617; }
+.sg-barra--finita > span { background: #b32d2e; }
+
+.sg-consumi td { vertical-align: middle; }
+
+/* --- statistiche --- */
+
+.sg-mesi { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: 0 0 .75rem; }
+
+/* =============================================================================
+   La scelta dei colori.
+
+   Sette colori scritti come numeri non dicono niente finche' non stanno uno
+   accanto all'altro — e' guardando la bolla sopra la carta che ci si accorge
+   che il testo non si legge.
    ========================================================================== */
 
 .sg-palette {
@@ -109,6 +156,32 @@
 .sg-anteprima__corpo { display: flex; flex-direction: column; flex: 1 1 auto; min-inline-size: 0; }
 .sg-anteprima__corpo b { font-size: 13px; color: var(--ap-testo, #1A1815); }
 .sg-anteprima__corpo em { font-size: 11px; font-style: normal; color: var(--ap-testo-tenue, #6A635B); }
+
+/*
+   I rapporti di contrasto, sotto l'anteprima.
+
+   Quattro pastiglie piccole: si leggono in un colpo d'occhio e quella storta
+   si distingue dalle altre senza doverle confrontare a una a una. Il colore
+   da solo non basta a dirlo — chi non distingue il rosso vedrebbe quattro
+   pastiglie uguali — quindi quella fuori norma porta anche il grassetto e il
+   bordo pieno.
+*/
+.sg-contrasto {
+  display: flex; flex-wrap: wrap; gap: .35rem;
+  max-width: 26rem; margin: 0 0 .5rem;
+}
+
+.sg-contrasto__voce {
+  padding: .15rem .5rem;
+  font-size: 11px; line-height: 1.6;
+  color: #50575e; background: #f6f7f7;
+  border: 1px solid #dcdcde; border-radius: 999px;
+}
+
+.sg-contrasto__voce--male {
+  font-weight: 700;
+  color: #b32d2e; background: #fcf0f1; border-color: #b32d2e;
+}
 
 .sg-anteprima__prezzo {
   flex: 0 0 auto;

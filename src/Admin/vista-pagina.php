@@ -12,6 +12,8 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Admin;
 
+use Storegentic\Analitica\Misure;
+use Storegentic\Api\Consumi;
 use Storegentic\Api\Contratto;
 use Storegentic\Catalogo\Sincronizzazione;
 
@@ -24,6 +26,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** @var array<string,mixed>|\WP_Error|null $contratto */
 /** @var bool $collegato */
 /** @var array<string,mixed> $stato */
+/** @var array<int,array<string,mixed>> $consumi */
+/** @var array<string,mixed> $riepilogo */
+/** @var array<int,string> $mesi */
+/** @var string|null $mese */
 
 $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (string) wp_unslash( $_GET['errore'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 ?>
@@ -47,6 +53,89 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 			<p>
 				<strong><?php esc_html_e( 'Non collegato.', 'storegentic' ); ?></strong>
 				<?php echo esc_html( $contratto instanceof \WP_Error ? $contratto->get_error_message() : '' ); ?>
+			</p>
+		</div>
+	<?php endif; ?>
+
+	<?php
+	/*
+	 * L'AVVISO PIU' IMPORTANTE DELLA PAGINA, E STA IN CIMA.
+	 *
+	 * Un contatore a zero non e' un dettaglio del piano: e' la ricerca del
+	 * negozio che smette di rispondere ai clienti. Prima di questa riga la
+	 * pagina diceva "Collegamento: attivo" mentre ogni ricerca del sito tornava
+	 * un errore, perche' l'handshake riesce anche a quota finita — non consuma
+	 * nulla — e il pannello guardava solo quello.
+	 */
+	$sg_finiti = array_values( array_filter( $consumi, static fn( $c ) => $c['esaurito'] ) );
+	$sg_stretti = array_values( array_filter( $consumi, static fn( $c ) => $c['stretto'] ) );
+	?>
+
+	<?php if ( ! empty( $sg_finiti ) ) : ?>
+		<div class="notice notice-error">
+			<p><strong><?php esc_html_e( 'Il piano ha finito.', 'storegentic' ); ?></strong></p>
+			<ul style="list-style:disc;margin-inline-start:1.5rem">
+				<?php foreach ( $sg_finiti as $sg_c ) : ?>
+					<li>
+						<?php // Il due punti sta attaccato al nome: a capo diventerebbe uno spazio a schermo. ?>
+						<strong><?php echo esc_html( (string) $sg_c['nome'] ); ?></strong><?php echo ': '; ?>
+						<?php
+						printf(
+							/* translators: 1: quanti se ne sono usati, 2: quanti ne consente il piano. */
+							esc_html__( 'usate %1$s su %2$s.', 'storegentic' ),
+							esc_html( Consumi::scrivi( $sg_c['usato'], (string) $sg_c['unita'] ) ),
+							esc_html( Consumi::scrivi( $sg_c['limite'], (string) $sg_c['unita'] ) )
+						);
+						?>
+						<?php echo esc_html( (string) $sg_c['spiega'] ); ?>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+			<?php $sg_rinnovo = Consumi::rinnovo(); ?>
+			<?php if ( $sg_rinnovo && $sg_rinnovo['passata'] ) : ?>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: la data che il servizio dichiara per il rinnovo. */
+						esc_html__( 'Il servizio dichiara che i contatori si rinnovano il %s, cioè una data già passata: aspettare non li rimette a zero. Scrivi a Storegentic.', 'storegentic' ),
+						esc_html( wp_date( 'd/m/Y', (int) $sg_rinnovo['quando'] ) )
+					);
+					?>
+				</p>
+			<?php elseif ( $sg_rinnovo ) : ?>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: data del rinnovo dei contatori. */
+						esc_html__( 'I contatori si rinnovano il %s.', 'storegentic' ),
+						esc_html( wp_date( 'd/m/Y', (int) $sg_rinnovo['quando'] ) )
+					);
+					?>
+				</p>
+			<?php endif; ?>
+			<p>
+				<?php if ( (bool) $i['ripiego'] ) : ?>
+					<?php esc_html_e( 'Nel frattempo la ricerca del sito continua a funzionare sul catalogo del negozio: trova le parole nei nomi e nelle descrizioni, non i concetti.', 'storegentic' ); ?>
+				<?php else : ?>
+					<strong><?php esc_html_e( 'La ricerca del sito mostra un errore ai clienti.', 'storegentic' ); ?></strong>
+					<?php esc_html_e( 'Accendi «Cerca nel catalogo quando il servizio non risponde», qui sotto, per farla comunque funzionare.', 'storegentic' ); ?>
+				<?php endif; ?>
+			</p>
+		</div>
+	<?php elseif ( ! empty( $sg_stretti ) ) : ?>
+		<div class="notice notice-warning">
+			<p>
+				<strong><?php esc_html_e( 'Il piano è quasi finito.', 'storegentic' ); ?></strong>
+				<?php
+				foreach ( $sg_stretti as $sg_c ) {
+					printf(
+						/* translators: 1: nome del contatore, 2: quanti ne restano. */
+						esc_html__( '%1$s: ne restano %2$s. ', 'storegentic' ),
+						esc_html( (string) $sg_c['nome'] ),
+						esc_html( Consumi::scrivi( $sg_c['rimasto'], (string) $sg_c['unita'] ) )
+					);
+				}
+				?>
 			</p>
 		</div>
 	<?php endif; ?>
@@ -181,7 +270,19 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 							</div>
 						</div>
 
-						<p class="description"><?php esc_html_e( 'Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. L’anteprima mostra le combinazioni che contano.', 'storegentic' ); ?></p>
+						<?php
+						/*
+						 * Il rapporto misurato, accanto all'anteprima. Prima qui
+						 * c'era solo la regola scritta — "sotto 4,5:1 non si
+						 * legge" — che e' un'informazione inutile finche' non si
+						 * sa a quanto si sta. Lo riempie il JavaScript a ogni
+						 * tocco; senza JavaScript resta vuoto, e il controllo lo
+						 * fa comunque il salvataggio.
+						 */
+						?>
+						<p class="sg-contrasto" data-sg-contrasto aria-live="polite"></p>
+
+						<p class="description"><?php esc_html_e( 'Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. I numeri qui sopra misurano gli accostamenti che contano davvero.', 'storegentic' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -245,6 +346,15 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 						<input type="text" id="sg-segnaposto" name="segnaposto" class="regular-text"
 						       value="<?php echo esc_attr( (string) $i['segnaposto'] ); ?>"
 						       placeholder="<?php esc_attr_e( 'Che cosa stai cercando?', 'storegentic' ); ?>">
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="sg-saluto"><?php esc_html_e( 'Prima frase dell’assistente', 'storegentic' ); ?></label></th>
+					<td>
+						<input type="text" id="sg-saluto" name="saluto" class="large-text"
+						       value="<?php echo esc_attr( (string) $i['saluto'] ); ?>"
+						       placeholder="<?php esc_attr_e( 'Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa.', 'storegentic' ); ?>">
+						<p class="description"><?php esc_html_e( 'È la frase che il cliente legge appena apre l’assistente. Lasciala vuota per quella predefinita.', 'storegentic' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -327,12 +437,44 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 							<?php esc_html_e( 'A fine sincronizzazione, togli dall\'indice i prodotti non più a catalogo', 'storegentic' ); ?></label>
 					</td>
 				</tr>
+			</table>
+
+			<?php
+			/*
+			 * I titoli servono a chi legge; a chi salva serve il campo sentinella
+			 * `gruppi[]`, che sta piu' su. Le righe qui sotto appartengono al
+			 * gruppo "catalogo" anche se il titolo e' un altro: la divisione in
+			 * gruppi dice quali caselle erano stampate, non come sono raccolte a
+			 * schermo.
+			 */
+			?>
+			<h2 class="title"><?php esc_html_e( 'Se il servizio non risponde', 'storegentic' ); ?></h2>
+			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Analisi', 'storegentic' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Ripiego', 'storegentic' ); ?></th>
 					<td>
-						<label><input type="checkbox" name="analitica" <?php checked( (bool) $i['analitica'] ); ?>>
-							<?php esc_html_e( 'Manda a Storegentic cosa viene cercato e cosa viene aperto', 'storegentic' ); ?></label>
-						<p class="description"><?php esc_html_e( 'Servono a capire cosa cercano i clienti e cosa non trovano. Non contengono dati personali.', 'storegentic' ); ?></p>
+						<label><input type="checkbox" name="ripiego" <?php checked( (bool) $i['ripiego'] ); ?>>
+							<?php esc_html_e( 'Cerca nel catalogo del negozio quando il servizio non risponde', 'storegentic' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Succede a quota finita, durante una manutenzione o se la rete cade. Il ripiego cerca le parole nei nomi e nelle descrizioni brevi: trova meno cose della ricerca intelligente, ma il cliente vede dei prodotti invece di un errore.', 'storegentic' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Quando entra in funzione, il cliente lo legge: la ricerca dice che i risultati arrivano dal catalogo del negozio.', 'storegentic' ); ?></p>
+					</td>
+				</tr>
+			</table>
+
+			<h2 class="title"><?php esc_html_e( 'Analisi e statistiche', 'storegentic' ); ?></h2>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Cosa se ne fa', 'storegentic' ); ?></th>
+					<td>
+						<label style="display:block;margin-block-end:.4rem">
+							<input type="checkbox" name="analitica" <?php checked( (bool) $i['analitica'] ); ?>>
+							<?php esc_html_e( 'Manda a Storegentic cosa viene cercato e cosa viene aperto', 'storegentic' ); ?>
+						</label>
+						<label style="display:block">
+							<input type="checkbox" name="statistiche" <?php checked( (bool) $i['statistiche'] ); ?>>
+							<?php esc_html_e( 'Tieni il conto anche qui, per le statistiche di questa pagina', 'storegentic' ); ?>
+						</label>
+						<p class="description"><?php esc_html_e( 'Sono due cose separate. La prima serve al servizio per migliorare le risposte. La seconda resta nel tuo database e riempie le statistiche qui sotto: Storegentic non offre un modo per rileggere quello che gli mandi.', 'storegentic' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -462,4 +604,76 @@ $errore_url = isset( $_GET['errore'] ) ? sanitize_text_field( rawurldecode( (str
 			<?php endforeach; ?>
 		</ol>
 	<?php endif; ?>
+
+	<?php if ( ! empty( $consumi ) ) : ?>
+		<h2 class="title">
+			<?php esc_html_e( 'Piano e consumi', 'storegentic' ); ?>
+			<?php if ( '' !== Consumi::piano() ) : ?>
+				<span class="sg-piano"><?php echo esc_html( Consumi::piano() ); ?></span>
+			<?php endif; ?>
+		</h2>
+
+		<p class="description" style="max-width:52rem">
+			<?php esc_html_e( 'Questi numeri li dichiara Storegentic a ogni collegamento. Sotto, nelle statistiche, c’è invece com’è andata davvero: le due cose possono non coincidere.', 'storegentic' ); ?>
+		</p>
+
+		<table class="widefat striped sg-consumi" style="max-width:52rem">
+			<thead>
+				<tr>
+					<th><?php esc_html_e( 'Cosa', 'storegentic' ); ?></th>
+					<th style="width:9rem"><?php esc_html_e( 'Usato', 'storegentic' ); ?></th>
+					<th style="width:9rem"><?php esc_html_e( 'Restano', 'storegentic' ); ?></th>
+					<th style="width:12rem"><?php esc_html_e( 'Quanto ne resta', 'storegentic' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $consumi as $sg_c ) : ?>
+					<tr>
+						<td>
+							<strong><?php echo esc_html( (string) $sg_c['nome'] ); ?></strong>
+							<?php if ( $sg_c['esaurito'] && '' !== (string) $sg_c['spiega'] ) : ?>
+								<br><span class="sg-allarme"><?php echo esc_html( (string) $sg_c['spiega'] ); ?></span>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php
+							printf(
+								/* translators: 1: quanti usati, 2: quanti ne consente il piano. */
+								esc_html__( '%1$s di %2$s', 'storegentic' ),
+								esc_html( Consumi::scrivi( $sg_c['usato'], (string) $sg_c['unita'] ) ),
+								esc_html( Consumi::scrivi( $sg_c['limite'], (string) $sg_c['unita'] ) )
+							);
+							?>
+						</td>
+						<td<?php echo $sg_c['esaurito'] ? ' class="sg-allarme"' : ''; ?>>
+							<?php echo esc_html( Consumi::scrivi( $sg_c['rimasto'], (string) $sg_c['unita'] ) ); ?>
+						</td>
+						<td>
+							<?php
+							/*
+							 * La barra dice quanto ne resta, non quanto se n'e'
+							 * usato: e' la domanda che si fa chi guarda. Il
+							 * `title` ripete il numero perche' una barra da sola
+							 * non e' leggibile da chi usa uno screen reader.
+							 */
+							$sg_resta = (int) round( ( 1 - (float) $sg_c['quota'] ) * 100 );
+							?>
+							<span class="sg-barra<?php echo $sg_c['esaurito'] ? ' sg-barra--finita' : ( $sg_c['stretto'] ? ' sg-barra--stretta' : '' ); ?>">
+								<span style="width:<?php echo esc_attr( (string) $sg_resta ); ?>%"></span>
+							</span>
+							<?php
+							printf(
+								/* translators: %d: percentuale rimasta. */
+								esc_html__( '%d%%', 'storegentic' ),
+								(int) $sg_resta
+							);
+							?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
+
+	<?php require __DIR__ . '/vista-statistiche.php'; ?>
 </div>

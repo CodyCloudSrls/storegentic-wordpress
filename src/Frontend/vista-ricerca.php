@@ -101,6 +101,17 @@ get_header();
 			<p class="sg-foto-scelta__testo" data-sg-foto-stato></p>
 			<button type="button" class="sg-foto-scelta__via" data-sg-foto-via><?php esc_html_e( 'Togli la foto', 'storegentic' ); ?></button>
 		</div>
+
+		<?php
+		/*
+		 * Quando i risultati arrivano dal catalogo del negozio invece che dal
+		 * servizio, lo si scrive. Vedi Frontend\Ripiego: una ricerca per parole
+		 * spacciata per ricerca intelligente fa sembrare rotta la funzione buona.
+		 */
+		?>
+		<?php if ( ! empty( $sg_esito['ripiego'] ) ) : ?>
+			<p class="sg-nota-ripiego"><?php esc_html_e( 'La ricerca intelligente non risponde in questo momento: questi risultati arrivano dal catalogo del negozio, cercando le parole che hai scritto.', 'storegentic' ); ?></p>
+		<?php endif; ?>
 	</header>
 
 	<?php if ( '' !== $sg_errore ) : ?>

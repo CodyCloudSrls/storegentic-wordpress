@@ -30,9 +30,10 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Frontend;
 
+use Storegentic\Analitica\Misure;
+use Storegentic\Analitica\Registratore;
 use Storegentic\Api\Client;
 use Storegentic\Api\Contratto;
-use Storegentic\Analitica\Registratore;
 use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -80,6 +81,7 @@ final class Assistente {
 
 		$risposta = '';
 		$fonti    = array();
+		$partito  = microtime( true );
 
 		$errore = ( new Client( null, null, self::ATTESA, 0 ) )->flusso(
 			$indirizzo,
@@ -164,6 +166,22 @@ final class Assistente {
 		Registratore::accoda(
 			'agent_results',
 			array( 'data' => array( 'characters' => $testo_totale, 'products' => count( $citati ) ) )
+		);
+
+		/*
+		 * Il conto tenuto in casa. Per l'assistente "quanti risultati" vuol dire
+		 * quanti prodotti ha nominato la risposta: una risposta che non ne nomina
+		 * nessuno e' andata a buon fine tecnicamente, ma per un negozio e' una
+		 * conversazione che non ha portato a niente, ed e' quello che conta
+		 * sapere.
+		 */
+		Misure::segna(
+			'assistente',
+			$domanda,
+			count( $citati ),
+			(int) round( ( microtime( true ) - $partito ) * 1000 ),
+			null !== $errore && 0 === $testo_totale ? $errore->get_error_message() : null,
+			null !== $errore ? (int) ( $errore->get_error_data()['stato'] ?? 0 ) : 0
 		);
 
 		self::manda( array( 'fine' => true ) );

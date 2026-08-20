@@ -26,6 +26,7 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Frontend;
 
+use Storegentic\Analitica\Misure;
 use Storegentic\Analitica\Registratore;
 use Storegentic\Impostazioni;
 use WP_Error;
@@ -354,14 +355,26 @@ final class Ponte {
 			return new WP_Error( 'storegentic_evento_senza_tipo', __( 'Evento senza tipo.', 'storegentic' ), array( 'status' => 400 ) );
 		}
 
+		$dati = self::dati_evento( $richiesta->get_param( 'data' ) );
+
 		Registratore::accoda(
 			$tipo,
 			array(
 				'sessionId' => mb_substr( sanitize_text_field( (string) $richiesta->get_param( 'sessionId' ) ), 0, 64 ),
 				'mode'      => mb_substr( sanitize_key( (string) $richiesta->get_param( 'mode' ) ), 0, 32 ),
-				'data'      => self::dati_evento( $richiesta->get_param( 'data' ) ),
+				'data'      => $dati,
 			)
 		);
+
+		/*
+		 * Lo stesso fatto va anche nel conto tenuto in casa. Non e' un doppione:
+		 * il Registratore SPEDISCE a Storegentic e poi dimentica, e il servizio
+		 * non offre alcun indirizzo per rileggere quegli eventi. Senza questa
+		 * riga il pannello del negozio non saprebbe mai quali prodotti si aprono.
+		 */
+		if ( 'search_result_click' === $tipo && ! empty( $dati['sku'] ) ) {
+			Misure::segna_apertura( (string) $dati['sku'] );
+		}
 
 		return new WP_REST_Response( array( 'accodato' => true ), 202 );
 	}

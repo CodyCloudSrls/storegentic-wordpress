@@ -719,6 +719,19 @@
         return;
       }
 
+      /*
+       * IL RIPIEGO SI DICHIARA, SEMPRE.
+       *
+       * Quando il servizio non risponde, il plugin cerca nel catalogo del
+       * negozio: e' una ricerca per parole, non per concetti, e trova meno
+       * cose. Scambiarla di nascosto con quella intelligente farebbe passare
+       * per rotta la funzione buona — "ho cercato pietre verdi e mi ha dato
+       * spazzatura" — mentre e' soltanto ferma.
+       */
+      if (dati.ripiego) {
+        corpo.appendChild(elemento('p', 'sg-nota-ripiego', T.ripiego));
+      }
+
       // Barra di affinamento: conteggio, categorie, ordine.
       corpo.appendChild(this.barra(modo, dati, domanda));
 

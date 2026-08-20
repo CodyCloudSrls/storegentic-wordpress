@@ -516,6 +516,25 @@ body.sg-bloccato { overflow: hidden; }
 .sg-avviso { padding: 1rem 1.25rem; border-radius: var(--sg-raggio); background: var(--sg-fondo); }
 .sg-avviso--male { color: #8A2E2E; }
 
+/*
+   La nota che dichiara il ripiego.
+
+   Deve farsi leggere e non deve spaventare: non e' un errore, e' un modo di
+   cercare diverso. Quindi il tono della pagina — fondo tenue, riga di
+   accento sul lato — e non il rosso degli allarmi. Sta sopra i risultati
+   perche' li spiega: sotto, l'avrebbe letta chi ha gia' deciso che la
+   ricerca funziona male.
+*/
+.sg-nota-ripiego {
+  margin: 0 0 1.25rem;
+  padding: .7rem .9rem;
+  font-size: .875rem; line-height: 1.5;
+  color: var(--sg-inchiostro-2);
+  background: var(--sg-fondo);
+  border-inline-start: 3px solid var(--sg-colore);
+  border-radius: 0 var(--sg-raggio-s) var(--sg-raggio-s) 0;
+}
+
 /* ============================================== LA FINESTRA E IL LANCIATORE
  *
  * Un pulsante che il plugin disegna da se', e una finestra che contiene tutto.

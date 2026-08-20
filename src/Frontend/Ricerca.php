@@ -24,8 +24,10 @@ declare( strict_types = 1 );
 
 namespace Storegentic\Frontend;
 
+use Storegentic\Analitica\Misure;
 use Storegentic\Api\Client;
 use Storegentic\Api\Contratto;
+use Storegentic\Impostazioni;
 use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -79,7 +81,8 @@ final class Ricerca {
 			self::indirizzo( 'text' ),
 			array( 'query' => $domanda ),
 			$quanti,
-			$domanda
+			$domanda,
+			'ricerca'
 		);
 	}
 
@@ -108,10 +111,10 @@ final class Ricerca {
 		 */
 		if ( '' !== $domanda ) {
 			$carico['query'] = $domanda;
-			return self::chiama( self::indirizzo( 'unified' ), $carico, $quanti, $domanda );
+			return self::chiama( self::indirizzo( 'unified' ), $carico, $quanti, $domanda, 'foto' );
 		}
 
-		return self::chiama( self::indirizzo( 'image' ), $carico, $quanti, '' );
+		return self::chiama( self::indirizzo( 'image' ), $carico, $quanti, '', 'foto' );
 	}
 
 	/**
@@ -147,14 +150,21 @@ final class Ricerca {
 
 	/**
 	 * @param array<string,mixed> $carico
+	 * @param string              $funzione Come si chiama questa chiamata nelle misure.
 	 * @return array<string,mixed>|WP_Error
 	 */
-	private static function chiama( string $indirizzo, array $carico, int $quanti, string $domanda ) {
+	private static function chiama( string $indirizzo, array $carico, int $quanti, string $domanda, string $funzione ) {
 		if ( '' === $indirizzo ) {
-			return new WP_Error(
-				'storegentic_ricerca_assente',
-				__( 'La ricerca non è disponibile per questo negozio.', 'storegentic' ),
-				array( 'status' => 503 )
+			return self::fallita(
+				$funzione,
+				$domanda,
+				$quanti,
+				0,
+				new WP_Error(
+					'storegentic_ricerca_assente',
+					__( 'La ricerca non è disponibile per questo negozio.', 'storegentic' ),
+					array( 'status' => 503 )
+				)
 			);
 		}
 
@@ -164,7 +174,12 @@ final class Ricerca {
 		$in_cache = get_transient( $impronta );
 
 		if ( is_array( $in_cache ) ) {
-			return self::componi( $in_cache, $domanda, true );
+			$esito = self::componi( $in_cache, $domanda, true );
+
+			// Zero millisecondi: e' una ricerca vera, ma non ha misurato il servizio.
+			Misure::segna( $funzione, $domanda, count( $esito['risultati'] ), 0 );
+
+			return $esito;
 		}
 
 		/*
@@ -180,13 +195,15 @@ final class Ricerca {
 		 */
 		$attesa   = isset( $carico['imageBase64'] ) ? 30 : 20;
 		$client   = new Client( null, null, $attesa, 0 );
+		$partito  = microtime( true );
 		$risposta = $client->post( $indirizzo, $carico );
+		$ms       = (int) round( ( microtime( true ) - $partito ) * 1000 );
 
 		if ( is_wp_error( $risposta ) ) {
 			$stato = (int) ( $risposta->get_error_data()['stato'] ?? 502 );
 			$risposta->add_data( array( 'status' => $stato >= 400 ? $stato : 502 ) );
 
-			return $risposta;
+			return self::fallita( $funzione, $domanda, $quanti, $ms, $risposta );
 		}
 
 		$magro = array(
@@ -200,7 +217,62 @@ final class Ricerca {
 
 		set_transient( $impronta, $magro, self::DURATA_CACHE );
 
-		return self::componi( $magro, $domanda, false );
+		$esito = self::componi( $magro, $domanda, false );
+
+		Misure::segna( $funzione, $domanda, count( $esito['risultati'] ), $ms );
+
+		return $esito;
+	}
+
+	/**
+	 * Il servizio non ha risposto: si segna, e si prova con il catalogo in casa.
+	 *
+	 * PERCHE' NON SI RESTITUISCE E BASTA L'ERRORE. Il messaggio che arriva dal
+	 * servizio e' scritto per chi sviluppa, non per chi compra: "Search quota
+	 * exceeded", in inglese, sulla vetrina di un negozio italiano. E soprattutto
+	 * lascia a mani vuote una persona che stava cercando di comprare qualcosa,
+	 * mentre il prodotto che cercava e' nel catalogo, a un metro di distanza.
+	 *
+	 * Il ripiego si puo' spegnere dalle impostazioni: c'e' chi preferisce dire
+	 * chiaramente che la ricerca intelligente e' ferma, invece di offrire una
+	 * ricerca per parole che potrebbe far pensare che funzioni male.
+	 *
+	 * L'errore si segna SEMPRE, anche quando il ripiego riesce: e' l'unico modo
+	 * perche' nel pannello si veda che il servizio e' fermo. Un ripiego che
+	 * funziona bene nasconderebbe il guasto per settimane.
+	 *
+	 * @return array<string,mixed>|WP_Error
+	 */
+	private static function fallita( string $funzione, string $domanda, int $quanti, int $ms, WP_Error $errore ) {
+		/*
+		 * Senza parole non c'e' ripiego possibile: una ricerca per foto non si
+		 * traduce in una query sul database del negozio. In quel caso l'errore
+		 * torna com'e', ed e' giusto cosi'.
+		 */
+		$esito = '' !== trim( $domanda ) && Impostazioni::leggi( 'ripiego' )
+			? Ripiego::cerca( $domanda, $quanti )
+			: null;
+
+		// Un ripiego che non trova niente non aiuta: meglio dire cosa e' successo.
+		$riuscito = null !== $esito && ! empty( $esito['risultati'] );
+
+		/*
+		 * Si segna una volta sola, e DOPO aver provato il ripiego: cosi' il
+		 * conteggio dei risultati e' quello che ha visto il cliente davvero.
+		 * L'errore si segna comunque, anche quando il ripiego ha rimediato,
+		 * altrimenti un guasto coperto bene resterebbe invisibile nel pannello
+		 * per tutto il tempo in cui dura.
+		 */
+		Misure::segna(
+			$funzione,
+			$domanda,
+			$riuscito ? count( $esito['risultati'] ) : 0,
+			$ms,
+			$errore->get_error_message(),
+			(int) ( $errore->get_error_data()['status'] ?? 0 )
+		);
+
+		return $riuscito ? $esito : $errore;
 	}
 
 	/**
