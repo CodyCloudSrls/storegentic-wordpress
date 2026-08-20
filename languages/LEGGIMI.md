@@ -6,7 +6,8 @@
 |---|---|
 | `storegentic.pot` | il modello: l'elenco di tutte le stringhe del plugin, senza traduzioni. È il punto di partenza per una lingua nuova. |
 | `storegentic-XX_XX.po` | il catalogo di una lingua, leggibile e modificabile. |
-| `storegentic-XX_XX.mo` | lo stesso catalogo compilato. **È questo che WordPress legge.** Un `.po` modificato non ha effetto finché non lo si ricompila. |
+| `storegentic-XX_XX.mo` | il catalogo compilato, formato storico. |
+| `storegentic-XX_XX.l10n.php` | lo stesso catalogo come array PHP. **Da WordPress 6.5 è questo che viene letto per primo**, ed è più veloce: niente file binario da interpretare, e l'opcache se lo tiene. Il `.mo` resta per i siti più vecchi. |
 | `glossario.md` | i termini fissi, lingua per lingua. |
 | `stile.md` | come si scrive un'interfaccia: linguaggio controllato, ispirato ad ASD-STE100. |
 
@@ -22,7 +23,8 @@ Il `.po` resta perché è utile: permette di ritoccare una frase italiana senza
 toccare il codice. Chi lo fa, poi lo compila, e da quel momento il catalogo
 entra in funzione:
 
-    wp i18n make-mo languages/storegentic-it_IT.po languages/
+    wp i18n make-mo  languages/storegentic-it_IT.po languages/
+    wp i18n make-php languages/storegentic-it_IT.po languages/
 
 ## Rifare il modello dopo aver cambiato il codice
 
@@ -33,7 +35,16 @@ Poi si aggiornano i cataloghi esistenti sul modello nuovo:
     wp i18n update-po languages/storegentic.pot languages/
 
 Le stringhe nuove restano vuote e vanno tradotte; quelle cambiate finiscono
-segnate come "fuzzy" e vanno riviste.
+segnate come "fuzzy" e vanno riviste. Poi si ricompila **in tutti e due i
+formati**, per ogni lingua:
+
+    for l in en_US de_DE fr_FR es_ES; do
+      wp i18n make-mo  languages/storegentic-$l.po languages/
+      wp i18n make-php languages/storegentic-$l.po languages/
+    done
+
+Una stringa vuota in un catalogo non è un problema: gettext usa l'originale
+italiano. Un catalogo compilato a metà, invece, lo è.
 
 ## Le regole che non si negoziano
 

@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: Storegentic 0.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/storegentic\n"
 "Last-Translator: CodyCloud Srls <it@codycloud.it>\n"
-"Language-Team: Italian\n"
-"Language: it_IT\n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,7 +33,7 @@ msgstr "https://storegentic.it"
 #. Description of the plugin
 #: storegentic.php
 msgid "Collega un sito WordPress a Storegentic: ricerca semantica, ricerca con una foto, assistente e analisi. Con WooCommerce indicizza i prodotti; senza, indicizza i contenuti del sito e fa da base di conoscenza. Funziona con qualsiasi tema, senza toccarlo."
-msgstr "Collega un sito WordPress a Storegentic: ricerca semantica, ricerca con una foto, assistente e analisi. Con WooCommerce indicizza i prodotti; senza, indicizza i contenuti del sito e fa da base di conoscenza. Funziona con qualsiasi tema, senza toccarlo."
+msgstr "Connects a WordPress site to Storegentic: semantic search, image search, assistant and analytics. With WooCommerce it indexes the products; without it, it indexes the site content and works as a knowledge base. It works with any theme, without touching it."
 
 #. Author of the plugin
 #: storegentic.php
@@ -48,34 +48,34 @@ msgstr "https://www.codycloud.it"
 #: src/Admin/Menu.php:60
 #: src/Admin/Riquadro.php:74
 msgid "Panoramica"
-msgstr "Panoramica"
+msgstr "Overview"
 
 #: src/Admin/Menu.php:65
 #: src/Admin/viste/panoramica.php:45
 msgid "Collegamento"
-msgstr "Collegamento"
+msgstr "Connection"
 
 #: src/Admin/Menu.php:70
 msgid "Aspetto"
-msgstr "Aspetto"
+msgstr "Appearance"
 
 #: src/Admin/Menu.php:75
 msgid "Ricerca"
-msgstr "Ricerca"
+msgstr "Search"
 
 #: src/Admin/Menu.php:80
 msgid "Catalogo"
-msgstr "Catalogo"
+msgstr "Catalogue"
 
 #: src/Admin/Menu.php:80
 #: src/Admin/viste/panoramica.php:71
 msgid "Contenuti"
-msgstr "Contenuti"
+msgstr "Content"
 
 #: src/Admin/Menu.php:85
 #: src/Admin/viste/statistiche.php:49
 msgid "Statistiche"
-msgstr "Statistiche"
+msgstr "Statistics"
 
 #. translators: %s: il nome della pagina.
 #: src/Admin/Menu.php:115
@@ -85,85 +85,85 @@ msgstr "Storegentic — %s"
 
 #: src/Admin/Pagina.php:108
 msgid "Impostazioni"
-msgstr "Impostazioni"
+msgstr "Settings"
 
 #: src/Admin/Pagina.php:118
 msgid "Non hai i permessi per modificare queste impostazioni."
-msgstr "Non hai i permessi per modificare queste impostazioni."
+msgstr "You do not have permission to change these settings."
 
 #. translators: %s: l'elenco degli accostamenti che non si leggono, con il loro rapporto.
 #: src/Admin/Pagina.php:301
 #, php-format
 msgid "Colori salvati, ma questi accostamenti sono sotto il 4,5:1 richiesto e non si leggono bene: %s."
-msgstr "Colori salvati, ma questi accostamenti sono sotto il 4,5:1 richiesto e non si leggono bene: %s."
+msgstr "Colours saved, but these pairings are below the required 4.5:1 and are hard to read: %s."
 
 #: src/Admin/Pagina.php:327
 msgid "Non hai i permessi per questa operazione."
-msgstr "Non hai i permessi per questa operazione."
+msgstr "You do not have permission to do this."
 
 #: src/Admin/Pagina.php:437
 msgid "Salva le impostazioni"
-msgstr "Salva le impostazioni"
+msgstr "Save settings"
 
 #: src/Admin/Riquadro.php:76
 msgid "Tutte le statistiche"
-msgstr "Tutte le statistiche"
+msgstr "All statistics"
 
 #: src/Admin/Riquadro.php:83
 msgid "Storegentic non è ancora collegato: manca la chiave del servizio."
-msgstr "Storegentic non è ancora collegato: manca la chiave del servizio."
+msgstr "Storegentic is not connected yet: the service key is missing."
 
 #: src/Admin/Riquadro.php:85
 msgid "Collega ora"
-msgstr "Collega ora"
+msgstr "Connect now"
 
 #. translators: %s: il nome del contatore finito.
 #: src/Admin/Riquadro.php:104
 #, php-format
 msgid "Il piano ha finito: %s. Il servizio rifiuta le richieste."
-msgstr "Il piano ha finito: %s. Il servizio rifiuta le richieste."
+msgstr "The plan is used up: %s. The service is rejecting requests."
 
 #. translators: 1: nome del contatore, 2: quanti ne restano.
 #: src/Admin/Riquadro.php:113
 #, php-format
 msgid "Quasi finito: %1$s, ne restano %2$s."
-msgstr "Quasi finito: %1$s, ne restano %2$s."
+msgstr "Almost used up: %1$s, %2$s left."
 
 #. translators: 1: nome della funzione, 2: quante volte, 3: il messaggio del servizio.
 #: src/Admin/Riquadro.php:131
 #, php-format
 msgid "%1$s: il servizio non ha risposto %2$s volte. Ultimo messaggio: «%3$s»."
-msgstr "%1$s: il servizio non ha risposto %2$s volte. Ultimo messaggio: «%3$s»."
+msgstr "%1$s: the service failed to respond %2$s times. Last message: \"%3$s\"."
 
 #: src/Admin/Riquadro.php:143
 msgid "Tutto in ordine: il servizio risponde e il piano tiene."
-msgstr "Tutto in ordine: il servizio risponde e il piano tiene."
+msgstr "All good: the service responds and the plan has room left."
 
 #: src/Admin/Riquadro.php:177
 msgid "Questo mese non è ancora arrivata nessuna domanda."
-msgstr "Questo mese non è ancora arrivata nessuna domanda."
+msgstr "No questions yet this month."
 
 #: src/Admin/Riquadro.php:184
 #: src/Admin/viste/panoramica.php:146
 #: src/Admin/viste/statistiche.php:83
 msgid "Domande"
-msgstr "Domande"
+msgstr "Questions"
 
 #: src/Admin/Riquadro.php:185
 #: src/Admin/viste/panoramica.php:150
 #: src/Admin/viste/statistiche.php:84
 msgid "Senza risultati"
-msgstr "Senza risultati"
+msgstr "No results"
 
 #: src/Admin/Riquadro.php:186
 #: src/Admin/viste/panoramica.php:158
 msgid "Domande diverse"
-msgstr "Domande diverse"
+msgstr "Unique questions"
 
 #: src/Admin/Riquadro.php:215
 #: src/Admin/viste/panoramica.php:164
 msgid "Cercato e non trovato"
-msgstr "Cercato e non trovato"
+msgstr "Searched but not found"
 
 #. translators: %s: quante volte.
 #: src/Admin/Riquadro.php:226
@@ -171,530 +171,530 @@ msgstr "Cercato e non trovato"
 #, php-format
 msgid "%s volta"
 msgid_plural "%s volte"
-msgstr[0] "%s volta"
-msgstr[1] "%s volte"
+msgstr[0] "%s time"
+msgstr[1] "%s times"
 
 #: src/Admin/viste/aspetto.php:26
 msgid "L’aspetto si configura a servizio collegato: quali modalità mostrare dipende anche da quali il servizio dichiara."
-msgstr "L’aspetto si configura a servizio collegato: quali modalità mostrare dipende anche da quali il servizio dichiara."
+msgstr "You set the appearance once the service is connected: which modes to show also depends on which ones the service declares."
 
 #: src/Admin/viste/aspetto.php:35
 msgid "Colori"
-msgstr "Colori"
+msgstr "Colours"
 
 #: src/Admin/viste/aspetto.php:39
 msgid "Combinazione"
-msgstr "Combinazione"
+msgstr "Palette"
 
 #: src/Admin/viste/aspetto.php:65
 msgid "Sfondo"
-msgstr "Sfondo"
+msgstr "Background"
 
 #: src/Admin/viste/aspetto.php:66
 msgid "Superficie"
-msgstr "Superficie"
+msgstr "Surface"
 
 #: src/Admin/viste/aspetto.php:67
 msgid "Testo"
-msgstr "Testo"
+msgstr "Text"
 
 #: src/Admin/viste/aspetto.php:68
 msgid "Testo tenue"
-msgstr "Testo tenue"
+msgstr "Muted text"
 
 #: src/Admin/viste/aspetto.php:69
 msgid "Bordo"
-msgstr "Bordo"
+msgstr "Border"
 
 #: src/Admin/viste/aspetto.php:70
 msgid "Accento"
-msgstr "Accento"
+msgstr "Accent"
 
 #: src/Admin/viste/aspetto.php:71
 msgid "Sopra l’accento"
-msgstr "Sopra l’accento"
+msgstr "On accent"
 
 #: src/Admin/viste/aspetto.php:87
 msgid "Arrotondamento"
-msgstr "Arrotondamento"
+msgstr "Corner radius"
 
 #: src/Admin/viste/aspetto.php:101
 msgid "Anteprima"
-msgstr "Anteprima"
+msgstr "Preview"
 
 #: src/Admin/viste/aspetto.php:103
 msgid "Dimmi che cosa cerchi: ti propongo qualcosa."
-msgstr "Dimmi che cosa cerchi: ti propongo qualcosa."
+msgstr "Tell me what you are looking for and I will suggest something."
 
 #: src/Admin/viste/aspetto.php:104
 msgid "Un regalo sotto i 60 €"
-msgstr "Un regalo sotto i 60 €"
+msgstr "A gift under €60"
 
 #: src/Admin/viste/aspetto.php:108
 msgid "Nome del prodotto"
-msgstr "Nome del prodotto"
+msgstr "Product name"
 
 #: src/Admin/viste/aspetto.php:109
 #: src/Frontend/vista-ricerca.php:160
 msgid "Categoria"
-msgstr "Categoria"
+msgstr "Category"
 
 #: src/Admin/viste/aspetto.php:127
 msgid "Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. I numeri qui sopra misurano gli accostamenti che contano davvero."
-msgstr "Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. I numeri qui sopra misurano gli accostamenti che contano davvero."
+msgstr "Text must stand out from the background: below a ratio of 4.5:1 not everyone can read it. The numbers above measure the pairings that really matter."
 
 #: src/Admin/viste/aspetto.php:132
 msgid "Il pulsante e la finestra"
-msgstr "Il pulsante e la finestra"
+msgstr "The button and the window"
 
 #: src/Admin/viste/aspetto.php:136
 msgid "Che cosa offre la finestra"
-msgstr "Che cosa offre la finestra"
+msgstr "What the window offers"
 
 #: src/Admin/viste/aspetto.php:141
 msgid "Ricerca a parole"
-msgstr "Ricerca a parole"
+msgstr "Text search"
 
 #: src/Admin/viste/aspetto.php:141
 msgid "Chi sa che cosa vuole lo descrive e lo trova."
-msgstr "Chi sa che cosa vuole lo descrive e lo trova."
+msgstr "Someone who knows what they want describes it and finds it."
 
 #: src/Admin/viste/aspetto.php:142
 msgid "Ricerca con una foto"
-msgstr "Ricerca con una foto"
+msgstr "Image search"
 
 #: src/Admin/viste/aspetto.php:142
 msgid "Si carica una foto e si trova quello che le somiglia."
-msgstr "Si carica una foto e si trova quello che le somiglia."
+msgstr "Someone with a photo uploads it and finds what looks like it."
 
 #: src/Admin/viste/aspetto.php:143
 #: src/Frontend/Finestra.php:64
 msgid "Assistente"
-msgstr "Assistente"
+msgstr "Assistant"
 
 #: src/Admin/viste/aspetto.php:143
 msgid "Chi non sa che cosa vuole lo chiede a parole sue."
-msgstr "Chi non sa che cosa vuole lo chiede a parole sue."
+msgstr "Someone who does not know what they want asks for it in their own words."
 
 #: src/Admin/viste/aspetto.php:156
 msgid "(il servizio non la dichiara: non compare)"
-msgstr "(il servizio non la dichiara: non compare)"
+msgstr "(the service does not declare it: it is not shown)"
 
 #: src/Admin/viste/aspetto.php:161
 msgid "Una modalità compare solo se la vuoi tu e se il servizio la dichiara. Un comando che risponde «non disponibile» è peggio di un comando assente."
-msgstr "Una modalità compare solo se la vuoi tu e se il servizio la dichiara. Un comando che risponde «non disponibile» è peggio di un comando assente."
+msgstr "A mode appears only if you want it and the service declares it. A control that answers \"not available\" is worse than no control at all."
 
 #: src/Admin/viste/aspetto.php:165
 msgid "Posizione del pulsante"
-msgstr "Posizione del pulsante"
+msgstr "Button position"
 
 #: src/Admin/viste/aspetto.php:168
 msgid "In basso a destra"
-msgstr "In basso a destra"
+msgstr "Bottom right"
 
 #: src/Admin/viste/aspetto.php:169
 msgid "In basso a sinistra"
-msgstr "In basso a sinistra"
+msgstr "Bottom left"
 
 #: src/Admin/viste/aspetto.php:174
 msgid "Testo del pulsante"
-msgstr "Testo del pulsante"
+msgstr "Button text"
 
 #: src/Admin/viste/aspetto.php:179
 msgid "Lasciandolo vuoto il testo si adatta alle modalità accese."
-msgstr "Lasciandolo vuoto il testo si adatta alle modalità accese."
+msgstr "Leave it empty and the text adapts to the modes you switch on."
 
 #: src/Admin/viste/aspetto.php:183
 msgid "Testo nel campo"
-msgstr "Testo nel campo"
+msgstr "Field text"
 
 #: src/Admin/viste/aspetto.php:187
 #: src/Frontend/Finestra.php:258
 #: src/Frontend/Interfaccia.php:142
 #: src/Frontend/vista-ricerca.php:76
 msgid "Che cosa stai cercando?"
-msgstr "Che cosa stai cercando?"
+msgstr "What are you looking for?"
 
 #: src/Admin/viste/aspetto.php:188
 msgid "Un esempio concreto fa capire cosa si può chiedere meglio di una domanda generica."
-msgstr "Un esempio concreto fa capire cosa si può chiedere meglio di una domanda generica."
+msgstr "A concrete example shows what you can ask better than a generic question does."
 
 #: src/Admin/viste/aspetto.php:192
 msgid "Prima frase dell’assistente"
-msgstr "Prima frase dell’assistente"
+msgstr "Assistant’s first sentence"
 
 #: src/Admin/viste/aspetto.php:196
 #: src/Frontend/Interfaccia.php:143
 msgid "Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa."
-msgstr "Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa."
+msgstr "Tell me what you are looking for or who the gift is for, and I will suggest something."
 
 #: src/Admin/viste/aspetto.php:197
 msgid "È la frase che si legge appena si apre l’assistente. Lasciala vuota per quella predefinita."
-msgstr "È la frase che si legge appena si apre l’assistente. Lasciala vuota per quella predefinita."
+msgstr "This is the sentence people read as soon as the assistant opens. Leave it empty for the default one."
 
 #: src/Admin/viste/aspetto.php:203
 msgid "Come si apre"
-msgstr "Come si apre"
+msgstr "How it opens"
 
 #: src/Admin/viste/aspetto.php:206
 msgid "È la scelta che cambia di più la sensazione del negozio, più dei colori. Una finestra al centro chiede attenzione; un cassetto lascia continuare a leggere."
-msgstr "È la scelta che cambia di più la sensazione del negozio, più dei colori. Una finestra al centro chiede attenzione; un cassetto lascia continuare a leggere."
+msgstr "This choice changes the feel of the shop more than the colours do. A window in the centre asks for attention; a drawer lets people carry on reading."
 
 #: src/Admin/viste/aspetto.php:211
 msgid "Forma della finestra"
-msgstr "Forma della finestra"
+msgstr "Window shape"
 
 #: src/Admin/viste/aspetto.php:223
 msgid "Sul telefono «al centro» e «a lato» diventano schermo pieno: un cassetto largo quanto lo schermo è lo schermo. «Dal basso» invece resta dal basso, perché è lì che arriva il pollice."
-msgstr "Sul telefono «al centro» e «a lato» diventano schermo pieno: un cassetto largo quanto lo schermo è lo schermo. «Dal basso» invece resta dal basso, perché è lì che arriva il pollice."
+msgstr "On a phone, \"in the centre\" and \"at the side\" become full screen: a drawer as wide as the screen is the screen. \"From the bottom\" stays at the bottom, because that is where the thumb reaches."
 
 #: src/Admin/viste/aspetto.php:227
 msgid "Quanto è grande"
-msgstr "Quanto è grande"
+msgstr "How big it is"
 
 #: src/Admin/viste/aspetto.php:230
 msgid "Larghezza"
-msgstr "Larghezza"
+msgstr "Width"
 
 #: src/Admin/viste/aspetto.php:233
 msgid "decimi di rem — 680 fa 68rem, circa 1088 px"
-msgstr "decimi di rem — 680 fa 68rem, circa 1088 px"
+msgstr "tenths of a rem — 680 makes 68rem, about 1088 px"
 
 #: src/Admin/viste/aspetto.php:236
 msgid "Altezza"
-msgstr "Altezza"
+msgstr "Height"
 
 #: src/Admin/viste/aspetto.php:240
 msgid "Sono massimi: su uno schermo più stretto la finestra si adatta da sola e non esce mai dai bordi."
-msgstr "Sono massimi: su uno schermo più stretto la finestra si adatta da sola e non esce mai dai bordi."
+msgstr "These are maximums: on a narrower screen the window adapts by itself and never goes past the edges."
 
 #: src/Admin/viste/aspetto.php:244
 msgid "Il comando che apre"
-msgstr "Il comando che apre"
+msgstr "The control that opens it"
 
 #: src/Admin/viste/aspetto.php:256
 msgid "Distanza dal bordo"
-msgstr "Distanza dal bordo"
+msgstr "Distance from the edge"
 
 #: src/Admin/viste/aspetto.php:259
 msgid "alzalo se il sito ha già un comando in basso"
-msgstr "alzalo se il sito ha già un comando in basso"
+msgstr "raise it if the site already has a control at the bottom"
 
 #: src/Admin/viste/aspetto.php:265
 msgid "Come si legge"
-msgstr "Come si legge"
+msgstr "How it reads"
 
 #: src/Admin/viste/aspetto.php:269
 msgid "Densità"
-msgstr "Densità"
+msgstr "Density"
 
 #: src/Admin/viste/aspetto.php:283
 msgid "Larghezza minima di una scheda"
-msgstr "Larghezza minima di una scheda"
+msgstr "Minimum width of a card"
 
 #: src/Admin/viste/aspetto.php:287
 msgid "Da qui si decidono le colonne: più stretta, più prodotti in riga. Non serve indicare un numero di colonne, che sarebbe sbagliato a ogni altra larghezza di schermo."
-msgstr "Da qui si decidono le colonne: più stretta, più prodotti in riga. Non serve indicare un numero di colonne, che sarebbe sbagliato a ogni altra larghezza di schermo."
+msgstr "This decides the columns: the narrower it is, the more products in a row. There is no need to give a number of columns, which would be wrong at every other screen width."
 
 #: src/Admin/viste/aspetto.php:291
 msgid "Carattere dei titoli"
-msgstr "Carattere dei titoli"
+msgstr "Font for the titles"
 
 #: src/Admin/viste/aspetto.php:298
 msgid "Nessun carattere si scarica da fuori: sono quelli già presenti nei dispositivi. Non fanno attendere il testo e non mandano l’indirizzo di chi visita a servizi di terze parti."
-msgstr "Nessun carattere si scarica da fuori: sono quelli già presenti nei dispositivi. Non fanno attendere il testo e non mandano l’indirizzo di chi visita a servizi di terze parti."
+msgstr "No font is downloaded from outside: these are the ones already on the devices. They do not make the text wait and they do not send the visitor’s address to third-party services."
 
 #: src/Admin/viste/aspetto.php:302
 msgid "Dietro la finestra"
-msgstr "Dietro la finestra"
+msgstr "Behind the window"
 
 #: src/Admin/viste/aspetto.php:305
 msgid "Quanto si copre la pagina"
-msgstr "Quanto si copre la pagina"
+msgstr "How much the page is covered"
 
 #: src/Admin/viste/aspetto.php:311
 msgid "Sfoca quello che sta dietro"
-msgstr "Sfoca quello che sta dietro"
+msgstr "Blur what is behind"
 
 #: src/Admin/viste/aspetto.php:313
 msgid "La finestra entra con un’animazione"
-msgstr "La finestra entra con un’animazione"
+msgstr "The window enters with an animation"
 
 #: src/Admin/viste/aspetto.php:314
 msgid "Chi ha chiesto meno animazioni al proprio dispositivo non le vede comunque: è una richiesta di accessibilità, non una preferenza."
-msgstr "Chi ha chiesto meno animazioni al proprio dispositivo non le vede comunque: è una richiesta di accessibilità, non una preferenza."
+msgstr "People who asked their device for fewer animations do not see them anyway: it is an accessibility request, not a preference."
 
 #: src/Admin/viste/collegamento.php:27
 msgid "Indirizzo del servizio"
-msgstr "Indirizzo del servizio"
+msgstr "Service address"
 
 #: src/Admin/viste/collegamento.php:36
 msgid "Gli indirizzi ufficiali sono già nell’elenco. Cambialo solo se Storegentic te ne ha dato un altro: tutti gli altri indirizzi li dichiara il servizio."
-msgstr "Gli indirizzi ufficiali sono già nell’elenco. Cambialo solo se Storegentic te ne ha dato un altro: tutti gli altri indirizzi li dichiara il servizio."
+msgstr "The official addresses are already in the list. Change it only if Storegentic gave you a different one: the service declares all the other addresses."
 
 #: src/Admin/viste/collegamento.php:37
 msgid "Prima di salvarlo viene provato: se non risponde, resta quello di prima e te lo diciamo, invece di spegnere la ricerca sul sito."
-msgstr "Prima di salvarlo viene provato: se non risponde, resta quello di prima e te lo diciamo, invece di spegnere la ricerca sul sito."
+msgstr "It is tested before it is saved: if it does not respond, the previous one stays and we tell you, instead of switching off search on the site."
 
 #: src/Admin/viste/collegamento.php:41
 msgid "Chiave"
-msgstr "Chiave"
+msgstr "Key"
 
 #: src/Admin/viste/collegamento.php:45
 msgid "Lascia vuoto per non cambiarla. La chiave resta sul server: non viene mai stampata nelle pagine pubbliche."
-msgstr "Lascia vuoto per non cambiarla. La chiave resta sul server: non viene mai stampata nelle pagine pubbliche."
+msgstr "Leave empty to keep it. The key stays on the server: it is never printed in public pages."
 
 #: src/Admin/viste/collegamento.php:49
 msgid "Attivo sul sito"
-msgstr "Attivo sul sito"
+msgstr "Active on the site"
 
 #: src/Admin/viste/collegamento.php:52
 msgid "Mostra la ricerca Storegentic ai visitatori"
-msgstr "Mostra la ricerca Storegentic ai visitatori"
+msgstr "Show Storegentic search to visitors"
 
 #: src/Admin/viste/collegamento.php:53
 msgid "Spegnendolo il servizio resta collegato e il catalogo resta sincronizzato, ma sul sito non compare nulla."
-msgstr "Spegnendolo il servizio resta collegato e il catalogo resta sincronizzato, ma sul sito non compare nulla."
+msgstr "Switch it off and the service stays connected and the catalogue stays in sync, but nothing appears on the site."
 
 #: src/Admin/viste/collegamento.php:63
 msgid "Cosa dichiara il servizio"
-msgstr "Cosa dichiara il servizio"
+msgstr "What the service declares"
 
 #: src/Admin/viste/collegamento.php:66
 msgid "Il plugin non conosce nessun indirizzo oltre a questo: quali funzioni esistono e dove stanno lo dichiara il servizio a ogni collegamento. Se qui manca qualcosa, manca sul servizio, non nel plugin."
-msgstr "Il plugin non conosce nessun indirizzo oltre a questo: quali funzioni esistono e dove stanno lo dichiara il servizio a ogni collegamento. Se qui manca qualcosa, manca sul servizio, non nel plugin."
+msgstr "The plugin knows no address other than this one: the service declares which features exist and where they are at every connection. If something is missing here, it is missing on the service, not in the plugin."
 
 #: src/Admin/viste/collegamento.php:72
 msgid "Funzioni accese"
-msgstr "Funzioni accese"
+msgstr "Features switched on"
 
 #: src/Admin/viste/collegamento.php:79
 msgid "Il servizio non dichiara alcuna funzione per questa chiave."
-msgstr "Il servizio non dichiara alcuna funzione per questa chiave."
+msgstr "The service declares no feature for this key."
 
 #: src/Admin/viste/collegamento.php:84
 msgid "Indirizzi dichiarati"
-msgstr "Indirizzi dichiarati"
+msgstr "Declared addresses"
 
 #: src/Admin/viste/collegamento.php:90
 msgid "Nessuno."
-msgstr "Nessuno."
+msgstr "None."
 
 #: src/Admin/viste/collegamento.php:103
 msgid "Identificativo di questa installazione"
-msgstr "Identificativo di questa installazione"
+msgstr "Identifier of this installation"
 
 #: src/Admin/viste/collegamento.php:106
 msgid "Serve a Storegentic per riconoscere questo sito. Non cambia se il sito cambia indirizzo."
-msgstr "Serve a Storegentic per riconoscere questo sito. Non cambia se il sito cambia indirizzo."
+msgstr "Storegentic uses it to recognise this site. It does not change if the site changes address."
 
 #: src/Admin/viste/collegamento.php:112
 #: src/Admin/viste/panoramica.php:117
 msgid "Verifica il collegamento"
-msgstr "Verifica il collegamento"
+msgstr "Check the connection"
 
 #: src/Admin/viste/contenuti.php:33
 msgid "I contenuti si sincronizzano a servizio collegato."
-msgstr "I contenuti si sincronizzano a servizio collegato."
+msgstr "Content syncs once the service is connected."
 
 #: src/Admin/viste/contenuti.php:43
 #: src/Admin/viste/contenuti.php:123
 msgid "Cosa mandare"
-msgstr "Cosa mandare"
+msgstr "What to send"
 
 #: src/Admin/viste/contenuti.php:46
 msgid "Su questo sito non c’è WooCommerce, quindi Storegentic non indicizza prodotti: legge i contenuti che scegli qui e risponde su quelli. È il modo di usarlo come base di conoscenza del sito."
-msgstr "Su questo sito non c’è WooCommerce, quindi Storegentic non indicizza prodotti: legge i contenuti che scegli qui e risponde su quelli. È il modo di usarlo come base di conoscenza del sito."
+msgstr "There is no WooCommerce on this site, so Storegentic does not index products: it reads the content you choose here and answers on that. This is how you use it as the knowledge base of the site."
 
 #: src/Admin/viste/contenuti.php:51
 msgid "Tipi di contenuto"
-msgstr "Tipi di contenuto"
+msgstr "Content types"
 
 #. translators: %s: quanti contenuti pubblicati ci sono di questo tipo.
 #: src/Admin/viste/contenuti.php:72
 #, php-format
 msgid "— %s pubblicati"
-msgstr "— %s pubblicati"
+msgstr "— %s published"
 
 #: src/Admin/viste/contenuti.php:80
 msgid "Solo i contenuti pubblici: mandare un tipo interno vorrebbe dire farlo comparire nei risultati con un indirizzo che non porta da nessuna parte."
-msgstr "Solo i contenuti pubblici: mandare un tipo interno vorrebbe dire farlo comparire nei risultati con un indirizzo che non porta da nessuna parte."
+msgstr "Public content only: sending an internal type would make it appear in the results with an address that leads nowhere."
 
 #: src/Admin/viste/contenuti.php:86
 #: src/Admin/viste/panoramica.php:91
 msgid "Sincronizzazione"
-msgstr "Sincronizzazione"
+msgstr "Sync"
 
 #: src/Admin/viste/contenuti.php:90
 msgid "Da sola"
-msgstr "Da sola"
+msgstr "On its own"
 
 #: src/Admin/viste/contenuti.php:93
 msgid "Sincronizza a intervalli regolari"
-msgstr "Sincronizza a intervalli regolari"
+msgstr "Sync at regular intervals"
 
 #: src/Admin/viste/contenuti.php:95
 msgid "Ogni"
-msgstr "Ogni"
+msgstr "Every"
 
 #: src/Admin/viste/contenuti.php:107
 msgid "Quanti per volta"
-msgstr "Quanti per volta"
+msgstr "How many at a time"
 
 #: src/Admin/viste/contenuti.php:115
 msgid "Non si cambia a sincronizzazione avviata: le pagine sono già calcolate sul valore attuale."
-msgstr "Non si cambia a sincronizzazione avviata: le pagine sono già calcolate sul valore attuale."
+msgstr "You cannot change this once a sync has started: the pages are already worked out on the current value."
 
 #: src/Admin/viste/contenuti.php:116
 msgid "Abbassalo se l’hosting interrompe le sincronizzazioni a metà."
-msgstr "Abbassalo se l’hosting interrompe le sincronizzazioni a metà."
+msgstr "Lower it if the hosting stops syncs halfway."
 
 #: src/Admin/viste/contenuti.php:126
 msgid "Includi i prodotti esauriti"
-msgstr "Includi i prodotti esauriti"
+msgstr "Include out-of-stock products"
 
 #: src/Admin/viste/contenuti.php:128
 msgid "Includi i prodotti privati"
-msgstr "Includi i prodotti privati"
+msgstr "Include private products"
 
 #: src/Admin/viste/contenuti.php:130
 msgid "Manda anche le categorie, con le loro descrizioni"
-msgstr "Manda anche le categorie, con le loro descrizioni"
+msgstr "Send the categories too, with their descriptions"
 
 #: src/Admin/viste/contenuti.php:135
 msgid "A fine sincronizzazione"
-msgstr "A fine sincronizzazione"
+msgstr "At the end of a sync"
 
 #: src/Admin/viste/contenuti.php:138
 msgid "Togli dall’indice quello che non c’è più sul sito"
-msgstr "Togli dall’indice quello che non c’è più sul sito"
+msgstr "Remove from the index what is no longer on the site"
 
 #: src/Admin/viste/contenuti.php:139
 msgid "Se una sincronizzazione si interrompe a metà, questa operazione resta sospesa e chiede conferma invece di svuotare l’indice."
-msgstr "Se una sincronizzazione si interrompe a metà, questa operazione resta sospesa e chiede conferma invece di svuotare l’indice."
+msgstr "If a sync stops halfway, this operation stays on hold and asks for confirmation instead of emptying the index."
 
 #: src/Admin/viste/contenuti.php:144
 msgid "Analisi e statistiche"
-msgstr "Analisi e statistiche"
+msgstr "Analytics and statistics"
 
 #: src/Admin/viste/contenuti.php:148
 msgid "Cosa se ne fa"
-msgstr "Cosa se ne fa"
+msgstr "What it is used for"
 
 #: src/Admin/viste/contenuti.php:152
 msgid "Manda a Storegentic cosa viene cercato e cosa viene aperto"
-msgstr "Manda a Storegentic cosa viene cercato e cosa viene aperto"
+msgstr "Send Storegentic what people search for and what they open"
 
 #: src/Admin/viste/contenuti.php:156
 msgid "Tieni il conto anche qui, per le statistiche di questo pannello"
-msgstr "Tieni il conto anche qui, per le statistiche di questo pannello"
+msgstr "Keep a count here too, for the statistics in this panel"
 
 #: src/Admin/viste/contenuti.php:158
 msgid "Sono due cose separate. La prima serve al servizio per migliorare le risposte. La seconda resta nel tuo database: Storegentic non offre un modo per rileggere quello che gli mandi."
-msgstr "Sono due cose separate. La prima serve al servizio per migliorare le risposte. La seconda resta nel tuo database: Storegentic non offre un modo per rileggere quello che gli mandi."
+msgstr "These are two separate things. The first helps the service improve its answers. The second stays in your database: Storegentic gives you no way to read back what you send it."
 
 #: src/Admin/viste/contenuti.php:168
 msgid "Adesso"
-msgstr "Adesso"
+msgstr "Now"
 
 #: src/Admin/viste/contenuti.php:172
 msgid "Esegui il passo successivo"
-msgstr "Esegui il passo successivo"
+msgstr "Run the next step"
 
 #: src/Admin/viste/contenuti.php:174
 #: src/Admin/viste/panoramica.php:119
 msgid "Sincronizza ora"
-msgstr "Sincronizza ora"
+msgstr "Sync now"
 
 #: src/Admin/viste/contenuti.php:183
 msgid "Annulla e azzera lo stato"
-msgstr "Annulla e azzera lo stato"
+msgstr "Cancel and reset the state"
 
 #: src/Admin/viste/cornice.php:53
 msgid "Sezioni di Storegentic"
-msgstr "Sezioni di Storegentic"
+msgstr "Storegentic sections"
 
 #: src/Admin/viste/cornice.php:64
 msgid "Impostazioni salvate."
-msgstr "Impostazioni salvate."
+msgstr "Settings saved."
 
 #: src/Admin/viste/cornice.php:85
 msgid "Inserisci la chiave del servizio per collegare Storegentic."
-msgstr "Inserisci la chiave del servizio per collegare Storegentic."
+msgstr "Enter the service key to connect Storegentic."
 
 #: src/Admin/viste/cornice.php:86
 msgid "Vai al collegamento"
-msgstr "Vai al collegamento"
+msgstr "Go to the connection"
 
 #: src/Admin/viste/cornice.php:92
 msgid "Non collegato."
-msgstr "Non collegato."
+msgstr "Not connected."
 
 #: src/Admin/viste/cornice.php:100
 msgid "Il piano ha finito."
-msgstr "Il piano ha finito."
+msgstr "The plan is used up."
 
 #. translators: 1: quanti se ne sono usati, 2: quanti ne consente il piano.
 #: src/Admin/viste/cornice.php:108
 #, php-format
 msgid "usate %1$s su %2$s."
-msgstr "usate %1$s su %2$s."
+msgstr "%1$s of %2$s used."
 
 #. translators: %s: la data che il servizio dichiara per il rinnovo.
 #: src/Admin/viste/cornice.php:124
 #, php-format
 msgid "Il servizio dichiara che i contatori si rinnovano il %s, cioè una data già passata: aspettare non li rimette a zero. Scrivi a Storegentic."
-msgstr "Il servizio dichiara che i contatori si rinnovano il %s, cioè una data già passata: aspettare non li rimette a zero. Scrivi a Storegentic."
+msgstr "The service says the counters renew on %s, a date that has already passed: waiting does not reset them. Write to Storegentic."
 
 #. translators: %s: data del rinnovo dei contatori.
 #: src/Admin/viste/cornice.php:134
 #, php-format
 msgid "I contatori si rinnovano il %s."
-msgstr "I contatori si rinnovano il %s."
+msgstr "The counters renew on %s."
 
 #: src/Admin/viste/cornice.php:143
 msgid "Nel frattempo la ricerca del sito continua a funzionare sui contenuti del sito: trova le parole nei nomi e nelle descrizioni, non i concetti."
-msgstr "Nel frattempo la ricerca del sito continua a funzionare sui contenuti del sito: trova le parole nei nomi e nelle descrizioni, non i concetti."
+msgstr "In the meantime the site search keeps working on the site content: it finds words in names and descriptions, not concepts."
 
 #: src/Admin/viste/cornice.php:145
 msgid "La ricerca del sito mostra un errore ai visitatori."
-msgstr "La ricerca del sito mostra un errore ai visitatori."
+msgstr "The site search shows an error to visitors."
 
 #: src/Admin/viste/cornice.php:146
 msgid "Accendi il ripiego"
-msgstr "Accendi il ripiego"
+msgstr "Turn on the fallback"
 
 #: src/Admin/viste/panoramica.php:32
 msgid "Ferma"
-msgstr "Ferma"
+msgstr "Stop"
 
 #: src/Admin/viste/panoramica.php:33
 msgid "In corso"
-msgstr "In corso"
+msgstr "In progress"
 
 #: src/Admin/viste/panoramica.php:34
 msgid "Inviato tutto, manca la chiusura"
-msgstr "Inviato tutto, manca la chiusura"
+msgstr "All sent, not closed yet"
 
 #: src/Admin/viste/panoramica.php:35
 msgid "Fallita"
-msgstr "Fallita"
+msgstr "Failed"
 
 #: src/Admin/viste/panoramica.php:47
 msgid "Attivo"
-msgstr "Attivo"
+msgstr "Active"
 
 #: src/Admin/viste/panoramica.php:47
 msgid "Non collegato"
-msgstr "Non collegato"
+msgstr "Not connected"
 
 #: src/Admin/viste/panoramica.php:55
 msgid "Visibile sul sito"
-msgstr "Visibile sul sito"
+msgstr "Visible on the site"
 
 #: src/Admin/viste/panoramica.php:57
 msgid "Sì"
-msgstr "Sì"
+msgstr "Yes"
 
 #: src/Admin/viste/panoramica.php:57
 msgid "No"
@@ -702,82 +702,82 @@ msgstr "No"
 
 #: src/Admin/viste/panoramica.php:65
 msgid "nessuna modalità attiva"
-msgstr "nessuna modalità attiva"
+msgstr "no mode active"
 
 #: src/Admin/viste/panoramica.php:71
 msgid "Prodotti"
-msgstr "Prodotti"
+msgstr "Products"
 
 #. translators: %s: quanto tempo fa.
 #: src/Admin/viste/panoramica.php:81
 #, php-format
 msgid "sincronizzati %s fa"
-msgstr "sincronizzati %s fa"
+msgstr "synced %s ago"
 
 #: src/Admin/viste/panoramica.php:85
 msgid "mai sincronizzati"
-msgstr "mai sincronizzati"
+msgstr "never synced"
 
 #. translators: 1: pagina corrente, 2: pagine totali.
 #: src/Admin/viste/panoramica.php:100
 #, php-format
 msgid "pagina %1$d di %2$d"
-msgstr "pagina %1$d di %2$d"
+msgstr "page %1$d of %2$d"
 
 #: src/Admin/viste/panoramica.php:105
 msgid "ogni giorno"
-msgstr "ogni giorno"
+msgstr "every day"
 
 #: src/Admin/viste/panoramica.php:113
 msgid "Ultimo errore di sincronizzazione:"
-msgstr "Ultimo errore di sincronizzazione:"
+msgstr "Last sync error:"
 
 #: src/Admin/viste/panoramica.php:125
 msgid "Questo mese"
-msgstr "Questo mese"
+msgstr "This month"
 
 #: src/Admin/viste/panoramica.php:141
 msgid "Ancora nessuna ricerca da mostrare. Le prime compaiono qui: cosa cercano i visitatori, cosa non trovano, e quanto ci mette il servizio a rispondere."
-msgstr "Ancora nessuna ricerca da mostrare. Le prime compaiono qui: cosa cercano i visitatori, cosa non trovano, e quanto ci mette il servizio a rispondere."
+msgstr "No searches to show yet. The first ones appear here: what visitors search for, what they do not find, and how long the service takes to respond."
 
 #: src/Admin/viste/panoramica.php:154
 #: src/Admin/viste/statistiche.php:85
 msgid "Servizio muto"
-msgstr "Servizio muto"
+msgstr "Service silent"
 
 #: src/Admin/viste/panoramica.php:183
 msgid "Vedi tutte le statistiche"
-msgstr "Vedi tutte le statistiche"
+msgstr "See all statistics"
 
 #: src/Admin/viste/parti/consumi.php:26
 msgid "Piano e consumi"
-msgstr "Piano e consumi"
+msgstr "Plan and usage"
 
 #: src/Admin/viste/parti/consumi.php:33
 msgid "Questi numeri li dichiara Storegentic a ogni collegamento. Nelle statistiche c’è invece com’è andata davvero: le due cose possono non coincidere."
-msgstr "Questi numeri li dichiara Storegentic a ogni collegamento. Nelle statistiche c’è invece com’è andata davvero: le due cose possono non coincidere."
+msgstr "Storegentic declares these numbers at every connection. The statistics show what actually happened: the two can differ."
 
 #: src/Admin/viste/parti/consumi.php:40
 msgid "Cosa"
-msgstr "Cosa"
+msgstr "What"
 
 #: src/Admin/viste/parti/consumi.php:41
 msgid "Usato"
-msgstr "Usato"
+msgstr "Used"
 
 #: src/Admin/viste/parti/consumi.php:42
 msgid "Restano"
-msgstr "Restano"
+msgstr "Left"
 
 #: src/Admin/viste/parti/consumi.php:43
 msgid "Quanto ne resta"
-msgstr "Quanto ne resta"
+msgstr "How much is left"
 
 #. translators: 1: quanti usati, 2: quanti ne consente il piano.
 #: src/Admin/viste/parti/consumi.php:59
 #, php-format
 msgid "%1$s di %2$s"
-msgstr "%1$s di %2$s"
+msgstr "%1$s of %2$s"
 
 #. translators: %d: percentuale rimasta.
 #: src/Admin/viste/parti/consumi.php:84
@@ -787,75 +787,75 @@ msgstr "%d%%"
 
 #: src/Admin/viste/parti/sincronizzazione.php:28
 msgid "Riconciliazione sospesa."
-msgstr "Riconciliazione sospesa."
+msgstr "Reconciliation on hold."
 
 #: src/Admin/viste/parti/sincronizzazione.php:31
 msgid "La verifica non ha riportato quanti elementi ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. Conferma solo se sei sicuro che tutto sia stato spedito."
-msgstr "La verifica non ha riportato quanti elementi ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. Conferma solo se sei sicuro che tutto sia stato spedito."
+msgstr "The check did not report how many items are in the index, so there is no way to know how many would be removed. Confirm only if you are sure that everything was sent."
 
 #. translators: 1: elementi che verrebbero rimossi, 2: elementi in indice.
 #: src/Admin/viste/parti/sincronizzazione.php:35
 #, php-format
 msgid "Toglierebbe %1$d elementi su %2$d dall’indice. Se si sono davvero ridotti tanto, conferma; altrimenti controlla la sincronizzazione."
-msgstr "Toglierebbe %1$d elementi su %2$d dall’indice. Se si sono davvero ridotti tanto, conferma; altrimenti controlla la sincronizzazione."
+msgstr "This would remove %1$d items out of %2$d from the index. If they really dropped that much, confirm; otherwise check the sync."
 
 #: src/Admin/viste/parti/sincronizzazione.php:42
 msgid "Confermo, procedi"
-msgstr "Confermo, procedi"
+msgstr "Confirm and continue"
 
 #: src/Admin/viste/parti/sincronizzazione.php:49
 msgid "Ultime operazioni"
-msgstr "Ultime operazioni"
+msgstr "Recent operations"
 
 #: src/Admin/viste/ricerca.php:35
 msgid "La ricerca si configura a servizio collegato: quanto si può chiedere lo dichiara il servizio."
-msgstr "La ricerca si configura a servizio collegato: quanto si può chiedere lo dichiara il servizio."
+msgstr "You set up the search once the service is connected: the service declares how much you can ask for."
 
 #: src/Admin/viste/ricerca.php:46
 msgid "Dove vanno i risultati"
-msgstr "Dove vanno i risultati"
+msgstr "Where the results go"
 
 #: src/Admin/viste/ricerca.php:50
 msgid "Risultati della ricerca a parole"
-msgstr "Risultati della ricerca a parole"
+msgstr "Text search results"
 
 #: src/Admin/viste/ricerca.php:55
 msgid "Nella pagina dei risultati"
-msgstr "Nella pagina dei risultati"
+msgstr "On the results page"
 
 #. translators: %s: l'indirizzo della pagina dei risultati.
 #: src/Admin/viste/ricerca.php:56
 #, php-format
 msgid "un indirizzo vero (%s): si condivide, il tasto Indietro funziona, c’è spazio per i filtri."
-msgstr "un indirizzo vero (%s): si condivide, il tasto Indietro funziona, c’è spazio per i filtri."
+msgstr "a real address (%s): you can share it, the Back button works, and there is room for filters."
 
 #: src/Admin/viste/ricerca.php:60
 msgid "Dentro la finestra"
-msgstr "Dentro la finestra"
+msgstr "Inside the window"
 
 #: src/Admin/viste/ricerca.php:61
 msgid "niente pagine in più nel sito: il widget basta a sé stesso."
-msgstr "niente pagine in più nel sito: il widget basta a sé stesso."
+msgstr "no extra pages on the site: the widget stands on its own."
 
 #: src/Admin/viste/ricerca.php:64
 msgid "La ricerca con la foto e l’assistente restano sempre nella finestra: una foto non si può mettere in un indirizzo, e una conversazione non è una pagina."
-msgstr "La ricerca con la foto e l’assistente restano sempre nella finestra: una foto non si può mettere in un indirizzo, e una conversazione non è una pagina."
+msgstr "Image search and the assistant always stay in the window: you cannot put a photo in an address, and a conversation is not a page."
 
 #: src/Admin/viste/ricerca.php:68
 msgid "Ricerca del sito"
-msgstr "Ricerca del sito"
+msgstr "Site search"
 
 #: src/Admin/viste/ricerca.php:71
 msgid "Sostituisci la ricerca del tema con quella di Storegentic"
-msgstr "Sostituisci la ricerca del tema con quella di Storegentic"
+msgstr "Replace the theme search with Storegentic search"
 
 #: src/Admin/viste/ricerca.php:72
 msgid "La lente e il campo di ricerca del tema apriranno la ricerca di Storegentic invece di quella di WordPress. Se il tema usa un markup particolare, il filtro storegentic_inneschi_ricerca permette di indicarlo."
-msgstr "La lente e il campo di ricerca del tema apriranno la ricerca di Storegentic invece di quella di WordPress. Se il tema usa un markup particolare, il filtro storegentic_inneschi_ricerca permette di indicarlo."
+msgstr "The theme’s search icon and search field open Storegentic search instead of the WordPress one. If the theme uses unusual markup, the storegentic_inneschi_ricerca filter lets you point to it."
 
 #: src/Admin/viste/ricerca.php:76
 msgid "Dove compare"
-msgstr "Dove compare"
+msgstr "Where it appears"
 
 #: src/Admin/viste/ricerca.php:81
 msgid "Home"
@@ -863,343 +863,343 @@ msgstr "Home"
 
 #: src/Admin/viste/ricerca.php:82
 msgid "Catalogo e categorie"
-msgstr "Catalogo e categorie"
+msgstr "Catalogue and categories"
 
 #: src/Admin/viste/ricerca.php:83
 msgid "Schede prodotto"
-msgstr "Schede prodotto"
+msgstr "Product pages"
 
 #: src/Admin/viste/ricerca.php:84
 msgid "Carrello"
-msgstr "Carrello"
+msgstr "Cart"
 
 #: src/Admin/viste/ricerca.php:96
 msgid "Nessuna scelta significa: ovunque."
-msgstr "Nessuna scelta significa: ovunque."
+msgstr "No selection means: everywhere."
 
 #: src/Admin/viste/ricerca.php:101
 msgid "Come cerca"
-msgstr "Come cerca"
+msgstr "How it searches"
 
 #: src/Admin/viste/ricerca.php:104
 msgid "Questi sono i parametri che il servizio accetta a ogni richiesta, con i valori che applica di suo. Lasciando un campo vuoto si continua a seguire il servizio: se un giorno cambia il proprio valore, questo sito lo segue senza che nessuno tocchi niente."
-msgstr "Questi sono i parametri che il servizio accetta a ogni richiesta, con i valori che applica di suo. Lasciando un campo vuoto si continua a seguire il servizio: se un giorno cambia il proprio valore, questo sito lo segue senza che nessuno tocchi niente."
+msgstr "These are the parameters the service accepts with every request, with the values it applies on its own. Leave a field empty to keep following the service: if it changes its own value one day, this site follows it and nobody has to touch anything."
 
 #: src/Admin/viste/ricerca.php:109
 msgid "Quanti risultati al massimo"
-msgstr "Quanti risultati al massimo"
+msgstr "Maximum number of results"
 
 #. translators: 1: quanti ne chiede il servizio di suo, 2: il tetto dichiarato.
 #: src/Admin/viste/ricerca.php:119
 #, php-format
 msgid "Il servizio ne manda %1$d di suo, e ne accetta al massimo %2$d. Abbassarlo rende la ricerca più veloce e i filtri meno utili."
-msgstr "Il servizio ne manda %1$d di suo, e ne accetta al massimo %2$d. Abbassarlo rende la ricerca più veloce e i filtri meno utili."
+msgstr "The service sends %1$d on its own, and accepts %2$d at most. A lower number makes the search faster and the filters less useful."
 
 #: src/Admin/viste/ricerca.php:130
 msgid "Quanto devono somigliare"
-msgstr "Quanto devono somigliare"
+msgstr "How similar they must be"
 
 #. translators: %s: la soglia che il servizio applica di suo.
 #: src/Admin/viste/ricerca.php:139
 #, php-format
 msgid "Da 0 a 1. Il servizio usa %s. Un numero più basso allarga la rete e trova di più, anche cose meno pertinenti; più alto stringe, e certe domande tornano vuote."
-msgstr "Da 0 a 1. Il servizio usa %s. Un numero più basso allarga la rete e trova di più, anche cose meno pertinenti; più alto stringe, e certe domande tornano vuote."
+msgstr "From 0 to 1. The service uses %s. A lower number casts a wider net and finds more, including less relevant things; a higher one narrows it, and some questions come back empty."
 
 #: src/Admin/viste/ricerca.php:150
 msgid "Con la foto: quanti risultati"
-msgstr "Con la foto: quanti risultati"
+msgstr "With a photo: how many results"
 
 #: src/Admin/viste/ricerca.php:161
 msgid "Con la foto: quanto devono somigliare"
-msgstr "Con la foto: quanto devono somigliare"
+msgstr "With a photo: how similar they must be"
 
 #: src/Admin/viste/ricerca.php:166
 msgid "Per le foto il servizio tiene una soglia più bassa che per le parole: due oggetti si somigliano in modo meno netto di due frasi."
-msgstr "Per le foto il servizio tiene una soglia più bassa che per le parole: due oggetti si somigliano in modo meno netto di due frasi."
+msgstr "For photos the service keeps a lower threshold than for words: two objects resemble each other less sharply than two sentences."
 
 #: src/Admin/viste/ricerca.php:173
 msgid "Mentre si scrive"
-msgstr "Mentre si scrive"
+msgstr "While you type"
 
 #: src/Admin/viste/ricerca.php:177
 msgid "Suggerimenti immediati"
-msgstr "Suggerimenti immediati"
+msgstr "Instant suggestions"
 
 #: src/Admin/viste/ricerca.php:182
 msgid "Chiedi i suggerimenti anche al servizio, non solo al sito"
-msgstr "Chiedi i suggerimenti anche al servizio, non solo al sito"
+msgstr "Ask the service for suggestions too, not just the site"
 
 #: src/Admin/viste/ricerca.php:185
 msgid "Il sito conosce i titoli e le categorie; il servizio conosce anche i marchi. Insieme rispondono in un decimo di secondo e non consumano il piano."
-msgstr "Il sito conosce i titoli e le categorie; il servizio conosce anche i marchi. Insieme rispondono in un decimo di secondo e non consumano il piano."
+msgstr "The site knows the titles and the categories; the service also knows the brands. Together they respond in a tenth of a second and do not use up the plan."
 
 #: src/Admin/viste/ricerca.php:187
 msgid "Il servizio non dichiara questa funzione: i suggerimenti arrivano solo dal sito. Non c’è niente da sistemare qui."
-msgstr "Il servizio non dichiara questa funzione: i suggerimenti arrivano solo dal sito. Non c’è niente da sistemare qui."
+msgstr "The service does not declare this feature: the suggestions come from the site only. There is nothing to fix here."
 
 #: src/Admin/viste/ricerca.php:193
 msgid "Se il servizio non risponde"
-msgstr "Se il servizio non risponde"
+msgstr "If the service does not respond"
 
 #: src/Admin/viste/ricerca.php:197
 msgid "Ripiego"
-msgstr "Ripiego"
+msgstr "Fallback"
 
 #: src/Admin/viste/ricerca.php:200
 msgid "Cerca nei contenuti del sito quando il servizio non risponde"
-msgstr "Cerca nei contenuti del sito quando il servizio non risponde"
+msgstr "Search the site content when the service does not respond"
 
 #: src/Admin/viste/ricerca.php:201
 msgid "Succede a piano finito, durante una manutenzione o se la rete cade. Il ripiego cerca le parole nei nomi e nelle descrizioni brevi: trova meno cose della ricerca intelligente, ma il visitatore vede dei risultati invece di un errore."
-msgstr "Succede a piano finito, durante una manutenzione o se la rete cade. Il ripiego cerca le parole nei nomi e nelle descrizioni brevi: trova meno cose della ricerca intelligente, ma il visitatore vede dei risultati invece di un errore."
+msgstr "This happens when the plan is used up, during maintenance, or if the network goes down. The fallback looks for words in names and short descriptions: it finds less than the semantic search, but the visitor sees results instead of an error."
 
 #: src/Admin/viste/ricerca.php:202
 msgid "Quando entra in funzione lo dichiara a schermo: i risultati dicono che arrivano dai contenuti del sito."
-msgstr "Quando entra in funzione lo dichiara a schermo: i risultati dicono che arrivano dai contenuti del sito."
+msgstr "When it starts, it says so on screen: the results state that they come from the site content."
 
 #: src/Admin/viste/statistiche.php:54
 msgid "Le statistiche sono spente: non si sta contando niente."
-msgstr "Le statistiche sono spente: non si sta contando niente."
+msgstr "The statistics are off: nothing gets counted."
 
 #: src/Admin/viste/statistiche.php:55
 msgid "Accendile"
-msgstr "Accendile"
+msgstr "Turn them on"
 
 #: src/Admin/viste/statistiche.php:60
 msgid "Ancora niente da mostrare. Le prime ricerche dei clienti compaiono qui: cosa cercano, cosa non trovano, e quanto ci mette il servizio a rispondere."
-msgstr "Ancora niente da mostrare. Le prime ricerche dei clienti compaiono qui: cosa cercano, cosa non trovano, e quanto ci mette il servizio a rispondere."
+msgstr "Nothing to show yet. The first customer searches appear here: what they search for, what they do not find, and how long the service takes to respond."
 
 #: src/Admin/viste/statistiche.php:82
 msgid "Funzione"
-msgstr "Funzione"
+msgstr "Feature"
 
 #: src/Admin/viste/statistiche.php:86
 msgid "Tempo medio"
-msgstr "Tempo medio"
+msgstr "Average time"
 
 #. translators: 1: data e ora, 2: il messaggio del servizio.
 #: src/Admin/viste/statistiche.php:100
 #, php-format
 msgid "Ultimo errore il %1$s: %2$s"
-msgstr "Ultimo errore il %1$s: %2$s"
+msgstr "Last error on %1$s: %2$s"
 
 #: src/Admin/viste/statistiche.php:129
 msgid "«Senza risultati» conta le domande a cui il cliente non ha visto nulla. «Servizio muto» conta le volte in cui Storegentic non ha risposto: le due colonne possono non coincidere, perché con il ripiego acceso il cliente vede lo stesso i prodotti del catalogo. Il tempo medio non conta le risposte già in cache, che arrivano subito."
-msgstr "«Senza risultati» conta le domande a cui il cliente non ha visto nulla. «Servizio muto» conta le volte in cui Storegentic non ha risposto: le due colonne possono non coincidere, perché con il ripiego acceso il cliente vede lo stesso i prodotti del catalogo. Il tempo medio non conta le risposte già in cache, che arrivano subito."
+msgstr "\"No results\" counts the questions where the customer saw nothing. \"Service silent\" counts the times Storegentic did not respond: the two columns can differ, because with the fallback on the customer still sees products from the catalogue. The average time does not count responses already in cache, which arrive at once."
 
 #: src/Admin/viste/statistiche.php:133
 msgid "Cosa cercano e non trovano"
-msgstr "Cosa cercano e non trovano"
+msgstr "What customers search for and do not find"
 
 #: src/Admin/viste/statistiche.php:135
 msgid "È l’elenco più utile di questa pagina. Ogni riga è un cliente che ha cercato e non ha avuto niente: a volte manca il prodotto, più spesso c’è ma si chiama in un altro modo."
-msgstr "È l’elenco più utile di questa pagina. Ogni riga è un cliente che ha cercato e non ha avuto niente: a volte manca il prodotto, più spesso c’è ma si chiama in un altro modo."
+msgstr "This is the most useful list on this page. Every row is a customer who searched and got nothing: sometimes the product is missing, more often it is there under another name."
 
 #: src/Admin/viste/statistiche.php:141
 #: src/Admin/viste/statistiche.php:163
 msgid "Cercato"
-msgstr "Cercato"
+msgstr "Searched"
 
 #: src/Admin/viste/statistiche.php:142
 msgid "Volte a vuoto"
-msgstr "Volte a vuoto"
+msgstr "Times empty"
 
 #: src/Admin/viste/statistiche.php:158
 msgid "Cosa cercano di più"
-msgstr "Cosa cercano di più"
+msgstr "What customers search for most"
 
 #: src/Admin/viste/statistiche.php:164
 msgid "Volte"
-msgstr "Volte"
+msgstr "Times"
 
 #: src/Admin/viste/statistiche.php:165
 msgid "Di cui a vuoto"
-msgstr "Di cui a vuoto"
+msgstr "Of which empty"
 
 #: src/Admin/viste/statistiche.php:184
 msgid "Cosa si apre dai risultati"
-msgstr "Cosa si apre dai risultati"
+msgstr "What customers open from the results"
 
 #: src/Admin/viste/statistiche.php:189
 msgid "Prodotto"
-msgstr "Prodotto"
+msgstr "Product"
 
 #: src/Admin/viste/statistiche.php:190
 msgid "Aperture"
-msgstr "Aperture"
+msgstr "Opens"
 
 #: src/Admin/viste/statistiche.php:212
 msgid "(non più a catalogo)"
-msgstr "(non più a catalogo)"
+msgstr "(no longer in the catalogue)"
 
 #. translators: %s: quante domande non sono state contate.
 #: src/Admin/viste/statistiche.php:234
 #, php-format
 msgid "%s domande cercate una volta sola non sono nell’elenco: lo spazio riservato al mese era pieno."
-msgstr "%s domande cercate una volta sola non sono nell’elenco: lo spazio riservato al mese era pieno."
+msgstr "%s questions searched only once are not in the list: the space kept for the month was full."
 
 #. translators: %s: quante ricerche sono state contate ma non trascritte.
 #: src/Admin/viste/statistiche.php:242
 #, php-format
 msgid "%s ricerche contengono un indirizzo di posta o un numero lungo: sono contate, ma il testo non viene conservato."
-msgstr "%s ricerche contengono un indirizzo di posta o un numero lungo: sono contate, ma il testo non viene conservato."
+msgstr "%s searches contain an email address or a long number: they are counted, but the text is not kept."
 
 #: src/Admin/viste/statistiche.php:253
 msgid "Cancella le statistiche"
-msgstr "Cancella le statistiche"
+msgstr "Delete the statistics"
 
 #. translators: %d: per quanti mesi si conservano le statistiche.
 #: src/Admin/viste/statistiche.php:258
 #, php-format
 msgid "Si conservano %d mesi; il più vecchio se ne va da solo."
-msgstr "Si conservano %d mesi; il più vecchio se ne va da solo."
+msgstr "%d months are kept; the oldest one drops off on its own."
 
 #: src/Api/Client.php:93
 msgid "Manca la chiave del negozio."
-msgstr "Manca la chiave del negozio."
+msgstr "The shop key is missing."
 
 #: src/Api/Client.php:97
 msgid "Questo server non può leggere risposte in streaming."
-msgstr "Questo server non può leggere risposte in streaming."
+msgstr "This server cannot read streaming responses."
 
 #: src/Api/Client.php:162
 msgid "La risposta si è interrotta."
-msgstr "La risposta si è interrotta."
+msgstr "The answer stopped part-way."
 
 #: src/Api/Client.php:189
 msgid "Manca la chiave del negozio. Inseriscila nelle impostazioni di Storegentic."
-msgstr "Manca la chiave del negozio. Inseriscila nelle impostazioni di Storegentic."
+msgstr "The shop key is missing. Enter it in the Storegentic settings."
 
 #: src/Api/Client.php:262
 msgid "Storegentic non risponde."
-msgstr "Storegentic non risponde."
+msgstr "Storegentic is not responding."
 
 #: src/Api/Client.php:321
 msgid "Chiave rifiutata: controlla la chiave del negozio."
-msgstr "Chiave rifiutata: controlla la chiave del negozio."
+msgstr "Key rejected: check the shop key."
 
 #: src/Api/Client.php:323
 msgid "Questa chiave non ha i permessi per questa operazione."
-msgstr "Questa chiave non ha i permessi per questa operazione."
+msgstr "This key does not have permission for this operation."
 
 #: src/Api/Client.php:325
 msgid "Indirizzo non trovato sul servizio."
-msgstr "Indirizzo non trovato sul servizio."
+msgstr "Address not found on the service."
 
 #: src/Api/Client.php:327
 msgid "Limite del piano raggiunto: riprova più tardi."
-msgstr "Limite del piano raggiunto: riprova più tardi."
+msgstr "Plan limit reached: try again later."
 
 #. translators: %d: codice di stato HTTP.
 #: src/Api/Client.php:330
 #, php-format
 msgid "Storegentic ha risposto con un errore (%d)."
-msgstr "Storegentic ha risposto con un errore (%d)."
+msgstr "Storegentic responded with an error (%d)."
 
 #: src/Api/Client.php:348
 msgid "Storegentic ha risposto in un formato non atteso."
-msgstr "Storegentic ha risposto in un formato non atteso."
+msgstr "Storegentic responded in an unexpected format."
 
 #: src/Api/Contratto.php:70
 msgid "Inserisci la chiave del negozio per collegare Storegentic."
-msgstr "Inserisci la chiave del negozio per collegare Storegentic."
+msgstr "Enter the shop key to connect Storegentic."
 
 #: src/Api/Contratto.php:88
 msgid "Storegentic non risponde. Il collegamento verrà ritentato fra qualche minuto."
-msgstr "Storegentic non risponde. Il collegamento verrà ritentato fra qualche minuto."
+msgstr "Storegentic is not responding. The connection is retried in a few minutes."
 
 #: src/Api/Contratto.php:151
 #: src/Api/Contratto.php:162
 msgid "Il servizio ha risposto senza dichiarare capacità né indirizzi."
-msgstr "Il servizio ha risposto senza dichiarare capacità né indirizzi."
+msgstr "The service responded without declaring any capabilities or addresses."
 
 #. translators: 1: tipo di contenuto, 2: identificativo.
 #: src/Catalogo/Contenuti.php:165
 #, php-format
 msgid "%1$s numero %2$d"
-msgstr "%1$s numero %2$d"
+msgstr "%1$s number %2$d"
 
 #: src/Catalogo/Sincronizzazione.php:123
 msgid "Inserisci la chiave del negozio."
-msgstr "Inserisci la chiave del negozio."
+msgstr "Enter the shop key."
 
 #: src/Catalogo/Sincronizzazione.php:127
 msgid "Una sincronizzazione è già in corso."
-msgstr "Una sincronizzazione è già in corso."
+msgstr "A sync is already in progress."
 
 #: src/Catalogo/Sincronizzazione.php:133
 msgid "Il servizio non dichiara il caricamento del catalogo per questo negozio."
-msgstr "Il servizio non dichiara il caricamento del catalogo per questo negozio."
+msgstr "The service does not declare catalogue upload for this shop."
 
 #: src/Catalogo/Sincronizzazione.php:140
 msgid "Non ci sono prodotti da sincronizzare."
-msgstr "Non ci sono prodotti da sincronizzare."
+msgstr "There are no products to sync."
 
 #: src/Catalogo/Sincronizzazione.php:201
 msgid "Nessuna sincronizzazione in corso."
-msgstr "Nessuna sincronizzazione in corso."
+msgstr "No sync in progress."
 
 #: src/Catalogo/Sincronizzazione.php:213
 msgid "Il servizio non dichiara l'indirizzo per il caricamento del catalogo."
-msgstr "Il servizio non dichiara l'indirizzo per il caricamento del catalogo."
+msgstr "The service does not declare the address for the catalogue upload."
 
 #. translators: 1: numero di pagina, 2: messaggio d'errore.
 #: src/Catalogo/Sincronizzazione.php:279
 #, php-format
 msgid "Pagina %1$d non accettata: %2$s"
-msgstr "Pagina %1$d non accettata: %2$s"
+msgstr "Page %1$d not accepted: %2$s"
 
 #: src/Catalogo/Sincronizzazione.php:323
 msgid "La riconciliazione si esegue solo dopo che tutte le pagine sono state accettate."
-msgstr "La riconciliazione si esegue solo dopo che tutte le pagine sono state accettate."
+msgstr "Reconciliation runs only after all pages are accepted."
 
 #: src/Catalogo/Sincronizzazione.php:335
 msgid "Catalogo caricato. Il servizio non dichiara la riconciliazione: gli articoli rimossi restano in indice."
-msgstr "Catalogo caricato. Il servizio non dichiara la riconciliazione: gli articoli rimossi restano in indice."
+msgstr "Catalogue uploaded. The service does not declare reconciliation: the removed items stay in the index."
 
 #: src/Catalogo/Sincronizzazione.php:340
 msgid "Catalogo caricato. Potatura disattivata nelle impostazioni."
-msgstr "Catalogo caricato. Potatura disattivata nelle impostazioni."
+msgstr "Catalogue uploaded. Pruning is off in the settings."
 
 #. translators: %s: messaggio d'errore.
 #: src/Catalogo/Sincronizzazione.php:365
 #, php-format
 msgid "Verifica della riconciliazione fallita: %s"
-msgstr "Verifica della riconciliazione fallita: %s"
+msgstr "Reconciliation check failed: %s"
 
 #. translators: 1: SKU da cancellare, 2: SKU in catalogo.
 #: src/Catalogo/Sincronizzazione.php:414
 #, php-format
 msgid "La riconciliazione cancellerebbe %1$d prodotti su %2$d. Controlla la sincronizzazione prima di confermare."
-msgstr "La riconciliazione cancellerebbe %1$d prodotti su %2$d. Controlla la sincronizzazione prima di confermare."
+msgstr "Reconciliation would delete %1$d products out of %2$d. Check the sync before you confirm."
 
 #: src/Catalogo/Sincronizzazione.php:418
 msgid "La verifica non ha riportato quanti prodotti ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. La potatura resta sospesa."
-msgstr "La verifica non ha riportato quanti prodotti ci sono in indice, quindi non si può sapere quanti ne verrebbero tolti. La potatura resta sospesa."
+msgstr "The check did not report how many products are in the index. Thus there is no way to know how many would be removed. Pruning stays on hold."
 
 #. translators: %s: messaggio d'errore.
 #: src/Catalogo/Sincronizzazione.php:436
 #, php-format
 msgid "Riconciliazione fallita: %s"
-msgstr "Riconciliazione fallita: %s"
+msgstr "Reconciliation failed: %s"
 
 #. translators: 1: prodotti inviati, 2: prodotti rimossi dall'indice.
 #: src/Catalogo/Sincronizzazione.php:445
 #, php-format
 msgid "Sincronizzazione completata: %1$d prodotti inviati, %2$d rimossi dall'indice."
-msgstr "Sincronizzazione completata: %1$d prodotti inviati, %2$d rimossi dall'indice."
+msgstr "Sync complete: %1$d products sent, %2$d removed from the index."
 
 #: src/Frontend/Assistente.php:71
 msgid "Scrivi una domanda."
-msgstr "Scrivi una domanda."
+msgstr "Write a question."
 
 #: src/Frontend/Assistente.php:78
 msgid "L’assistente non è disponibile su questo negozio."
-msgstr "L’assistente non è disponibile su questo negozio."
+msgstr "The assistant is not available on this shop."
 
 #: src/Frontend/Assistente.php:96
 msgid "La risposta si è interrotta. Riprova."
-msgstr "La risposta si è interrotta. Riprova."
+msgstr "The answer stopped. Try again."
 
 #: src/Frontend/Finestra.php:56
 #: src/Frontend/Finestra.php:109
@@ -1207,409 +1207,409 @@ msgstr "La risposta si è interrotta. Riprova."
 #: src/Frontend/Interfaccia.php:230
 #: src/Frontend/vista-ricerca.php:90
 msgid "Cerca"
-msgstr "Cerca"
+msgstr "Search"
 
 #: src/Frontend/Finestra.php:60
 #: src/Frontend/vista-ricerca.php:87
 msgid "Foto"
-msgstr "Foto"
+msgstr "Photo"
 
 #: src/Frontend/Finestra.php:104
 #: src/Frontend/Pagina.php:190
 #: src/Frontend/vista-ricerca.php:68
 msgid "Cerca nel catalogo"
-msgstr "Cerca nel catalogo"
+msgstr "Search the catalogue"
 
 #: src/Frontend/Finestra.php:108
 msgid "Ti aiuto a scegliere"
-msgstr "Ti aiuto a scegliere"
+msgstr "I help you choose"
 
 #: src/Frontend/Finestra.php:167
 msgid "Come vuoi cercare"
-msgstr "Come vuoi cercare"
+msgstr "How do you want to search"
 
 #: src/Frontend/Finestra.php:192
 msgid "Ricomincia la conversazione"
-msgstr "Ricomincia la conversazione"
+msgstr "Start the conversation again"
 
 #: src/Frontend/Finestra.php:200
 #: src/Frontend/Interfaccia.php:229
 msgid "Chiudi"
-msgstr "Chiudi"
+msgstr "Close"
 
 #: src/Frontend/Finestra.php:251
 #: src/Frontend/vista-ricerca.php:74
 msgid "Che cosa cerchi"
-msgstr "Che cosa cerchi"
+msgstr "What are you looking for"
 
 #: src/Frontend/Finestra.php:261
 #: src/Frontend/Interfaccia.php:247
 msgid "Cancella"
-msgstr "Cancella"
+msgstr "Clear"
 
 #: src/Frontend/Finestra.php:277
 #: src/Frontend/Finestra.php:284
 msgid "Scegli una foto"
-msgstr "Scegli una foto"
+msgstr "Choose a photo"
 
 #: src/Frontend/Finestra.php:293
 msgid "Scrivi la tua domanda"
-msgstr "Scrivi la tua domanda"
+msgstr "Write your question"
 
 #: src/Frontend/Finestra.php:295
 msgid "Scrivi qui…"
-msgstr "Scrivi qui…"
+msgstr "Write here…"
 
 #: src/Frontend/Finestra.php:298
 msgid "Invia"
-msgstr "Invia"
+msgstr "Send"
 
 #: src/Frontend/Finestra.php:305
 msgid "Ferma la risposta"
-msgstr "Ferma la risposta"
+msgstr "Stop the answer"
 
 #: src/Frontend/Finestra.php:311
 msgid "Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio."
-msgstr "Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio."
+msgstr "An artificial intelligence answers. For orders, write or phone the shop."
 
 #: src/Frontend/Forma.php:65
 msgid "Al centro"
-msgstr "Al centro"
+msgstr "In the centre"
 
 #: src/Frontend/Forma.php:66
 msgid "Un foglio in mezzo allo schermo, sopra la pagina. Chiede attenzione: chi lo apre sta cercando, non leggendo."
-msgstr "Un foglio in mezzo allo schermo, sopra la pagina. Chiede attenzione: chi lo apre sta cercando, non leggendo."
+msgstr "A sheet in the middle of the screen, above the page. It asks for attention: the person who opens it is searching, not reading."
 
 #: src/Frontend/Forma.php:69
 msgid "A lato"
-msgstr "A lato"
+msgstr "At the side"
 
 #: src/Frontend/Forma.php:70
 msgid "Un cassetto che entra dal bordo e lascia vedere la pagina. Adatto a chi vuole che si continui a leggere mentre si cerca."
-msgstr "Un cassetto che entra dal bordo e lascia vedere la pagina. Adatto a chi vuole che si continui a leggere mentre si cerca."
+msgstr "A drawer that comes in from the edge and leaves the page visible. Good if you want people to keep reading while they search."
 
 #: src/Frontend/Forma.php:73
 msgid "Dal basso"
-msgstr "Dal basso"
+msgstr "From the bottom"
 
 #: src/Frontend/Forma.php:74
 msgid "Sale dal fondo, come nelle applicazioni. Sul telefono è il gesto più naturale, e il pollice arriva ai comandi."
-msgstr "Sale dal fondo, come nelle applicazioni. Sul telefono è il gesto più naturale, e il pollice arriva ai comandi."
+msgstr "It comes up from the bottom, as in apps. On the phone this is the most natural gesture, and the thumb reaches the controls."
 
 #: src/Frontend/Forma.php:77
 msgid "A tutto schermo"
-msgstr "A tutto schermo"
+msgstr "Full screen"
 
 #: src/Frontend/Forma.php:78
 msgid "Occupa tutto, su ogni dispositivo. Massimo spazio per le fotografie, nessuna distrazione intorno."
-msgstr "Occupa tutto, su ogni dispositivo. Massimo spazio per le fotografie, nessuna distrazione intorno."
+msgstr "It fills everything, on every device. Maximum room for the photographs, no distractions around."
 
 #: src/Frontend/Forma.php:91
 msgid "Pillola con scritta"
-msgstr "Pillola con scritta"
+msgstr "Pill with text"
 
 #: src/Frontend/Forma.php:92
 msgid "Dice a parole cosa fa. Chi non ha mai visto un assistente su un sito capisce che può parlarci."
-msgstr "Dice a parole cosa fa. Chi non ha mai visto un assistente su un sito capisce che può parlarci."
+msgstr "It says in words what it does. A person who has never seen an assistant on a website understands that they can talk to it."
 
 #: src/Frontend/Forma.php:95
 msgid "Tondo, solo icona"
-msgstr "Tondo, solo icona"
+msgstr "Round, icon only"
 
 #: src/Frontend/Forma.php:96
 msgid "Occupa pochissimo. Si sceglie quando la pagina ha già altri comandi in basso."
-msgstr "Occupa pochissimo. Si sceglie quando la pagina ha già altri comandi in basso."
+msgstr "It takes very little room. Choose it when the page already has other controls at the bottom."
 
 #: src/Frontend/Forma.php:99
 msgid "Barra in fondo"
-msgstr "Barra in fondo"
+msgstr "Bar at the bottom"
 
 #: src/Frontend/Forma.php:100
 msgid "Una fascia larga quanto lo schermo. Difficile non vederla, e sul telefono si tocca senza mirare."
-msgstr "Una fascia larga quanto lo schermo. Difficile non vederla, e sul telefono si tocca senza mirare."
+msgstr "A band as wide as the screen. It is hard to miss, and on the phone you touch it without aim."
 
 #: src/Frontend/Forma.php:117
 msgid "Comoda"
-msgstr "Comoda"
+msgstr "Comfortable"
 
 #: src/Frontend/Forma.php:118
 msgid "Più aria intorno a ogni cosa. Si legge meglio, e su uno schermo grande non sembra vuoto."
-msgstr "Più aria intorno a ogni cosa. Si legge meglio, e su uno schermo grande non sembra vuoto."
+msgstr "More air around everything. It reads better, and on a large screen it does not look empty."
 
 #: src/Frontend/Forma.php:122
 msgid "Compatta"
-msgstr "Compatta"
+msgstr "Compact"
 
 #: src/Frontend/Forma.php:123
 msgid "Meno spazi. Sullo stesso schermo ci stanno più prodotti, e si scorre di meno."
-msgstr "Meno spazi. Sullo stesso schermo ci stanno più prodotti, e si scorre di meno."
+msgstr "Less space. The same screen holds more products, and you scroll less."
 
 #: src/Frontend/Forma.php:146
 #: src/Frontend/Palette.php:65
 msgid "Dal tema del sito"
-msgstr "Dal tema del sito"
+msgstr "From the site theme"
 
 #: src/Frontend/Forma.php:150
 msgid "Senza grazie"
-msgstr "Senza grazie"
+msgstr "Sans serif"
 
 #: src/Frontend/Forma.php:154
 msgid "Con grazie"
-msgstr "Con grazie"
+msgstr "Serif"
 
 #: src/Frontend/Forma.php:158
 msgid "Stretto"
-msgstr "Stretto"
+msgstr "Narrow"
 
 #: src/Frontend/Interfaccia.php:200
 #: src/Frontend/vista-ricerca.php:129
 msgid "una cosa che regge il freddo"
-msgstr "una cosa che regge il freddo"
+msgstr "something that holds up in the cold"
 
 #: src/Frontend/Interfaccia.php:201
 #: src/Frontend/vista-ricerca.php:130
 msgid "qualcosa di leggero per l’estate"
-msgstr "qualcosa di leggero per l’estate"
+msgstr "something light for the summer"
 
 #: src/Frontend/Interfaccia.php:202
 #: src/Frontend/vista-ricerca.php:131
 msgid "un regalo sotto i 50 euro"
-msgstr "un regalo sotto i 50 euro"
+msgstr "a gift under 50 euros"
 
 #: src/Frontend/Interfaccia.php:203
 #: src/Frontend/vista-ricerca.php:132
 msgid "come questa, ma di un altro colore"
-msgstr "come questa, ma di un altro colore"
+msgstr "like this one, but in another colour"
 
 #: src/Frontend/Interfaccia.php:218
 msgid "Un regalo sotto i 60 €, per mia madre"
-msgstr "Un regalo sotto i 60 €, per mia madre"
+msgstr "A gift under €60, for my mother"
 
 #: src/Frontend/Interfaccia.php:219
 msgid "Che cosa mi consigliate per un matrimonio?"
-msgstr "Che cosa mi consigliate per un matrimonio?"
+msgstr "What do you suggest for a wedding?"
 
 #: src/Frontend/Interfaccia.php:220
 msgid "Qual è la differenza fra questi due?"
-msgstr "Qual è la differenza fra questi due?"
+msgstr "What is the difference between these two?"
 
 #: src/Frontend/Interfaccia.php:231
 msgid "Sto cercando…"
-msgstr "Sto cercando…"
+msgstr "I am searching…"
 
 #: src/Frontend/Interfaccia.php:232
 msgid "Nessun risultato. Prova con parole diverse."
-msgstr "Nessun risultato. Prova con parole diverse."
+msgstr "No results. Try different words."
 
 #: src/Frontend/Interfaccia.php:233
 msgid "La ricerca non ha risposto. Riprova fra poco."
-msgstr "La ricerca non ha risposto. Riprova fra poco."
+msgstr "The search did not respond. Try again shortly."
 
 #: src/Frontend/Interfaccia.php:240
 #: src/Frontend/vista-ricerca.php:113
 msgid "La ricerca intelligente non risponde in questo momento: questi risultati arrivano dal catalogo del negozio, cercando le parole che hai scritto."
-msgstr "La ricerca intelligente non risponde in questo momento: questi risultati arrivano dal catalogo del negozio, cercando le parole che hai scritto."
+msgstr "Smart search is not responding right now: these results come from the shop catalogue, matched on the words you wrote."
 
 #: src/Frontend/Interfaccia.php:241
 msgid "Le tue ultime ricerche"
-msgstr "Le tue ultime ricerche"
+msgstr "Your recent searches"
 
 #: src/Frontend/Interfaccia.php:242
 msgid "Prova con"
-msgstr "Prova con"
+msgstr "Try one of these"
 
 #: src/Frontend/Interfaccia.php:243
 msgid "Oppure sfoglia"
-msgstr "Oppure sfoglia"
+msgstr "Or browse"
 
 #. translators: %s: le parole scritte da chi cerca.
 #: src/Frontend/Interfaccia.php:245
 #, php-format
 msgid "Cerca «%s» nel catalogo"
-msgstr "Cerca «%s» nel catalogo"
+msgstr "Search \"%s\" in the catalogue"
 
 #: src/Frontend/Interfaccia.php:246
 msgid "Apri la pagina dei risultati"
-msgstr "Apri la pagina dei risultati"
+msgstr "Open the results page"
 
 #: src/Frontend/Interfaccia.php:249
 msgid "Ordina i risultati"
-msgstr "Ordina i risultati"
+msgstr "Sort the results"
 
 #: src/Frontend/Interfaccia.php:250
 #: src/Frontend/vista-ricerca.php:216
 msgid "Più pertinenti"
-msgstr "Più pertinenti"
+msgstr "Most relevant"
 
 #: src/Frontend/Interfaccia.php:251
 #: src/Frontend/vista-ricerca.php:217
 msgid "Prezzo crescente"
-msgstr "Prezzo crescente"
+msgstr "Price: low to high"
 
 #: src/Frontend/Interfaccia.php:252
 #: src/Frontend/vista-ricerca.php:218
 msgid "Prezzo decrescente"
-msgstr "Prezzo decrescente"
+msgstr "Price: high to low"
 
 #: src/Frontend/Interfaccia.php:253
 msgid "1 risultato"
-msgstr "1 risultato"
+msgstr "1 result"
 
 #. translators: %d: quanti risultati.
 #: src/Frontend/Interfaccia.php:255
 #, php-format
 msgid "%d risultati"
-msgstr "%d risultati"
+msgstr "%d results"
 
 #: src/Frontend/Interfaccia.php:257
 #: src/Frontend/vista-ricerca.php:81
 msgid "Cerca con una foto"
-msgstr "Cerca con una foto"
+msgstr "Search with a photo"
 
 #: src/Frontend/Interfaccia.php:258
 msgid "Scegli una foto o trascinala qui: ti mostro i prodotti che le somigliano di più."
-msgstr "Scegli una foto o trascinala qui: ti mostro i prodotti che le somigliano di più."
+msgstr "Choose a photo or drag it here: I show you the products that look most like it."
 
 #: src/Frontend/Interfaccia.php:259
 msgid "Sto guardando la foto…"
-msgstr "Sto guardando la foto…"
+msgstr "I am looking at the photo…"
 
 #: src/Frontend/Interfaccia.php:260
 msgid "Non riesco a leggere questa foto. Prova con un altro file."
-msgstr "Non riesco a leggere questa foto. Prova con un altro file."
+msgstr "I cannot read this photo. Try another file."
 
 #: src/Frontend/Interfaccia.php:261
 msgid "I più simili alla tua foto"
-msgstr "I più simili alla tua foto"
+msgstr "The most similar to your photo"
 
 #: src/Frontend/Interfaccia.php:262
 msgid "Cambia foto"
-msgstr "Cambia foto"
+msgstr "Change photo"
 
 #: src/Frontend/Interfaccia.php:264
 msgid "Sto pensando…"
-msgstr "Sto pensando…"
+msgstr "I am thinking…"
 
 #: src/Frontend/Interfaccia.php:265
 msgid "Va bene, ho smesso."
-msgstr "Va bene, ho smesso."
+msgstr "All right, I stopped."
 
 #: src/Frontend/Interfaccia.php:266
 msgid "Non riesco a rispondere adesso. Riprova fra poco."
-msgstr "Non riesco a rispondere adesso. Riprova fra poco."
+msgstr "I cannot answer now. Try again shortly."
 
 #. translators: %s: le parole cercate.
 #: src/Frontend/Pagina.php:189
 #, php-format
 msgid "Ricerca: %s"
-msgstr "Ricerca: %s"
+msgstr "Search: %s"
 
 #: src/Frontend/Palette.php:66
 msgid "Prende i colori dal tema, se il tema li dichiara. Altrimenti usa il neutro."
-msgstr "Prende i colori dal tema, se il tema li dichiara. Altrimenti usa il neutro."
+msgstr "It takes the colours from the theme, if the theme declares them. Otherwise it uses the neutral palette."
 
 #: src/Frontend/Palette.php:71
 msgid "Neutro"
-msgstr "Neutro"
+msgstr "Neutral"
 
 #: src/Frontend/Palette.php:72
 msgid "Grigi caldi e un nero pieno. Sta bene su quasi tutto."
-msgstr "Grigi caldi e un nero pieno. Sta bene su quasi tutto."
+msgstr "Warm greys and a full black. It suits almost everything."
 
 #: src/Frontend/Palette.php:76
 msgid "Inchiostro e oro"
-msgstr "Inchiostro e oro"
+msgstr "Ink and gold"
 
 #: src/Frontend/Palette.php:77
 msgid "Fondo chiaro, testo quasi nero, accento dorato. Per chi vende oggetti."
-msgstr "Fondo chiaro, testo quasi nero, accento dorato. Per chi vende oggetti."
+msgstr "Light background, almost black text, gold accent. For shops that sell objects."
 
 #: src/Frontend/Palette.php:104
 msgid "Notte"
-msgstr "Notte"
+msgstr "Night"
 
 #: src/Frontend/Palette.php:105
 msgid "Fondo scuro e accento chiaro. Per i negozi con vetrina scura."
-msgstr "Fondo scuro e accento chiaro. Per i negozi con vetrina scura."
+msgstr "Dark background and light accent. For shops with a dark storefront."
 
 #: src/Frontend/Palette.php:117
 msgid "Bosco"
-msgstr "Bosco"
+msgstr "Forest"
 
 #: src/Frontend/Palette.php:118
 msgid "Verdi profondi su carta chiara."
-msgstr "Verdi profondi su carta chiara."
+msgstr "Deep greens on light paper."
 
 #: src/Frontend/Palette.php:130
 msgid "Elettrico"
-msgstr "Elettrico"
+msgstr "Electric"
 
 #: src/Frontend/Palette.php:131
 msgid "Grigi freddi e un blu deciso."
-msgstr "Grigi freddi e un blu deciso."
+msgstr "Cool greys and a strong blue."
 
 #: src/Frontend/Palette.php:143
 msgid "Personalizzata"
-msgstr "Personalizzata"
+msgstr "Custom"
 
 #: src/Frontend/Palette.php:144
 msgid "Scegli tu i sette colori."
-msgstr "Scegli tu i sette colori."
+msgstr "You choose the seven colours."
 
 #: src/Frontend/Ponte.php:207
 msgid "Storegentic non è attivo su questo negozio."
-msgstr "Storegentic non è attivo su questo negozio."
+msgstr "Storegentic is not active on this shop."
 
 #: src/Frontend/Ponte.php:226
 msgid "Troppe richieste. Riprova fra qualche istante."
-msgstr "Troppe richieste. Riprova fra qualche istante."
+msgstr "Too many requests. Try again in a moment."
 
 #: src/Frontend/Ponte.php:356
 msgid "Evento senza tipo."
-msgstr "Evento senza tipo."
+msgstr "Event without a type."
 
 #: src/Frontend/Ricerca.php:78
 msgid "Scrivi che cosa cerchi."
-msgstr "Scrivi che cosa cerchi."
+msgstr "Write what you are looking for."
 
 #: src/Frontend/Ricerca.php:98
 msgid "La foto non è leggibile. Riprova con un altro file."
-msgstr "La foto non è leggibile. Riprova con un altro file."
+msgstr "The photo is not readable. Try again with another file."
 
 #: src/Frontend/Ricerca.php:166
 msgid "La ricerca non è disponibile per questo negozio."
-msgstr "La ricerca non è disponibile per questo negozio."
+msgstr "Search is not available for this shop."
 
 #: src/Frontend/Scheda.php:105
 #: src/Frontend/Scheda.php:146
 msgid "Esaurito"
-msgstr "Esaurito"
+msgstr "Out of stock"
 
 #: src/Frontend/Scheda.php:111
 msgid "Su richiesta"
-msgstr "Su richiesta"
+msgstr "On request"
 
 #: src/Frontend/Scheda.php:150
 msgid "In saldo"
-msgstr "In saldo"
+msgstr "On sale"
 
 #: src/Frontend/Scheda.php:154
 msgid "Ultimo pezzo"
-msgstr "Ultimo pezzo"
+msgstr "Last one"
 
 #: src/Frontend/Scheda.php:171
 msgid "Prezzo su richiesta"
-msgstr "Prezzo su richiesta"
+msgstr "Price on request"
 
 #. translators: %s: nome del prodotto.
 #: src/Frontend/Scheda.php:216
 #, php-format
 msgid "Aggiungi %s al carrello"
-msgstr "Aggiungi %s al carrello"
+msgstr "Add %s to the cart"
 
 #: src/Frontend/Scheda.php:217
 msgid "Aggiungi"
-msgstr "Aggiungi"
+msgstr "Add"
 
 #. translators: %d: quanti risultati.
 #: src/Frontend/Suggerimenti.php:274
@@ -1617,94 +1617,94 @@ msgstr "Aggiungi"
 #, php-format
 msgid "%d risultato"
 msgid_plural "%d risultati"
-msgstr[0] "%d risultato"
-msgstr[1] "%d risultati"
+msgstr[0] "%d result"
+msgstr[1] "%d results"
 
 #: src/Frontend/vista-ricerca.php:29
 msgid "La ricerca non è disponibile in questo momento."
-msgstr "La ricerca non è disponibile in questo momento."
+msgstr "Search is not available at this moment."
 
 #. translators: %s: le parole cercate.
 #: src/Frontend/vista-ricerca.php:67
 #, php-format
 msgid "Risultati per «%s»"
-msgstr "Risultati per «%s»"
+msgstr "Results for \"%s\""
 
 #: src/Frontend/vista-ricerca.php:94
 msgid "Scegli una foto dal dispositivo"
-msgstr "Scegli una foto dal dispositivo"
+msgstr "Choose a photo from the device"
 
 #: src/Frontend/vista-ricerca.php:102
 msgid "Togli la foto"
-msgstr "Togli la foto"
+msgstr "Remove the photo"
 
 #: src/Frontend/vista-ricerca.php:124
 msgid "Scrivi che cosa cerchi, con parole tue. Puoi anche caricare una foto e trovare quello che le somiglia."
-msgstr "Scrivi che cosa cerchi, con parole tue. Puoi anche caricare una foto e trovare quello che le somiglia."
+msgstr "Write what you are looking for, in your own words. You can also upload a photo and find what looks like it."
 
 #: src/Frontend/vista-ricerca.php:146
 msgid "Nessun risultato per questa ricerca."
-msgstr "Nessun risultato per questa ricerca."
+msgstr "No results for this search."
 
 #: src/Frontend/vista-ricerca.php:147
 msgid "Prova con meno parole, oppure descrivi quello che cerchi: colore, materiale, occasione."
-msgstr "Prova con meno parole, oppure descrivi quello che cerchi: colore, materiale, occasione."
+msgstr "Try fewer words, or describe what you are looking for: colour, material, occasion."
 
 #: src/Frontend/vista-ricerca.php:148
 msgid "Vedi tutto il catalogo"
-msgstr "Vedi tutto il catalogo"
+msgstr "See the whole catalogue"
 
 #: src/Frontend/vista-ricerca.php:156
 msgid "Affina"
-msgstr "Affina"
+msgstr "Refine"
 
 #: src/Frontend/vista-ricerca.php:176
 msgid "Prezzo"
-msgstr "Prezzo"
+msgstr "Price"
 
 #: src/Frontend/vista-ricerca.php:179
 msgid "Prezzo minimo"
-msgstr "Prezzo minimo"
+msgstr "Minimum price"
 
 #: src/Frontend/vista-ricerca.php:180
 msgid "da"
-msgstr "da"
+msgstr "from"
 
 #: src/Frontend/vista-ricerca.php:184
 msgid "Prezzo massimo"
-msgstr "Prezzo massimo"
+msgstr "Maximum price"
 
 #: src/Frontend/vista-ricerca.php:185
 msgid "a"
-msgstr "a"
+msgstr "to"
 
 #: src/Frontend/vista-ricerca.php:191
 msgid "Disponibilità"
-msgstr "Disponibilità"
+msgstr "Availability"
 
 #: src/Frontend/vista-ricerca.php:194
 msgid "Solo quelli disponibili"
-msgstr "Solo quelli disponibili"
+msgstr "In stock only"
 
 #: src/Frontend/vista-ricerca.php:198
 #: src/Frontend/vista-ricerca.php:240
 msgid "Togli i filtri"
-msgstr "Togli i filtri"
+msgstr "Remove the filters"
 
 #: src/Frontend/vista-ricerca.php:214
 msgid "Ordina"
-msgstr "Ordina"
+msgstr "Sort"
 
 #: src/Frontend/vista-ricerca.php:239
 msgid "Nessun risultato con questi filtri."
-msgstr "Nessun risultato con questi filtri."
+msgstr "No results with these filters."
 
 #: src/Impostazioni.php:499
 msgid "L’indirizzo risponde, ma non con una risposta del servizio: probabilmente c’è un filtro davanti."
-msgstr "L’indirizzo risponde, ma non con una risposta del servizio: probabilmente c’è un filtro davanti."
+msgstr "The address responds, but not with a response from the service: there is probably a filter in front of it."
 
 #. translators: %d: codice di stato HTTP.
 #: src/Impostazioni.php:503
 #, php-format
 msgid "L’indirizzo risponde con un errore (%d): il servizio non è raggiungibile lì."
-msgstr "L’indirizzo risponde con un errore (%d): il servizio non è raggiungibile lì."
+msgstr "The address responds with an error (%d): the service is not reachable there."

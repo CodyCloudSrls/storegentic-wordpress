@@ -84,7 +84,7 @@ self::apri_modulo();
 			</div>
 
 			<p class="sg-angoli">
-				<label><?php esc_html_e( 'Angoli', 'storegentic' ); ?>
+				<label><?php esc_html_e( 'Arrotondamento', 'storegentic' ); ?>
 					<input type="number" name="raggio" min="0" max="24" class="sg-numero"
 					       value="<?php echo esc_attr( (string) $i['raggio'] ); ?>" data-sg-raggio> px</label>
 			</p>
@@ -162,7 +162,7 @@ self::apri_modulo();
 		</td>
 	</tr>
 	<tr>
-		<th scope="row"><label for="sg-posizione"><?php esc_html_e( 'Angolo del pulsante', 'storegentic' ); ?></label></th>
+		<th scope="row"><label for="sg-posizione"><?php esc_html_e( 'Posizione del pulsante', 'storegentic' ); ?></label></th>
 		<td>
 			<select id="sg-posizione" name="posizione">
 				<option value="destra" <?php selected( (string) $i['posizione'], 'destra' ); ?>><?php esc_html_e( 'In basso a destra', 'storegentic' ); ?></option>

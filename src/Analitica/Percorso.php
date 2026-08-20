@@ -148,7 +148,21 @@ final class Percorso {
 				'mode'      => $attribuiti['modo'],
 				'data'      => array(
 					'items'           => (int) $carrello->get_cart_contents_count(),
-					'value'           => (float) $carrello->get_cart_contents_total(),
+					/*
+					 * IL TOTALE, NON L'IMPONIBILE.
+					 *
+					 * `get_cart_contents_total()` esclude tasse e spedizione;
+					 * `$ordine->get_total()`, che si manda con l'acquisto, le
+					 * include. Con due unita' di misura diverse il funnel non si
+					 * legge: il valore alla cassa risulterebbe sistematicamente
+					 * piu' basso di quello dell'ordine, e la differenza si
+					 * scambierebbe per abbandono.
+					 *
+					 * Il contesto 'edit' serve a ottenere il numero: senza,
+					 * get_total() restituisce la stringa gia' formattata con il
+					 * simbolo di valuta dentro.
+					 */
+					'value'           => (float) $carrello->get_total( 'edit' ),
 					'currency'        => get_woocommerce_currency(),
 					'attributedItems' => (int) $attribuiti['quanti'],
 					'attributedValue' => (float) $attribuiti['valore'],

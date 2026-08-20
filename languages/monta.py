@@ -101,10 +101,25 @@ def monta(pot, traduzioni, lingua, uscita):
 if __name__ == '__main__':
     lingua, sorgente, uscita = sys.argv[1], sys.argv[2], sys.argv[3]
     if sorgente == 'IDENTICA':
-        # L'italiano e' la lingua sorgente: la traduzione e' l'originale.
-        voci = json.load(open('stringhe.json', encoding='utf-8'))
-        trad = {v['msgid']: {'msgstr': v['msgid'],
-                             'msgstr_plurale': v.get('plurale', v['msgid'])} for v in voci}
+        # L'italiano e' la lingua sorgente: la traduzione e' l'originale, e si
+        # legge dal modello stesso. Nessun file intermedio da tenere in giro.
+        trad = {}
+        msgid = plurale = None
+        chiave = None
+        for r in open('storegentic.pot', encoding='utf-8'):
+            r = r.rstrip('\n')
+            if r.startswith('msgid '):
+                msgid, chiave, plurale = json.loads(r[6:]), 'msgid', None
+            elif r.startswith('msgid_plural '):
+                plurale, chiave = json.loads(r[13:]), 'plurale'
+            elif r.startswith('"') and chiave == 'msgid':
+                msgid += json.loads(r)
+            elif r.startswith('"') and chiave == 'plurale':
+                plurale += json.loads(r)
+            elif r.startswith('msgstr'):
+                if msgid:
+                    trad[msgid] = {'msgstr': msgid, 'msgstr_plurale': plurale or msgid}
+                chiave = None
     else:
         trad = {t['msgid']: t for t in json.load(open(sorgente, encoding='utf-8'))}
     monta('storegentic.pot', trad, lingua, uscita)
