@@ -130,7 +130,7 @@ final class Finestra {
 		<noscript><style>.sg-lancia,.sg-invito{display:none !important}</style></noscript>
 		<?php
 		?>
-		<button type="button" class="sg-lancia sg-lancia--<?php echo esc_attr( $posizione ); ?>"
+		<button type="button" class="sg-lancia sg-lancia--<?php echo esc_attr( $posizione ); ?> <?php echo esc_attr( Forma::classe_pulsante() ); ?>"
 		        data-sg-apri aria-haspopup="dialog" aria-controls="sg-finestra" aria-expanded="false">
 			<span class="sg-lancia__segno" aria-hidden="true">
 				<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor"
@@ -155,7 +155,7 @@ final class Finestra {
 		$primo  = (string) array_key_first( $modi );
 		$titolo = self::etichetta();
 		?>
-		<div class="sg-finestra" id="sg-finestra" role="dialog" aria-modal="true"
+		<div class="sg-finestra <?php echo esc_attr( Forma::classe() ); ?><?php echo 'sinistra' === Impostazioni::leggi( 'posizione' ) ? ' sg-finestra--da-sinistra' : ''; ?>" id="sg-finestra" role="dialog" aria-modal="true"
 		     aria-label="<?php echo esc_attr( $titolo ); ?>" hidden>
 
 			<div class="sg-finestra__velo" data-sg-chiudi></div>

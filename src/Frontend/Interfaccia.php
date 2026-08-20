@@ -348,9 +348,15 @@ final class Interfaccia {
 		return $voci;
 	}
 
-	/** I colori scelti nell'amministrazione diventano variabili CSS. */
+	/**
+	 * Le scelte dell'amministrazione diventano variabili CSS.
+	 *
+	 * Due classi, due domande: Palette dice di che colore e', Forma dice com'e'
+	 * fatta. Escono insieme perche' vanno nello stesso blocco `:root`, ma
+	 * restano separate perche' chi le compila ragiona in due modi diversi.
+	 */
 	private static function variabili(): string {
-		return Palette::css();
+		return Palette::css() . Forma::css();
 	}
 
 	/**

@@ -15,6 +15,7 @@ namespace Storegentic;
 
 use Storegentic\Admin\Pagina;
 use Storegentic\Admin\Riquadro;
+use Storegentic\Analitica\Percorso;
 use Storegentic\Analitica\Registratore;
 use Storegentic\Api\Contratto;
 use Storegentic\Catalogo\Pianificatore;
@@ -32,6 +33,14 @@ final class Plugin {
 
 		Pianificatore::avvia();
 		Registratore::avvia();
+
+		/*
+		 * Il funnel: carrello, cassa e ordine. Si aggancia sempre, anche in
+		 * amministrazione, perche' un ordine puo' nascere anche da li' — e
+		 * perche' `woocommerce_thankyou` scatta su una pagina pubblica ma il
+		 * gancio va registrato prima di sapere dove si e'.
+		 */
+		Percorso::avvia();
 
 		/*
 		 * La pagina dei risultati si monta anche in amministrazione: le regole

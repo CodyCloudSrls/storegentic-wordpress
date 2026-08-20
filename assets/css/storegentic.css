@@ -489,7 +489,7 @@ body.sg-bloccato { overflow: hidden; }
 
 .sg-griglia {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--sg-scheda-minima, 13rem), 1fr));
   gap: 2rem 1.5rem;
 }
 
@@ -581,7 +581,15 @@ body.sg-bloccato { overflow: hidden; }
 .sg-finestra__velo {
   position: absolute; inset: 0;
   background: var(--sg-velo);
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  /*
+     `opacity` e non un colore diverso: il colore del velo lo decide la
+     palette — su un fondo scuro un velo nero non si vedrebbe — e qui si
+     regola solo quanto di quel velo si applica. A 1 e' esattamente il
+     disegno originale.
+  */
+  opacity: var(--sg-velo-quanto, 1);
+  -webkit-backdrop-filter: blur(var(--sg-velo-sfocatura, 3px));
+  backdrop-filter: blur(var(--sg-velo-sfocatura, 3px));
 }
 
 /*
@@ -593,12 +601,21 @@ body.sg-bloccato { overflow: hidden; }
  * scorre, e con `vh` la riga di comando finisce sotto quella barra proprio
  * mentre si scrive.
  */
+/*
+   IL FOGLIO. Le misure arrivano dalle impostazioni (vedi Frontend\Forma) e
+   hanno tutte un ripiego uguale al valore di prima: un'installazione che non
+   ha mai toccato niente vede esattamente quello che vedeva.
+
+   La posizione la decide una classe sull'elemento — sg-finestra--centro,
+   --laterale, --basso, --pieno — piu' sotto. Qui c'e' solo cio' che le quattro
+   forme hanno in comune.
+*/
 .sg-finestra__foglio {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: min(68rem, calc(100vw - 3rem));
-  height: min(52rem, calc(100vh - 3rem));
-  height: min(52rem, calc(100dvh - 3rem));
+  width: min(var(--sg-finestra-larga, 68rem), calc(100vw - 3rem));
+  height: min(var(--sg-finestra-alta, 52rem), calc(100vh - 3rem));
+  height: min(var(--sg-finestra-alta, 52rem), calc(100dvh - 3rem));
   display: flex; flex-direction: column;
   background: var(--sg-fondo);
   border: 1px solid var(--sg-linea);
@@ -1203,4 +1220,150 @@ body.sg-finestra-aperta .sg-lancia { display: none; }
 
 @media (pointer: coarse) {
   .sg-finestra__ricomincia { width: 44px; height: 44px; }
+}
+
+/* =============================================================================
+   LE DECLINAZIONI: come si apre la finestra, e che aspetto ha il comando.
+
+   Ogni negozio deve poter avere la propria. Le regole qui sotto arrivano DOPO
+   tutto il resto di proposito: sono varianti, e una variante deve poter
+   scavalcare il caso normale senza alzare la specificita' con selettori
+   annidati. Una classe sola sull'elemento della finestra basta.
+
+   Le misure continuano a venire dalle variabili di Frontend\Forma, quindi
+   larghezza, densita' e colonne valgono in tutte e quattro le forme.
+
+   PERCHE' QUATTRO E NON UNA REGOLABILE A PIACERE. Perche' sono quattro
+   comportamenti, non quattro numeri: un cassetto che entra da destra e un
+   foglio che sale dal basso hanno animazioni diverse, ancoraggi diversi e un
+   modo diverso di stare su un telefono. Offrire "posizione: x, y" darebbe
+   mille combinazioni, di cui novecentonovanta sbagliate.
+   ========================================================================== */
+
+/* --- a lato: un cassetto che lascia vedere la pagina --- */
+
+.sg-finestra--laterale .sg-finestra__foglio {
+  top: 0; left: auto; right: 0;
+  transform: none;
+  width: min(var(--sg-finestra-larga, 68rem), calc(100vw - 3rem));
+  height: 100%; height: 100dvh;
+  border-radius: var(--sg-raggio-l) 0 0 var(--sg-raggio-l);
+  border-inline-end: 0;
+}
+
+/* Segue il pulsante: se quello sta a sinistra, il cassetto entra da sinistra. */
+.sg-finestra--laterale.sg-finestra--da-sinistra .sg-finestra__foglio {
+  right: auto; left: 0;
+  border-radius: 0 var(--sg-raggio-l) var(--sg-raggio-l) 0;
+  border-inline-end: 1px solid var(--sg-linea);
+  border-inline-start: 0;
+}
+
+/* --- dal basso: come nelle applicazioni --- */
+
+.sg-finestra--basso .sg-finestra__foglio {
+  top: auto; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: min(var(--sg-finestra-larga, 68rem), 100vw);
+  height: min(var(--sg-finestra-alta, 52rem), calc(100dvh - 2rem));
+  border-radius: var(--sg-raggio-l) var(--sg-raggio-l) 0 0;
+  border-bottom: 0;
+}
+
+/* --- a tutto schermo: nessuna cornice, su ogni dispositivo --- */
+
+.sg-finestra--pieno .sg-finestra__foglio {
+  top: 0; left: 0; transform: none;
+  width: 100%; height: 100%; height: 100dvh;
+  max-width: none;
+  border: 0; border-radius: 0;
+}
+
+/*
+   SUL TELEFONO LE FORME CONVERGONO, MA NON TUTTE.
+
+   "Al centro" e "a lato" su 390 punti diventano schermo pieno: un cassetto
+   largo quanto lo schermo E' lo schermo, e tenerne il bordo arrotondato
+   sarebbe una cornice che non contiene niente. "Dal basso" invece resta dal
+   basso: e' la sua ragione d'essere, il pollice ci arriva, e su un telefono e'
+   il gesto che le persone conoscono meglio.
+*/
+@media (max-width: 48rem) {
+  .sg-finestra--laterale .sg-finestra__foglio {
+    left: 0; right: 0; width: 100%;
+    border-radius: 0; border: 0;
+  }
+
+  .sg-finestra--basso .sg-finestra__foglio {
+    width: 100%;
+    height: min(var(--sg-finestra-alta, 52rem), calc(100dvh - 3rem));
+    border-radius: var(--sg-raggio-l) var(--sg-raggio-l) 0 0;
+  }
+}
+
+/* --- il comando che apre --- */
+
+/*
+   Tondo: la sola lente. Cinquantasei punti perche' sotto i quarantaquattro un
+   bersaglio non si tocca con sicurezza (WCAG 2.5.8), e con l'icona dentro
+   quarantaquattro sarebbero stretti.
+*/
+.sg-lancia--tondo {
+  width: 56px; min-width: 56px; height: 56px; padding: 0;
+  justify-content: center;
+}
+
+.sg-lancia--tondo .sg-lancia__testo { display: none; }
+
+/*
+   Barra: una fascia larga quanto la pagina. Non si puo' sbagliare mira, ed e'
+   la forma giusta per un negozio che vuole che l'assistente si veda. In cambio
+   si prende una striscia in fondo allo schermo, quindi non e' la scelta
+   predefinita.
+*/
+.sg-lancia--barra {
+  left: 0; right: 0; bottom: 0;
+  width: 100%;
+  justify-content: center;
+  border-radius: 0;
+  padding: 0 1rem;
+  min-height: 56px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -6px 24px -10px rgba(0,0,0,.22);
+}
+
+/* La barra e' larga quanto lo schermo: destra e sinistra non vogliono dire piu' niente. */
+.sg-lancia--barra.sg-lancia--destra,
+.sg-lancia--barra.sg-lancia--sinistra { left: 0; right: 0; }
+
+@media (max-width: 48rem) {
+  /* Il tondo resta tondo; la pillola diventa tonda, come gia' faceva. */
+  .sg-lancia--barra { width: 100%; }
+}
+
+/* --- densita': gli spazi si moltiplicano, il disegno resta --- */
+
+/*
+   Un fattore, non misure nuove. Le distanze restano in proporzione fra loro —
+   cambia la scala, non il rapporto — quindi "compatta" non e' un secondo
+   disegno da mantenere: e' lo stesso disegno più vicino.
+*/
+.sg-finestra__testa { padding: calc(.7rem * var(--sg-spazio, 1)) calc(.7rem * var(--sg-spazio, 1)) calc(.7rem * var(--sg-spazio, 1)) calc(1rem * var(--sg-spazio, 1)); }
+.sg-pannello__corpo { padding: calc(1.1rem * var(--sg-spazio, 1)); }
+.sg-griglia { gap: calc(2rem * var(--sg-spazio, 1)) calc(1.5rem * var(--sg-spazio, 1)); }
+.sg-riga { padding: calc(.5rem * var(--sg-spazio, 1)); gap: calc(.75rem * var(--sg-spazio, 1)); }
+
+/* --- movimento --- */
+
+/*
+   La durata sta in una variabile invece che nella regola: spegnere il
+   movimento vuol dire metterla a zero, e resta una sola transizione da
+   leggere. Chi ha chiesto meno animazioni al proprio dispositivo vince
+   comunque, qualunque cosa dica l'impostazione del negozio: e' una richiesta
+   di accessibilita', non una preferenza estetica.
+*/
+.sg-finestra__foglio { transition: transform var(--sg-movimento, .22s) ease, opacity var(--sg-movimento, .22s) ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-finestra__foglio { transition: none; }
 }

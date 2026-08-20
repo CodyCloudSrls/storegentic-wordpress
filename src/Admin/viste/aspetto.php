@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace Storegentic\Admin;
 
 use Storegentic\Frontend\Finestra;
+use Storegentic\Frontend\Forma;
 use Storegentic\Frontend\Palette;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -194,6 +195,123 @@ self::apri_modulo();
 			       value="<?php echo esc_attr( (string) $i['saluto'] ); ?>"
 			       placeholder="<?php esc_attr_e( 'Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa.', 'storegentic' ); ?>">
 			<p class="description"><?php esc_html_e( 'È la frase che si legge appena si apre l’assistente. Lasciala vuota per quella predefinita.', 'storegentic' ); ?></p>
+		</td>
+	</tr>
+</table>
+
+
+<h2 class="title"><?php esc_html_e( 'Come si apre', 'storegentic' ); ?></h2>
+
+<p class="description sg-largo">
+	<?php esc_html_e( 'È la scelta che cambia di più la sensazione del negozio, più dei colori. Una finestra al centro chiede attenzione; un cassetto lascia continuare a leggere.', 'storegentic' ); ?>
+</p>
+
+<table class="form-table" role="presentation">
+	<tr>
+		<th scope="row"><?php esc_html_e( 'Forma della finestra', 'storegentic' ); ?></th>
+		<td>
+			<fieldset class="sg-scelte">
+				<?php foreach ( Forma::forme() as $sg_n => $sg_f ) : ?>
+					<label class="sg-scelta">
+						<input type="radio" name="forma" value="<?php echo esc_attr( $sg_n ); ?>" <?php checked( (string) $i['forma'], $sg_n ); ?>>
+						<span class="sg-scelta__segno sg-scelta__segno--<?php echo esc_attr( $sg_n ); ?>" aria-hidden="true"><i></i></span>
+						<span class="sg-scelta__nome"><?php echo esc_html( (string) $sg_f['nome'] ); ?></span>
+						<span class="sg-scelta__spiega"><?php echo esc_html( (string) $sg_f['spiega'] ); ?></span>
+					</label>
+				<?php endforeach; ?>
+			</fieldset>
+			<p class="description"><?php esc_html_e( 'Sul telefono «al centro» e «a lato» diventano schermo pieno: un cassetto largo quanto lo schermo è lo schermo. «Dal basso» invece resta dal basso, perché è lì che arriva il pollice.', 'storegentic' ); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row"><?php esc_html_e( 'Quanto è grande', 'storegentic' ); ?></th>
+		<td>
+			<p class="sg-misura">
+				<label for="sg-larghezza"><?php esc_html_e( 'Larghezza', 'storegentic' ); ?></label>
+				<input type="number" id="sg-larghezza" name="larghezza" class="sg-numero" min="320" max="1200" step="10"
+				       value="<?php echo esc_attr( (string) $i['larghezza'] ); ?>">
+				<span class="sg-tenue"><?php esc_html_e( 'decimi di rem — 680 fa 68rem, circa 1088 px', 'storegentic' ); ?></span>
+			</p>
+			<p class="sg-misura">
+				<label for="sg-altezza"><?php esc_html_e( 'Altezza', 'storegentic' ); ?></label>
+				<input type="number" id="sg-altezza" name="altezza" class="sg-numero" min="300" max="1200" step="10"
+				       value="<?php echo esc_attr( (string) $i['altezza'] ); ?>">
+			</p>
+			<p class="description"><?php esc_html_e( 'Sono massimi: su uno schermo più stretto la finestra si adatta da sola e non esce mai dai bordi.', 'storegentic' ); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row"><?php esc_html_e( 'Il comando che apre', 'storegentic' ); ?></th>
+		<td>
+			<fieldset class="sg-scelte">
+				<?php foreach ( Forma::pulsanti() as $sg_n => $sg_p ) : ?>
+					<label class="sg-scelta">
+						<input type="radio" name="pulsante" value="<?php echo esc_attr( $sg_n ); ?>" <?php checked( (string) $i['pulsante'], $sg_n ); ?>>
+						<span class="sg-scelta__nome"><?php echo esc_html( (string) $sg_p['nome'] ); ?></span>
+						<span class="sg-scelta__spiega"><?php echo esc_html( (string) $sg_p['spiega'] ); ?></span>
+					</label>
+				<?php endforeach; ?>
+			</fieldset>
+			<p class="sg-misura">
+				<label for="sg-distanza"><?php esc_html_e( 'Distanza dal bordo', 'storegentic' ); ?></label>
+				<input type="number" id="sg-distanza" name="distanza" class="sg-numero" min="0" max="80" step="5"
+				       value="<?php echo esc_attr( (string) $i['distanza'] ); ?>">
+				<span class="sg-tenue"><?php esc_html_e( 'alzalo se il sito ha già un comando in basso', 'storegentic' ); ?></span>
+			</p>
+		</td>
+	</tr>
+</table>
+
+<h2 class="title"><?php esc_html_e( 'Come si legge', 'storegentic' ); ?></h2>
+
+<table class="form-table" role="presentation">
+	<tr>
+		<th scope="row"><?php esc_html_e( 'Densità', 'storegentic' ); ?></th>
+		<td>
+			<fieldset class="sg-scelte">
+				<?php foreach ( Forma::densita() as $sg_n => $sg_d ) : ?>
+					<label class="sg-scelta">
+						<input type="radio" name="densita" value="<?php echo esc_attr( $sg_n ); ?>" <?php checked( (string) $i['densita'], $sg_n ); ?>>
+						<span class="sg-scelta__nome"><?php echo esc_html( (string) $sg_d['nome'] ); ?></span>
+						<span class="sg-scelta__spiega"><?php echo esc_html( (string) $sg_d['spiega'] ); ?></span>
+					</label>
+				<?php endforeach; ?>
+			</fieldset>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row"><label for="sg-colonna"><?php esc_html_e( 'Larghezza minima di una scheda', 'storegentic' ); ?></label></th>
+		<td>
+			<input type="number" id="sg-colonna" name="colonna" class="sg-numero" min="90" max="280" step="5"
+			       value="<?php echo esc_attr( (string) $i['colonna'] ); ?>">
+			<p class="description"><?php esc_html_e( 'Da qui si decidono le colonne: più stretta, più prodotti in riga. Non serve indicare un numero di colonne, che sarebbe sbagliato a ogni altra larghezza di schermo.', 'storegentic' ); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row"><label for="sg-caratteri"><?php esc_html_e( 'Carattere dei titoli', 'storegentic' ); ?></label></th>
+		<td>
+			<select id="sg-caratteri" name="caratteri">
+				<?php foreach ( Forma::caratteri() as $sg_n => $sg_c ) : ?>
+					<option value="<?php echo esc_attr( $sg_n ); ?>" <?php selected( (string) $i['caratteri'], $sg_n ); ?>><?php echo esc_html( (string) $sg_c['nome'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<p class="description"><?php esc_html_e( 'Nessun carattere si scarica da fuori: sono quelli già presenti nei dispositivi. Non fanno attendere il testo e non mandano l’indirizzo di chi visita a servizi di terze parti.', 'storegentic' ); ?></p>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row"><?php esc_html_e( 'Dietro la finestra', 'storegentic' ); ?></th>
+		<td>
+			<p class="sg-misura">
+				<label for="sg-velo"><?php esc_html_e( 'Quanto si copre la pagina', 'storegentic' ); ?></label>
+				<input type="number" id="sg-velo" name="velo" class="sg-numero" min="0" max="100" step="10"
+				       value="<?php echo esc_attr( (string) $i['velo'] ); ?>">
+				<span class="sg-tenue">%</span>
+			</p>
+			<label class="sg-riga-spunta"><input type="checkbox" name="sfocatura" <?php checked( (bool) $i['sfocatura'] ); ?>>
+				<?php esc_html_e( 'Sfoca quello che sta dietro', 'storegentic' ); ?></label>
+			<label class="sg-riga-spunta"><input type="checkbox" name="movimento" <?php checked( (bool) $i['movimento'] ); ?>>
+				<?php esc_html_e( 'La finestra entra con un’animazione', 'storegentic' ); ?></label>
+			<p class="description"><?php esc_html_e( 'Chi ha chiesto meno animazioni al proprio dispositivo non le vede comunque: è una richiesta di accessibilità, non una preferenza.', 'storegentic' ); ?></p>
 		</td>
 	</tr>
 </table>

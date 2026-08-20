@@ -151,6 +151,19 @@ final class Pagina {
 				'saluto'          => $inviate['saluto'] ?? '',
 				'modi'            => (array) ( $inviate['modi'] ?? array() ),
 				'etichetta_avvio' => $inviate['etichetta_avvio'] ?? '',
+
+				// La forma della finestra: vedi Frontend\Forma.
+				'forma'           => $inviate['forma'] ?? 'centro',
+				'larghezza'       => $inviate['larghezza'] ?? 680,
+				'altezza'         => $inviate['altezza'] ?? 520,
+				'pulsante'        => $inviate['pulsante'] ?? 'pillola',
+				'distanza'        => $inviate['distanza'] ?? 10,
+				'densita'         => $inviate['densita'] ?? 'comoda',
+				'colonna'         => $inviate['colonna'] ?? 130,
+				'velo'            => $inviate['velo'] ?? 100,
+				'caratteri'       => $inviate['caratteri'] ?? 'tema',
+				'sfocatura'       => isset( $inviate['sfocatura'] ),
+				'movimento'       => isset( $inviate['movimento'] ),
 			);
 		}
 

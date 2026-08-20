@@ -28,6 +28,7 @@ namespace Storegentic\Frontend;
 
 use Storegentic\Analitica\Misure;
 use Storegentic\Analitica\Registratore;
+use Storegentic\Analitica\Sessione;
 use Storegentic\Impostazioni;
 use WP_Error;
 use WP_REST_Request;
@@ -357,10 +358,21 @@ final class Ponte {
 
 		$dati = self::dati_evento( $richiesta->get_param( 'data' ) );
 
+		/*
+		 * LA SESSIONE LA DECIDE IL SERVER, NON IL BROWSER.
+		 *
+		 * Prima si prendeva quella mandata dal browser. Chiunque poteva
+		 * spedirne una qualsiasi e attribuirsi — o attribuire ad altri — un
+		 * percorso: il funnel diventava un dato che chi lo legge non puo'
+		 * verificare. Ora l'identificativo sta in un cookie che scrive e legge
+		 * solo il PHP. Vedi Analitica\Sessione.
+		 */
+		$sessione = Sessione::apri();
+
 		Registratore::accoda(
 			$tipo,
 			array(
-				'sessionId' => mb_substr( sanitize_text_field( (string) $richiesta->get_param( 'sessionId' ) ), 0, 64 ),
+				'sessionId' => $sessione,
 				'mode'      => mb_substr( sanitize_key( (string) $richiesta->get_param( 'mode' ) ), 0, 32 ),
 				'data'      => $dati,
 			)
@@ -374,6 +386,16 @@ final class Ponte {
 		 */
 		if ( 'search_result_click' === $tipo && ! empty( $dati['sku'] ) ) {
 			Misure::segna_apertura( (string) $dati['sku'] );
+
+			/*
+			 * E si annoda il filo: da qui in poi, se quel prodotto finisce in
+			 * un ordine, si sapra' che era stato scoperto cercando. E' il
+			 * passaggio senza il quale il funnel resta un elenco di coriandoli.
+			 */
+			Sessione::ricorda(
+				(string) $dati['sku'],
+				(string) $richiesta->get_param( 'mode' ) ?: 'agent_search'
+			);
 		}
 
 		return new WP_REST_Response( array( 'accodato' => true ), 202 );

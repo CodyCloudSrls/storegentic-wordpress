@@ -65,7 +65,24 @@ final class Registratore {
 		'image_results'       => array( 'results_returned', 'image_search' ),
 		'agent_chat'          => array( 'query_sent', 'agent_chat' ),
 		'agent_results'       => array( 'results_returned', 'agent_chat' ),
+
+		/*
+		 * LA CODA DEL FUNNEL, CHE PER MESI NON HA MANDATO NIENTE.
+		 *
+		 * `add_to_cart` era gia' qui e non lo emetteva nessuno: una voce di
+		 * vocabolario senza una sola riga che la usasse. Gli altri due non
+		 * c'erano proprio. Il risultato era un funnel che si interrompe dove
+		 * comincia a valere qualcosa: si vedeva chi cercava e chi cliccava, non
+		 * chi comprava, e quindi non si poteva rispondere all'unica domanda che
+		 * conta — la ricerca fa vendere di piu'?
+		 *
+		 * Il `mode` qui e' `null` perche' lo decide il caso: dipende da dove il
+		 * prodotto era stato scoperto, e lo sa Analitica\Sessione. Vedi
+		 * Analitica\Percorso, che e' chi li emette.
+		 */
 		'add_to_cart'         => array( 'add_to_cart', null ),
+		'checkout_started'    => array( 'checkout_started', null ),
+		'purchase_completed'  => array( 'purchase_completed', null ),
 	);
 
 	public static function avvia(): void {
@@ -100,6 +117,21 @@ final class Registratore {
 			return;
 		}
 
+		/*
+		 * IL MODO: PRIMA QUELLO DEL VOCABOLARIO, POI QUELLO DEL CASO.
+		 *
+		 * Per una ricerca il modo e' fisso — una ricerca a parole e' sempre
+		 * `agent_search`. Per gli eventi del carrello no: un prodotto messo nel
+		 * carrello puo' essere stato scoperto con la ricerca, con la foto o
+		 * chiedendo all'assistente, e il modo lo sa solo chi chiama. Il
+		 * vocabolario mette `null` per quei tre, e qui vince il valore passato.
+		 */
+		$modo = $tradotto[1] ?? null;
+
+		if ( null === $modo && ! empty( $dettagli['mode'] ) ) {
+			$modo = self::modo_ammesso( (string) $dettagli['mode'] );
+		}
+
 		$coda[] = array_filter(
 			array(
 				'eventType'  => $tradotto[0],
@@ -108,7 +140,7 @@ final class Registratore {
 				'occurredAt' => gmdate( 'Y-m-d\TH:i:s.v\Z' ),
 				'sessionId'  => $dettagli['sessionId'] ?? null,
 				'channel'    => 'woocommerce-plugin',
-				'mode'       => $tradotto[1],
+				'mode'       => $modo,
 				'data'       => $dettagli['data'] ?? array(),
 			),
 			static fn( $v ) => null !== $v && '' !== $v
@@ -119,6 +151,17 @@ final class Registratore {
 		if ( count( $coda ) >= self::SOGLIA ) {
 			self::programma();
 		}
+	}
+
+	/**
+	 * I modi che il servizio accetta, e nessun altro.
+	 *
+	 * E' un elenco chiuso come quello dei tipi: un modo inventato fa rifiutare
+	 * l'evento intero, e lo fa in silenzio. Meglio mandarlo senza modo che
+	 * perderlo.
+	 */
+	private static function modo_ammesso( string $modo ): ?string {
+		return in_array( $modo, array( 'agent_chat', 'agent_search', 'image_search' ), true ) ? $modo : null;
 	}
 
 	public static function forse_spedisci(): void {

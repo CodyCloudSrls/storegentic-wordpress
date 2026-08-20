@@ -293,3 +293,63 @@
   background: var(--ap-accento, #1A1815);
   border-radius: 999px;
 }
+
+/* --- le scelte a schede: forma, pulsante, densita' --- */
+
+/*
+   Stessa forma delle combinazioni di colori, per la stessa ragione: un elenco
+   di radio con l'etichetta accanto costringe a leggere per scegliere, mentre
+   qui la scelta si fa a colpo d'occhio e la spiegazione serve solo a chi ha
+   un dubbio.
+*/
+.sg-scelte {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: .5rem;
+  max-width: 52rem;
+  margin-block-end: 1rem;
+}
+
+.sg-scelta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas: 'radio segno' 'radio nome' 'radio spiega';
+  align-items: start;
+  gap: 0 .6rem;
+  padding: .7rem .8rem;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sg-scelta:hover { border-color: #8c8f94; }
+.sg-scelta:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; }
+.sg-scelta input { grid-area: radio; margin: .2rem 0 0; }
+.sg-scelta__nome { grid-area: nome; font-weight: 600; }
+.sg-scelta__spiega { grid-area: spiega; color: #646970; font-size: 12px; line-height: 1.45; }
+
+/*
+   IL DISEGNINO DELLA FORMA. Quattro parole non dicono dove si apre una
+   finestra; un rettangolo con dentro un rettangolo lo dice in un istante.
+   E' fatto con due elementi e nessuna immagine: niente da caricare, e segue
+   il tema chiaro o scuro dell'amministrazione.
+*/
+.sg-scelta__segno {
+  grid-area: segno;
+  position: relative; display: block;
+  inline-size: 3.4rem; block-size: 2.2rem;
+  margin-block-end: .4rem;
+  background: #f0f0f1; border: 1px solid #dcdcde; border-radius: 3px;
+}
+
+.sg-scelta__segno i { position: absolute; display: block; background: #2271b1; border-radius: 2px; }
+
+.sg-scelta__segno--centro i { inset: 22% 18%; }
+.sg-scelta__segno--laterale i { inset: 8% 8% 8% 52%; }
+.sg-scelta__segno--basso i { inset: 45% 12% 8% 12%; }
+.sg-scelta__segno--pieno i { inset: 6%; }
+
+/* Una misura con la sua etichetta e la sua unita', su una riga sola. */
+.sg-misura { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin: 0 0 .5rem; }
+.sg-misura label { min-inline-size: 12rem; }

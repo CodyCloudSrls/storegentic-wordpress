@@ -84,6 +84,28 @@ final class Impostazioni {
 			'etichetta_avvio'     => '',
 
 			/*
+			 * LA FORMA DELL'INTERFACCIA. I colori dicono di chi e' il negozio;
+			 * questi dicono come si comporta. Vedi Frontend\Forma, dove sta
+			 * anche il perche' di ogni voce.
+			 *
+			 * Le misure sono in DECIMI di rem, interi: `larghezza => 680` vuol
+			 * dire 68rem. Un intero si sanifica senza ambiguita' e non porta
+			 * dietro il problema della virgola contro il punto decimale, che
+			 * cambia da lingua a lingua.
+			 */
+			'forma'               => 'centro',   // centro | laterale | basso | pieno
+			'larghezza'           => 680,        // 68rem
+			'altezza'             => 520,        // 52rem
+			'pulsante'            => 'pillola',  // pillola | tondo | barra
+			'distanza'            => 10,         // 1rem dal bordo
+			'densita'             => 'comoda',   // comoda | compatta
+			'colonna'             => 130,        // 13rem: la scheda piu' stretta
+			'velo'                => 100,        // per cento del velo disegnato
+			'sfocatura'           => true,
+			'movimento'           => true,
+			'caratteri'           => 'tema',     // tema | sistema | grazie | stretto
+
+			/*
 			 * Dove finiscono i risultati della ricerca a parole.
 			 *
 			 *   pagina    si va alla pagina dei risultati, che e' un indirizzo
@@ -237,6 +259,49 @@ final class Impostazioni {
 
 			case 'posizione':
 				return 'sinistra' === $valore ? 'sinistra' : 'destra';
+
+			case 'forma':
+				return isset( \Storegentic\Frontend\Forma::forme()[ $valore ] ) ? (string) $valore : 'centro';
+
+			case 'pulsante':
+				return isset( \Storegentic\Frontend\Forma::pulsanti()[ $valore ] ) ? (string) $valore : 'pillola';
+
+			case 'densita':
+				return isset( \Storegentic\Frontend\Forma::densita()[ $valore ] ) ? (string) $valore : 'comoda';
+
+			case 'caratteri':
+				return isset( \Storegentic\Frontend\Forma::caratteri()[ $valore ] ) ? (string) $valore : 'tema';
+
+			/*
+			 * LE MISURE HANNO UN MINIMO E UN MASSIMO, E NON SONO CAPRICCI.
+			 *
+			 * Sotto le 32rem una finestra non tiene due colonne di prodotti
+			 * nemmeno su un monitor grande; sopra le 120rem le righe di testo
+			 * diventano troppo lunghe per seguirle con l'occhio. Una scheda
+			 * sotto le 9rem non mostra una fotografia riconoscibile, e sopra le
+			 * 28rem su un telefono se ne vede una sola per schermata.
+			 */
+			case 'larghezza':
+				return max( 320, min( 1200, (int) $valore ) );
+
+			case 'altezza':
+				return max( 300, min( 1200, (int) $valore ) );
+
+			case 'colonna':
+				return max( 90, min( 280, (int) $valore ) );
+
+			case 'distanza':
+				return max( 0, min( 80, (int) $valore ) );
+
+			case 'velo':
+				/*
+				 * Cento vuol dire "come e' disegnato", non "nero pieno": il
+				 * colore del velo lo decide la palette — su un fondo scuro un
+				 * velo nero non si vedrebbe — e questo numero dice solo quanto
+				 * di quel velo si applica. Cosi' il valore predefinito lascia
+				 * l'aspetto identico a prima.
+				 */
+				return max( 0, min( 100, (int) $valore ) );
 
 			case 'palette':
 				$ammesse = array_keys( \Storegentic\Frontend\Palette::preparate() );

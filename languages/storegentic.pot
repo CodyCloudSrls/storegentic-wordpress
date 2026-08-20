@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-20T15:13:31+00:00\n"
+"POT-Creation-Date: 2026-08-20T16:44:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: storegentic\n"
@@ -90,16 +90,16 @@ msgid "Non hai i permessi per modificare queste impostazioni."
 msgstr ""
 
 #. translators: %s: l'elenco degli accostamenti che non si leggono, con il loro rapporto.
-#: src/Admin/Pagina.php:288
+#: src/Admin/Pagina.php:301
 #, php-format
 msgid "Colori salvati, ma questi accostamenti sono sotto il 4,5:1 richiesto e non si leggono bene: %s."
 msgstr ""
 
-#: src/Admin/Pagina.php:314
+#: src/Admin/Pagina.php:327
 msgid "Non hai i permessi per questa operazione."
 msgstr ""
 
-#: src/Admin/Pagina.php:424
+#: src/Admin/Pagina.php:437
 msgid "Salva le impostazioni"
 msgstr ""
 
@@ -172,162 +172,254 @@ msgid_plural "%s volte"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/viste/aspetto.php:25
+#: src/Admin/viste/aspetto.php:26
 msgid "L’aspetto si configura a servizio collegato: quali modalità mostrare dipende anche da quali il servizio dichiara."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:34
+#: src/Admin/viste/aspetto.php:35
 msgid "Colori"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:38
+#: src/Admin/viste/aspetto.php:39
 msgid "Combinazione"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:64
+#: src/Admin/viste/aspetto.php:65
 msgid "Sfondo"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:65
+#: src/Admin/viste/aspetto.php:66
 msgid "Superficie"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:66
+#: src/Admin/viste/aspetto.php:67
 msgid "Testo"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:67
+#: src/Admin/viste/aspetto.php:68
 msgid "Testo tenue"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:68
+#: src/Admin/viste/aspetto.php:69
 msgid "Bordo"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:69
+#: src/Admin/viste/aspetto.php:70
 msgid "Accento"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:70
+#: src/Admin/viste/aspetto.php:71
 msgid "Sopra l’accento"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:86
+#: src/Admin/viste/aspetto.php:87
 msgid "Angoli"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:100
+#: src/Admin/viste/aspetto.php:101
 msgid "Anteprima"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:102
+#: src/Admin/viste/aspetto.php:103
 msgid "Dimmi che cosa cerchi: ti propongo qualcosa."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:103
+#: src/Admin/viste/aspetto.php:104
 msgid "Un regalo sotto i 60 €"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:107
+#: src/Admin/viste/aspetto.php:108
 msgid "Nome del prodotto"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:108
+#: src/Admin/viste/aspetto.php:109
 #: src/Frontend/vista-ricerca.php:160
 msgid "Categoria"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:126
+#: src/Admin/viste/aspetto.php:127
 msgid "Il testo deve staccare dallo sfondo: sotto un rapporto di 4,5:1 non è leggibile da tutti. I numeri qui sopra misurano gli accostamenti che contano davvero."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:131
+#: src/Admin/viste/aspetto.php:132
 msgid "Il pulsante e la finestra"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:135
+#: src/Admin/viste/aspetto.php:136
 msgid "Che cosa offre la finestra"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:140
+#: src/Admin/viste/aspetto.php:141
 msgid "Ricerca a parole"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:140
+#: src/Admin/viste/aspetto.php:141
 msgid "Chi sa che cosa vuole lo descrive e lo trova."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:141
+#: src/Admin/viste/aspetto.php:142
 msgid "Ricerca con una foto"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:141
+#: src/Admin/viste/aspetto.php:142
 msgid "Si carica una foto e si trova quello che le somiglia."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:142
+#: src/Admin/viste/aspetto.php:143
 #: src/Frontend/Finestra.php:64
 msgid "Assistente"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:142
+#: src/Admin/viste/aspetto.php:143
 msgid "Chi non sa che cosa vuole lo chiede a parole sue."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:155
+#: src/Admin/viste/aspetto.php:156
 msgid "(il servizio non la dichiara: non compare)"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:160
+#: src/Admin/viste/aspetto.php:161
 msgid "Una modalità compare solo se la vuoi tu e se il servizio la dichiara. Un comando che risponde «non disponibile» è peggio di un comando assente."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:164
+#: src/Admin/viste/aspetto.php:165
 msgid "Angolo del pulsante"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:167
+#: src/Admin/viste/aspetto.php:168
 msgid "In basso a destra"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:168
+#: src/Admin/viste/aspetto.php:169
 msgid "In basso a sinistra"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:173
+#: src/Admin/viste/aspetto.php:174
 msgid "Testo del pulsante"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:178
+#: src/Admin/viste/aspetto.php:179
 msgid "Lasciandolo vuoto il testo si adatta alle modalità accese."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:182
+#: src/Admin/viste/aspetto.php:183
 msgid "Testo nel campo"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:186
+#: src/Admin/viste/aspetto.php:187
 #: src/Frontend/Finestra.php:258
 #: src/Frontend/Interfaccia.php:142
 #: src/Frontend/vista-ricerca.php:76
 msgid "Che cosa stai cercando?"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:187
+#: src/Admin/viste/aspetto.php:188
 msgid "Un esempio concreto fa capire cosa si può chiedere meglio di una domanda generica."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:191
+#: src/Admin/viste/aspetto.php:192
 msgid "Prima frase dell’assistente"
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:195
+#: src/Admin/viste/aspetto.php:196
 #: src/Frontend/Interfaccia.php:143
 msgid "Dimmi che cosa cerchi o per chi è il regalo: ti propongo qualcosa."
 msgstr ""
 
-#: src/Admin/viste/aspetto.php:196
+#: src/Admin/viste/aspetto.php:197
 msgid "È la frase che si legge appena si apre l’assistente. Lasciala vuota per quella predefinita."
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:203
+msgid "Come si apre"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:206
+msgid "È la scelta che cambia di più la sensazione del negozio, più dei colori. Una finestra al centro chiede attenzione; un cassetto lascia continuare a leggere."
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:211
+msgid "Forma della finestra"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:223
+msgid "Sul telefono «al centro» e «a lato» diventano schermo pieno: un cassetto largo quanto lo schermo è lo schermo. «Dal basso» invece resta dal basso, perché è lì che arriva il pollice."
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:227
+msgid "Quanto è grande"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:230
+msgid "Larghezza"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:233
+msgid "decimi di rem — 680 fa 68rem, circa 1088 px"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:236
+msgid "Altezza"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:240
+msgid "Sono massimi: su uno schermo più stretto la finestra si adatta da sola e non esce mai dai bordi."
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:244
+msgid "Il comando che apre"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:256
+msgid "Distanza dal bordo"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:259
+msgid "alzalo se il sito ha già un comando in basso"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:265
+msgid "Come si legge"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:269
+msgid "Densità"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:283
+msgid "Larghezza minima di una scheda"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:287
+msgid "Da qui si decidono le colonne: più stretta, più prodotti in riga. Non serve indicare un numero di colonne, che sarebbe sbagliato a ogni altra larghezza di schermo."
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:291
+msgid "Carattere dei titoli"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:298
+msgid "Nessun carattere si scarica da fuori: sono quelli già presenti nei dispositivi. Non fanno attendere il testo e non mandano l’indirizzo di chi visita a servizi di terze parti."
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:302
+msgid "Dietro la finestra"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:305
+msgid "Quanto si copre la pagina"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:311
+msgid "Sfoca quello che sta dietro"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:313
+msgid "La finestra entra con un’animazione"
+msgstr ""
+
+#: src/Admin/viste/aspetto.php:314
+msgid "Chi ha chiesto meno animazioni al proprio dispositivo non le vede comunque: è una richiesta di accessibilità, non una preferenza."
 msgstr ""
 
 #: src/Admin/viste/collegamento.php:27
@@ -1178,6 +1270,95 @@ msgstr ""
 msgid "Risponde un’intelligenza artificiale. Per gli ordini scrivi o telefona al negozio."
 msgstr ""
 
+#: src/Frontend/Forma.php:65
+msgid "Al centro"
+msgstr ""
+
+#: src/Frontend/Forma.php:66
+msgid "Un foglio in mezzo allo schermo, sopra la pagina. Chiede attenzione: chi lo apre sta cercando, non leggendo."
+msgstr ""
+
+#: src/Frontend/Forma.php:69
+msgid "A lato"
+msgstr ""
+
+#: src/Frontend/Forma.php:70
+msgid "Un cassetto che entra dal bordo e lascia vedere la pagina. Adatto a chi vuole che si continui a leggere mentre si cerca."
+msgstr ""
+
+#: src/Frontend/Forma.php:73
+msgid "Dal basso"
+msgstr ""
+
+#: src/Frontend/Forma.php:74
+msgid "Sale dal fondo, come nelle applicazioni. Sul telefono è il gesto più naturale, e il pollice arriva ai comandi."
+msgstr ""
+
+#: src/Frontend/Forma.php:77
+msgid "A tutto schermo"
+msgstr ""
+
+#: src/Frontend/Forma.php:78
+msgid "Occupa tutto, su ogni dispositivo. Massimo spazio per le fotografie, nessuna distrazione intorno."
+msgstr ""
+
+#: src/Frontend/Forma.php:91
+msgid "Pillola con scritta"
+msgstr ""
+
+#: src/Frontend/Forma.php:92
+msgid "Dice a parole cosa fa. Chi non ha mai visto un assistente su un sito capisce che può parlarci."
+msgstr ""
+
+#: src/Frontend/Forma.php:95
+msgid "Tondo, solo icona"
+msgstr ""
+
+#: src/Frontend/Forma.php:96
+msgid "Occupa pochissimo. Si sceglie quando la pagina ha già altri comandi in basso."
+msgstr ""
+
+#: src/Frontend/Forma.php:99
+msgid "Barra in fondo"
+msgstr ""
+
+#: src/Frontend/Forma.php:100
+msgid "Una fascia larga quanto lo schermo. Difficile non vederla, e sul telefono si tocca senza mirare."
+msgstr ""
+
+#: src/Frontend/Forma.php:117
+msgid "Comoda"
+msgstr ""
+
+#: src/Frontend/Forma.php:118
+msgid "Più aria intorno a ogni cosa. Si legge meglio, e su uno schermo grande non sembra vuoto."
+msgstr ""
+
+#: src/Frontend/Forma.php:122
+msgid "Compatta"
+msgstr ""
+
+#: src/Frontend/Forma.php:123
+msgid "Meno spazi. Sullo stesso schermo ci stanno più prodotti, e si scorre di meno."
+msgstr ""
+
+#: src/Frontend/Forma.php:146
+#: src/Frontend/Palette.php:65
+msgid "Dal tema del sito"
+msgstr ""
+
+#: src/Frontend/Forma.php:150
+msgid "Senza grazie"
+msgstr ""
+
+#: src/Frontend/Forma.php:154
+msgid "Con grazie"
+msgstr ""
+
+#: src/Frontend/Forma.php:158
+msgid "Stretto"
+msgstr ""
+
 #: src/Frontend/Interfaccia.php:200
 #: src/Frontend/vista-ricerca.php:129
 msgid "una cosa che regge il freddo"
@@ -1321,10 +1502,6 @@ msgstr ""
 msgid "Ricerca: %s"
 msgstr ""
 
-#: src/Frontend/Palette.php:65
-msgid "Dal tema del sito"
-msgstr ""
-
 #: src/Frontend/Palette.php:66
 msgid "Prende i colori dal tema, se il tema li dichiara. Altrimenti usa il neutro."
 msgstr ""
@@ -1377,15 +1554,15 @@ msgstr ""
 msgid "Scegli tu i sette colori."
 msgstr ""
 
-#: src/Frontend/Ponte.php:206
+#: src/Frontend/Ponte.php:207
 msgid "Storegentic non è attivo su questo negozio."
 msgstr ""
 
-#: src/Frontend/Ponte.php:225
+#: src/Frontend/Ponte.php:226
 msgid "Troppe richieste. Riprova fra qualche istante."
 msgstr ""
 
-#: src/Frontend/Ponte.php:355
+#: src/Frontend/Ponte.php:356
 msgid "Evento senza tipo."
 msgstr ""
 
@@ -1520,12 +1697,12 @@ msgstr ""
 msgid "Nessun risultato con questi filtri."
 msgstr ""
 
-#: src/Impostazioni.php:434
+#: src/Impostazioni.php:499
 msgid "L’indirizzo risponde, ma non con una risposta del servizio: probabilmente c’è un filtro davanti."
 msgstr ""
 
 #. translators: %d: codice di stato HTTP.
-#: src/Impostazioni.php:438
+#: src/Impostazioni.php:503
 #, php-format
 msgid "L’indirizzo risponde con un errore (%d): il servizio non è raggiungibile lì."
 msgstr ""
