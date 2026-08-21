@@ -1,0 +1,72 @@
+name: release
+
+# A tag makes a release. There is one branch, main, and one tag for each
+# version. See CONTRIBUTING.md.
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the version of the plugin
+        id: plugin
+        run: |
+          VERSIONE="$( sed -n 's/^ \* Version: *\([0-9][^ ]*\) *$/\1/p' storegentic.php | head -1 )"
+          echo "versione=$VERSIONE" >> "$GITHUB_OUTPUT"
+
+      - name: The tag must match the version of the plugin
+        env:
+          VERSIONE: ${{ steps.plugin.outputs.versione }}
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+
+          if [ "$TAG" != "$VERSIONE" ]; then
+            echo "The tag says $TAG and the plugin says $VERSIONE." >&2
+            exit 1
+          fi
+
+      - name: Build the package
+        run: bin/build-zip.sh
+
+      - name: Notes from the changelog
+        env:
+          VERSIONE: ${{ steps.plugin.outputs.versione }}
+        run: |
+          awk -v v="$VERSIONE" '
+            $0 ~ "^## \\[" v "\\]" { dentro = 1; next }
+            dentro && /^## \[/     { exit }
+            dentro                 { print }
+          ' CHANGELOG.md > note.md
+
+          sed "s/@VERSIONE@/$VERSIONE/g" .github/release-footer.md >> note.md
+
+          cat note.md
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSIONE: ${{ steps.plugin.outputs.versione }}
+        run: |
+          # The step can run again on the same tag: a re-run of the job, or a
+          # tag that moved before anybody used it. A second run must not stop
+          # on "release already exists".
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "Storegentic $VERSIONE" \
+              --notes-file note.md
+            gh release upload "$GITHUB_REF_NAME" \
+              dist/*.zip dist/*.zip.sha256 --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "Storegentic $VERSIONE" \
+              --notes-file note.md \
+              dist/*.zip dist/*.zip.sha256
+          fi

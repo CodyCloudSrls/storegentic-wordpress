@@ -1,0 +1,32 @@
+# What does NOT go into the release package.
+#
+# `git archive` reads these lines, and `bin/build-zip.sh` uses `git archive`.
+# One list, one place: a file that a developer needs is here, and a file that
+# a live site needs is not.
+
+/.editorconfig      export-ignore
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
+/.github            export-ignore
+/CHANGELOG.md       export-ignore
+/CONTRIBUTING.md    export-ignore
+/README.md          export-ignore
+/SECURITY.md        export-ignore
+/bin                export-ignore
+/collaudo           export-ignore
+/docs               export-ignore
+
+/languages/glossario.md export-ignore
+/languages/monta.py     export-ignore
+/languages/stile.md     export-ignore
+
+# The compiled catalogues are binary. They also add nothing to a diff.
+*.mo        binary
+*.mo        linguist-generated=true
+*.l10n.php  linguist-generated=true
+*.po        linguist-generated=true
+*.pot       linguist-generated=true
+
+# The language of the repository is PHP, not the catalogues.
+*.po   linguist-detectable=false
+*.pot  linguist-detectable=false

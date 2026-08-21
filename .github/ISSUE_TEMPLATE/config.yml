@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security problem
+    url: https://github.com/CodyCloudSrls/storegentic-wordpress/blob/main/SECURITY.md
+    about: Do not open a public issue. Send a message to it@codycloud.it.
+  - name: Question about the service
+    url: https://storegentic.eu
+    about: For the plan, the key and the index, speak to Storegentic.

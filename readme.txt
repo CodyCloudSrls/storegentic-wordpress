@@ -5,8 +5,8 @@ Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.0
 Stable tag: 0.3.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License: AGPLv3 or later
+License URI: https://www.gnu.org/licenses/agpl-3.0.html
 
 Ricerca semantica, ricerca con una foto e un assistente conversazionale, su un
 negozio WooCommerce o su un sito qualunque.

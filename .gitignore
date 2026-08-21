@@ -1,25 +1,27 @@
-# Cosa NON entra nel repository del plugin.
+# What does NOT go into the repository.
 #
-# I cataloghi compilati (.mo e .l10n.php) invece ENTRANO, di proposito: sono
-# quello che WordPress legge davvero, e un plugin scaricato da un repository
-# senza di essi si installa muto, in italiano, in qualunque lingua sia il sito.
-# Si rigenerano dai .po, ma solo se qualcuno si ricorda di farlo.
+# The compiled catalogues (.mo and .l10n.php) DO go in, on purpose: WordPress
+# reads them, and a plugin from a repository without them installs in Italian
+# in each language. They come from the .po files, but only if a person
+# remembers to make them.
 
-# Roba dei sistemi operativi
+# Operating systems
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Editor
+# Editors
 *.swp
 *.swo
 *~
 .idea/
 .vscode/
 
-# Se un domani si usasse Composer o npm
+# If a future version uses Composer or npm
 /vendor/
 /node_modules/
 
-# Gli zip di rilascio si costruiscono, non si versionano
+# The release packages come from bin/build-zip.sh
+/dist/
 /storegentic-*.zip
+/storegentic-*.zip.sha256

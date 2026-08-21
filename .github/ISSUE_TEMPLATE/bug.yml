@@ -1,0 +1,59 @@
+name: Defect
+description: Something does not operate as this documentation says.
+labels: [ defect ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not use this form for a security problem. See SECURITY.md.
+
+  - type: input
+    id: versione
+    attributes:
+      label: Version of the plugin
+      placeholder: "0.3.0"
+    validations:
+      required: true
+
+  - type: input
+    id: ambiente
+    attributes:
+      label: WordPress, PHP, WooCommerce
+      placeholder: "WordPress 6.7, PHP 8.2, WooCommerce 9.4 (or none)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: passi
+    attributes:
+      label: Steps
+      description: One step for each line.
+      placeholder: |
+        1. Open Storegentic > Catalogue.
+        2. Select Sync now.
+        3. Wait for two minutes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: atteso
+    attributes:
+      label: What must happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: accaduto
+    attributes:
+      label: What happens
+      description: Add the text of the message, and the log if there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: contratto
+    attributes:
+      label: What the service declares
+      description: >
+        Copy the "What the service declares" table from
+        Storegentic > Connection. Do not copy the key.

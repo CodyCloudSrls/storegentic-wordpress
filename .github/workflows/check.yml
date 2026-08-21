@@ -1,0 +1,67 @@
+name: check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '8.0', '8.3' ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Syntax of each PHP file
+        run: |
+          ESITO=0
+          while IFS= read -r FILE; do
+            php -l "$FILE" > /dev/null 2>&1 || { php -l "$FILE"; ESITO=1; }
+          done < <( find . -name '*.php' -not -path './.git/*' )
+          exit $ESITO
+
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax of each JavaScript file
+        run: |
+          for FILE in assets/js/*.js; do
+            node --check "$FILE"
+          done
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck bin/*.sh
+
+  package:
+    name: package and versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The script stops if the version in the header, the constant VERSIONE
+      # and the Stable tag of readme.txt are not the same. It also stops if a
+      # .po file has no compiled catalogue.
+      - run: bin/build-zip.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: dist/
+          retention-days: 7
